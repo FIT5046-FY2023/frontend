@@ -49,7 +49,7 @@ function App() {
       });
   };
   const getCsv = async () => {
-    await fetch("http://127.0.0.1:5000/cvd", {
+    await fetch("http://127.0.0.1:5000/cvddata", {
       method: "GET",
       body: JSON.stringify({}),
       headers: {
