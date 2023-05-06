@@ -1,4 +1,5 @@
-import React from "react";
+// import React from "react";
+import React, { useEffect, useState } from "react";
 import Analysis from "./Analysis";
 import Preprocessing from "./Preprocessing";
 import UploadData from "./UploadData";
@@ -13,6 +14,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+
 
 const steps = ["Upload Dataset", "Preprocessing", "Analysis", "Visualisation"];
 
@@ -31,9 +33,15 @@ function getStepContent(step: number) {
   }
 }
 
+
+
 // Tweaked from https://github.com/mui/material-ui/blob/v5.12.2/docs/data/material/getting-started/templates/checkout/Checkout.tsx
 export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [predictions, setPredictions] = useState("");
+  const [mse, setMSE] = useState("");
+  const [R2, setR2] = useState("");
+  const [rmse, setRMSE] = useState("");
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -42,6 +50,24 @@ export default function CVDAnalysisForm() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  useEffect(() => {
+    // fetch('https://jsonplaceholder.typicode.com/posts?_limit=10')
+    fetch("http://127.0.0.1:5000/predict")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        let predictiondata = JSON.parse(data)
+        setPredictions(predictiondata.Predictions);
+        //setMSE(predictiondata.MeanSquareError); 
+        setRMSE(predictiondata.RootMeanSquareError);
+        setR2(predictiondata.R2_Score); 
+
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, []);
 
   return (
     <React.Fragment>
@@ -73,13 +99,41 @@ export default function CVDAnalysisForm() {
           {activeStep === steps.length ? (
             <React.Fragment>
               <Typography variant="h5" gutterBottom>
-                Visualisation Results
+                Analysis Results
+              </Typography>
+              
+              <Typography variant="subtitle1">
+              <Typography sx={{fontWeight: 'bold'}}> MSE: </Typography> {R2}{mse}
+
+                
               </Typography>
               <Typography variant="subtitle1">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Si id
-                dicis, vicimus. At multis malis affectus. Nos commodius agimus.
-                Utram tandem linguam nescio?
+              
+              <Typography sx={{fontWeight: 'bold'}}> RMSE:</Typography> {rmse}
+        
+                
               </Typography>
+
+              <Typography variant="subtitle1">
+
+              <Typography sx={{fontWeight: 'bold'}}> R2 Score:</Typography> {R2}
+               
+              </Typography>
+
+              <div> </div>
+
+              <Typography variant="h5" gutterBottom>
+                Visualisation Results
+              </Typography>
+              
+
+              <Typography variant="subtitle1">
+                Predictions: {predictions}
+                
+              </Typography>
+
+
+
             </React.Fragment>
           ) : (
             <React.Fragment>

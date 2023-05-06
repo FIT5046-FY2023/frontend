@@ -15,6 +15,7 @@ function App() {
   const [csv, setCsv] = useState("");
   const [cvd, setCvd] = useState("");
 
+
   const getCvd = async () => {
     // fetch('https://jsonplaceholder.typicode.com/posts?_limit=10')
     fetch("http://127.0.0.1:5000/cvddata")
@@ -40,6 +41,8 @@ function App() {
         console.log(err.message);
       });
   }, []);
+
+  
   
   const addPosts = async (title: string, body: string) => {
     await fetch("https://jsonplaceholder.typicode.com/posts", {
@@ -81,6 +84,8 @@ function App() {
       });
   };
 
+  
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
     addPosts(title, body);
@@ -101,9 +106,7 @@ function App() {
       <Navigation sections={sections} title={"Cardiovascular Disease Data"} />
       <CVDAnalysisForm />
       <div className="App">
-      <div>
-      {csvData}
-    </div>
+    
         <div></div>
         <div className="add-post-container">
           <form onSubmit={handleSubmit}>
@@ -135,7 +138,7 @@ function App() {
           <form onSubmit={getCvd}>
             <button type="submit">Get Cvd</button>
           </form>
-          <p>{cvd}</p>
+          <p>{csv}</p>
         </div>
       </div>
     </ThemeProvider>
