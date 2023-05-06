@@ -5,7 +5,6 @@ import Preprocessing from "./Preprocessing";
 import UploadData from "./UploadData";
 import Visualisation from "./Visualisation";
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
@@ -18,14 +17,14 @@ import Box from "@mui/material/Box";
 
 const steps = ["Upload Dataset", "Preprocessing", "Analysis", "Visualisation"];
 
-function getStepContent(step: number) {
+function getStepContent({step, setMLAlgos, MLAlgorithms}:{step: number, setMLAlgos: React.Dispatch<any[]>, MLAlgorithms: any[]}) {
   switch (step) {
     case 0:
       return <UploadData />;
     case 1:
       return <Preprocessing />;
     case 2:
-      return <Analysis />;
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
     case 3:
       return <Visualisation />;
     default:
@@ -42,6 +41,7 @@ export default function CVDAnalysisForm() {
   const [mse, setMSE] = useState("");
   const [R2, setR2] = useState("");
   const [rmse, setRMSE] = useState("");
+  const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -84,7 +84,7 @@ export default function CVDAnalysisForm() {
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper
           variant="outlined"
-          sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
+          sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
         >
           <Typography component="h1" variant="h4" align="center">
             CVD Analysis
@@ -137,7 +137,7 @@ export default function CVDAnalysisForm() {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {getStepContent(activeStep)}
+              {getStepContent({step:activeStep, setMLAlgos, MLAlgorithms})}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
                   <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
