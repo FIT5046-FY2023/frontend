@@ -95,7 +95,10 @@ function App() {
   };
   const theme = createTheme();
 
- 
+  // if (!csvData) {
+  //   return <div>Loading...</div>;
+  // }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
