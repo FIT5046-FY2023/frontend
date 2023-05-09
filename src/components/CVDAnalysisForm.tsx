@@ -13,7 +13,12 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import { ScatterChart, Scatter, LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
 
+interface MyObject {
+  name: number;
+  uv: number; 
+}
 
 const steps = ["Upload Dataset", "Preprocessing", "Analysis", "Visualisation"];
 
@@ -37,11 +42,15 @@ function getStepContent({step, setMLAlgos, MLAlgorithms}:{step: number, setMLAlg
 // Tweaked from https://github.com/mui/material-ui/blob/v5.12.2/docs/data/material/getting-started/templates/checkout/Checkout.tsx
 export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [predictions, setPredictions] = useState("");
+  const [predictions, setPredictions] = useState();
   const [mse, setMSE] = useState("");
   const [R2, setR2] = useState("");
   const [rmse, setRMSE] = useState("");
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
+  const predictionsArray: {}[] = [];
+  const data1 = [{name: '0', uv: 8.248466622900004},{name: '1', uv: 7.5823660776}, {name: '2', uv: 8.692531544699996}, {name: '3', uv: 8.502016348800002},
+    {name: '4', uv: 8.1789648864}];
+  const [prediction, setPred] = useState<any[]>([]); 
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -58,11 +67,26 @@ export default function CVDAnalysisForm() {
       .then((data) => {
         console.log(data);
         let predictiondata = JSON.parse(data)
-        setPredictions(predictiondata.Predictions);
-        //setMSE(predictiondata.MeanSquareError); 
+        
+        let preddata = predictiondata.Predictions;
+  
+
+        setPredictions(preddata);
+        setMSE(predictiondata.MeanSquareError); 
         setRMSE(predictiondata.RootMeanSquareError);
         setR2(predictiondata.R2_Score); 
 
+       const data1 = [{name: 'Page A', uv: 400, pv: 2400, amt: 2400}];
+
+       for (let i = 0; i < preddata.length; i++) {
+        let singleObj: MyObject = {name:i,uv:Number(preddata[i])*10};
+        predictionsArray.push(singleObj);
+        
+      };
+
+      setPred(predictionsArray)
+
+        
       })
       .catch((err) => {
         console.log(err.message);
@@ -70,7 +94,9 @@ export default function CVDAnalysisForm() {
   }, []);
 
   return (
+    
     <React.Fragment>
+
       <AppBar
         position="absolute"
         color="default"
@@ -81,7 +107,7 @@ export default function CVDAnalysisForm() {
         }}
       >
       </AppBar>
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Container component="main" maxWidth="sm" sx={{ mb: 4 }} >
         <Paper
           variant="outlined"
           sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
@@ -96,41 +122,73 @@ export default function CVDAnalysisForm() {
               </Step>
             ))}
           </Stepper>
+        
           {activeStep === steps.length ? (
-            <React.Fragment>
-              <Typography variant="h5" gutterBottom>
+            <React.Fragment >
+
+<Typography variant="h5" gutterBottom align="center">
                 Analysis Results
               </Typography>
-              
-              <Typography variant="subtitle1">
-              <Typography sx={{fontWeight: 'bold'}}> MSE: </Typography> {R2}{mse}
 
-                
-              </Typography>
-              <Typography variant="subtitle1">
+
+<Paper
+          variant="outlined"
+          sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
+        >
+
+              <Box sx={{ display: 'flex' }}>
               
-              <Typography sx={{fontWeight: 'bold'}}> RMSE:</Typography> {rmse}
+              <Typography variant="subtitle1" sx={{display:"inline"}}>
+              <Typography sx={{fontWeight: 'bold', display: "inline"}} > MSE: </Typography> {mse}
+              </Typography>
+              </Box> 
+
+              <Box sx={{ display: 'flex' }}>
+
+              <Typography variant="subtitle1" sx={{ display: "inline" }}>
+              <Typography sx={{fontWeight: 'bold', display: "inline" }}> RMSE: </Typography>  {rmse}
+              </Typography>
+              </Box>
+
+              <Box>
+
+              <Typography variant="subtitle1" sx={{display: "inline" }}>
+              <Typography sx={{fontWeight: 'bold', display: "inline" }} > R2 Score: </Typography> {R2}
+              </Typography>
+
+              </Box>
+
+              </Paper>
+
         
-                
-              </Typography>
-
-              <Typography variant="subtitle1">
-
-              <Typography sx={{fontWeight: 'bold'}}> R2 Score:</Typography> {R2}
-               
-              </Typography>
-
-              <div> </div>
-
-              <Typography variant="h5" gutterBottom>
+              <Typography variant="h5" gutterBottom align="center">
                 Visualisation Results
-              </Typography>
-              
 
-              <Typography variant="subtitle1">
-                Predictions: {predictions}
-                
               </Typography>
+            
+              <Paper
+          variant="outlined"
+          sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
+        >
+      
+              <ScatterChart
+                width={450}
+                height={300}
+                margin={{
+                  top: 20,
+                  right: 20,
+                  bottom: 10,
+                  left: 10,
+                }}
+              >
+                <CartesianGrid strokeDasharray="5 5" />
+                <XAxis dataKey="name" type="number" name=""  />
+                <YAxis dataKey="uv" type="number" name="Predictions"  />
+                <Scatter name="Predictions" data={prediction} fill="#8884d8" />
+         
+              </ScatterChart>
+
+              </Paper>
 
 
 

@@ -95,15 +95,14 @@ function App() {
   };
   const theme = createTheme();
 
-  if (!csvData) {
-    return <div>Loading...</div>;
-  }
-
+ 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Navigation sections={sections} title={"Cardiovascular Disease Data"} />
-      <CVDAnalysisForm />
+
+      <CVDAnalysisForm/> 
+
       <div className="App">
     
         <div></div>
