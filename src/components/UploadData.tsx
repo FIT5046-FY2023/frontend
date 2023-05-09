@@ -1,4 +1,4 @@
-import { Input, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Input, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, unstable_useId } from "@mui/material";
 import Container from "@mui/material/Container";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DropzoneOptions, useDropzone } from "react-dropzone";
@@ -7,12 +7,23 @@ import Paginate from "react-paginate";
 // from https://refine.dev/blog/how-to-import-csv/ - TODO: convert any types to proper types
 const UploadData = () => {
   const [file, setFile] = useState();
+  const [curFiles, setCurFiles] = useState<any[]>([]);
   const [array, setArray] = useState([]);
 
   const fileReader = new FileReader();
 
   const handleOnChange = (e: any) => {
     setFile(e.target.files[0]);
+  };
+  const handleOnChangeCurFiles = (e: any) => {
+    console.log(e.target.files);
+    const fileList: FileList = e.target.files; 
+    let files: File[] = []
+    for (let index = 0; index < fileList.length; index++) {
+      files.push(fileList[index]);
+      
+    }
+    setCurFiles([...curFiles, ...files]);
   };
 
   const csvFileToArray = (string: any) => {
@@ -36,6 +47,7 @@ const UploadData = () => {
 
     if (file) {
       fileReader.onload = function (event: any) {
+        setCurFiles([...curFiles, file]);
         const text = event.target.result;
         csvFileToArray(text);
       };
@@ -51,6 +63,7 @@ const UploadData = () => {
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <form>
           <Input type="file" id="csv-file-input" onChange={handleOnChange} inputProps={{accept:".csv"}} ></Input>
+          <Input type="file" id="csv-file-input" onChange={handleOnChangeCurFiles} inputProps={{accept:".csv", multiple:"true"}}  ></Input>
 
           <button
             onClick={(e) => {
@@ -60,6 +73,37 @@ const UploadData = () => {
             IMPORT CSV
           </button>
         </form>
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+                {["Name", "Size", "Last Modified"].map((key) => (
+                  <TableCell
+                    key={key}
+                    align="center"
+                    style={{ minWidth: 170 }}
+                  >
+                    {key}
+                  </TableCell>
+                ))}
+              </TableRow>
+          </TableHead>
+          <TableBody>
+          {curFiles.length > 0 && curFiles.map((file: File, index: number) => (
+              <TableRow key={index}>
+              
+                  <TableCell key={"name"} align="center">{file.name}</TableCell>
+                  <TableCell key={"size"} align="center">{file.size}</TableCell>
+                  <TableCell key={"lastModified"} align="center">{file.lastModified}</TableCell>
+                  
+              </TableRow>
+            ))}
+
+          </TableBody>
+        </Table>
+        </TableContainer>
+        </Paper>
 
         <br />
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
