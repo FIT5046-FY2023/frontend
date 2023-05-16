@@ -43,13 +43,11 @@ function App() {
 
   
   
-  const addPosts = async (title: string, body: string) => {
-    await fetch("https://jsonplaceholder.typicode.com/posts", {
+   const addPosts = async (title: string, csv: string) => {
+    await fetch("http://127.0.0.1:5000/cvddata", {
       method: "POST",
-      body: JSON.stringify({
-        title: title,
-        body: body,
-        userId: Math.random().toString(36).slice(2),
+      body: JSON.stringify({ csv: csv
+   
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
