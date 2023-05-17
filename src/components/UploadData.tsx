@@ -1,6 +1,8 @@
 import {
   Button,
+  Card,
   Input,
+  OutlinedInput,
   Paper,
   Table,
   TableBody,
@@ -11,12 +13,18 @@ import {
 } from "@mui/material";
 import Container from "@mui/material/Container";
 import React, { useState } from "react";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import axios from "axios";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Upload } from "@mui/icons-material";
 
-// from https://refine.dev/blog/how-to-import-csv/ - TODO: convert any types to proper types
-const UploadData = (props: {curFiles: File[], setCurFiles: React.Dispatch<any[]>}) => {
-  const [array, setArray] = useState<any[]>([]);
-  const {curFiles, setCurFiles} = props;
+// from https://refine.dev/blog/how-to-import-csv/ 
+const UploadData = (props: {
+  curFiles: File[];
+  setCurFiles: React.Dispatch<any[]>;
+  handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}) => {
+  const [array, setArray] = useState<any[]>([]); // for csv preview
+  const { curFiles, setCurFiles, handleUpload } = props;
   const fileReader = new FileReader();
 
   const handleOnChangeCurFiles = (e: any) => {
@@ -45,39 +53,41 @@ const UploadData = (props: {curFiles: File[], setCurFiles: React.Dispatch<any[]>
   };
 
   const handlePreview = (index: number) => {
-   
     const file = curFiles[index];
     if (file) {
       fileReader.onload = function (event: any) {
-        // setCurFiles([...curFiles, file]);
         const text = event.target.result;
         csvFileToArray(text);
       };
 
       fileReader.readAsText(file);
     }
-  }
+  };
 
   const headerKeys = Object.keys(Object.assign({}, ...array));
 
   return (
     <div style={{ textAlign: "center" }}>
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Container component="main" sx={{ mb: 4 }}>
         <form>
-          <Input
+          <OutlinedInput
             type="file"
             id="csv-file-input"
             onChange={handleOnChangeCurFiles}
             inputProps={{ accept: ".csv", multiple: "true" }}
-            
-          ></Input>
+          ></OutlinedInput>
+          <Button
+           variant="outlined"
+           onClick={handleUpload}
+           startIcon={<Upload />}
+           > Upload </Button>
         </form>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <Card elevation={0} sx={{ borderRadius: 2, my: 4 }} variant="outlined">
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  {["Name", "Size", "Last Modified"].map((key) => (
+                  {["Name", "Size", "Last Modified", 'Action'].map((key) => (
                     <TableCell
                       key={key}
                       align="center"
@@ -91,7 +101,7 @@ const UploadData = (props: {curFiles: File[], setCurFiles: React.Dispatch<any[]>
               <TableBody>
                 {curFiles.length > 0 &&
                   curFiles.map((file: File, index: number) => (
-                    <TableRow key={index} >
+                    <TableRow key={index}>
                       <TableCell key={"name"} align="center">
                         {file.name}
                       </TableCell>
@@ -102,18 +112,20 @@ const UploadData = (props: {curFiles: File[], setCurFiles: React.Dispatch<any[]>
                         {file.lastModified}
                       </TableCell>
                       <TableCell key={"preview"} align="center">
-                       
-                        <Button variant="outlined" onClick={(e) => handlePreview(index)} startIcon={<VisibilityIcon />}
-                        defaultValue={index}>
-  Preview
-</Button>
+                        <Button
+                          variant="outlined"
+                          onClick={(e) => handlePreview(index)}
+                          startIcon={<VisibilityIcon />}
+                        >
+                          Preview
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
           </TableContainer>
-        </Paper>
+        </Card>
 
         <br />
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -152,3 +164,34 @@ const UploadData = (props: {curFiles: File[], setCurFiles: React.Dispatch<any[]>
 };
 
 export default UploadData;
+
+// function CsvUploader() {
+//   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSelectedFile(event.target.files?.[0] || null);
+  // };
+
+  // const handleUpload = () => {
+  //   if (selectedFile) {
+  //     const formData = new FormData();
+  //     formData.append('file', selectedFile);
+    
+  //     axios.post('http://127.0.0.1:5000/upload', formData)
+  //       .then((response) => {
+  //         console.log(response);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //     }
+  // };
+//   return (
+//     <div>
+//       <input type="file" onChange={handleFileSelect} />
+//       <button onClick={handleUpload}>Upload</button>
+//     </div>
+//   );
+// }
+
+// export default CsvUploader;

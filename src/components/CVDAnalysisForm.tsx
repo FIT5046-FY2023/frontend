@@ -12,6 +12,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import axios from "axios";
 
 interface MyObject {
   name: number;
@@ -28,7 +29,7 @@ function getStepContent({
 }: {
   step: number;
   analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
-  uploadDataProps: { curFiles: File[]; setCurFiles: React.Dispatch<any[]> };
+  uploadDataProps: { curFiles: File[]; setCurFiles: React.Dispatch<any[]>; handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void};
   preprocessProps: {checkbox: React.SetStateAction<{obesity: boolean;
     drinking: boolean;
     lack_fruit: boolean;
@@ -61,13 +62,13 @@ function getStepContent({
     hypertension: boolean;}>>}; 
 
 }) {
-  const { curFiles, setCurFiles } = uploadDataProps;
+  const { curFiles, setCurFiles, handleUpload } = uploadDataProps;
   const {setMLAlgos, MLAlgorithms } = analysisProps;
   const {checkbox, setCheckboxValues} = preprocessProps;  
 
   switch (step) {
     case 0:
-      return <UploadData setCurFiles={setCurFiles} curFiles={curFiles} />;
+      return <UploadData setCurFiles={setCurFiles} curFiles={curFiles} handleUpload={handleUpload}/>;
     case 1:
       return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues}/>;
     case 2:
@@ -142,8 +143,7 @@ export default function CVDAnalysisForm() {
   const handleVisualise = (e: any) => {
     handleNext();
     console.log("entered handleVisualise");
-    // let encodedCsv;
-    let csv;
+
     const csvFile = curFiles[0];
     console.log(csvFile);
     if (csvFile) {
@@ -154,9 +154,9 @@ export default function CVDAnalysisForm() {
       setGetData(true);
     }
     // const requestBody = {
-    //   csv: csv,
     //   mlAlgorithm: MLAlgorithms[0],
     // };
+  };
 
     // console.log(requestBody);
     // return requestBody;
@@ -226,37 +226,24 @@ export default function CVDAnalysisForm() {
       const csv = await csvFile.text();
       return csv;
     }
+  const handleUpload = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    // Currently uploads only one file 
     if (curFiles.length > 0) {
-      getCSVText().then((data:string) => {
-        addPosts(data);
-      });
-      const requestBody = {
-        csv: getCSVText(),
-        mlAlgorithm: MLAlgorithms[0],
-      };
+      const selectedFile = curFiles[0];
+      const formData = new FormData();
+      formData.append("file", selectedFile);
 
-      console.log(requestBody);
-    
-    // let formData = new FormData();
-    // formData.append('csv', csvFile);
-    // formData.append('mlAlgorithms', MLAlgorithms[0]);
-    // fetch("http://127.0.0.1:5000/users", {
-    //   method: "POST",
-    //   body: formData,
-    //   headers: {
-    //     "Content-type": "application/json; charset=UTF-8",
-    //   },
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.message);
-    //   });
+      axios
+        .post("http://127.0.0.1:5000/upload", formData)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
+  };
 
-  }, [getData]);
   useEffect(() => {
     fetch("http://127.0.0.1:5000/predict")
       .then((response) => response.json())
@@ -296,21 +283,23 @@ export default function CVDAnalysisForm() {
           borderBottom: (t) => `1px solid ${t.palette.divider}`,
         }}
       ></AppBar>
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Container component="main" sx={{ mb: 4, br: 32 }}>
         <Paper
           variant="outlined"
-          sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
+          sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 }, borderRadius: 2 }}
         >
           <Typography component="h1" variant="h4" align="center">
             CVD Analysis
           </Typography>
-          <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
+          <Container maxWidth={'sm'}>
+            <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Container>
 
           {activeStep === steps.length - 1 ? (
             <>
@@ -334,7 +323,7 @@ export default function CVDAnalysisForm() {
               {getStepContent({
                 step: activeStep,
                 analysisProps: { setMLAlgos, MLAlgorithms },
-                uploadDataProps: {curFiles, setCurFiles },
+                uploadDataProps: {curFiles, setCurFiles,  handleUpload },
                 preprocessProps: {checkbox, setCheckboxValues}
 
               })}
