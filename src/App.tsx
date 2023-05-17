@@ -105,8 +105,8 @@ function App() {
       <CVDAnalysisForm/> 
 
       <div className="App">
-    
-        <div></div>
+    {/* TO DELETE */}
+        {/* <div></div>
         <div className="add-post-container">
           <form onSubmit={handleSubmit}>
             <input
@@ -138,7 +138,7 @@ function App() {
             <button type="submit">Get Cvd</button>
           </form>
           <p>{csv}</p>
-        </div>
+        </div> */}
       </div>
     </ThemeProvider>
   );
