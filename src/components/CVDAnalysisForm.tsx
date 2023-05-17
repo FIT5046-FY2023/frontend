@@ -24,19 +24,52 @@ function getStepContent({
   step,
   uploadDataProps,
   analysisProps,
+  preprocessProps
 }: {
   step: number;
   analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
   uploadDataProps: { curFiles: File[]; setCurFiles: React.Dispatch<any[]> };
+  preprocessProps: {checkbox: React.SetStateAction<{obesity: boolean;
+    drinking: boolean;
+    lack_fruit: boolean;
+    lack_exercise: boolean;
+    over_65: boolean;
+    early_school: boolean;
+    low_income: boolean;
+    hcc_holder: boolean;
+    unemployed: boolean;
+    comm_support: boolean;
+    carer: boolean;
+    diabetes: boolean;
+    mental_disease: boolean;
+    psycho: boolean;
+    hypertension: boolean}>, setCheckboxValues:React.Dispatch<React.SetStateAction<{smoking: boolean;
+    obesity: boolean;
+    drinking: boolean;
+    lack_fruit: boolean;
+    lack_exercise: boolean;
+    over_65: boolean;
+    early_school: boolean;
+    low_income: boolean;
+    hcc_holder: boolean;
+    unemployed: boolean;
+    comm_support: boolean;
+    carer: boolean;
+    diabetes: boolean;
+    mental_disease: boolean;
+    psycho: boolean;
+    hypertension: boolean;}>>}; 
+
 }) {
   const { curFiles, setCurFiles } = uploadDataProps;
-  const { setMLAlgos, MLAlgorithms } = analysisProps;
+  const {setMLAlgos, MLAlgorithms } = analysisProps;
+  const {checkbox, setCheckboxValues} = preprocessProps;  
 
   switch (step) {
     case 0:
       return <UploadData setCurFiles={setCurFiles} curFiles={curFiles} />;
     case 1:
-      return <Preprocessing />;
+      return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues}/>;
     case 2:
       return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
     case 3:
@@ -56,16 +89,47 @@ export default function CVDAnalysisForm() {
   const [rmse, setRMSE] = useState("");
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
+ // const [checkbox, setCheckboxValues] = useState<any[]>([]);
   const predictionsArray: {}[] = [];
   const [getData, setGetData] = useState(false);
-  const data1 = [
-    { name: "0", uv: 8.248466622900004 },
-    { name: "1", uv: 7.5823660776 },
-    { name: "2", uv: 8.692531544699996 },
-    { name: "3", uv: 8.502016348800002 },
-    { name: "4", uv: 8.1789648864 },
-  ];
   const [prediction, setPred] = useState<any[]>([]);
+  const [checkbox, setCheckboxValues] = React.useState({
+        smoking: true,
+        obesity: true,
+        drinking: true, 
+        lack_fruit: true,
+        lack_exercise: true,
+        over_65: true, 
+        early_school: true,
+        low_income: true, 
+        hcc_holder: true, 
+        unemployed: true, 
+        comm_support: true, 
+        carer: true, 
+        diabetes: true, 
+        mental_disease: true, 
+        psycho: true,
+        hypertension: true
+      });
+
+
+
+    const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
+     //const newdata = {...checkbox}
+      //const target_id = event.target.id
+     // newdata[target_id] = event.target.value
+
+     const name = event.target.value
+     const checked = event.target.checked
+     setCheckboxValues((prevValues) => ({
+       ...prevValues,
+       [name]: checked,
+     }));
+     console.log(checkbox)
+      
+      
+    }
+
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -97,6 +161,47 @@ export default function CVDAnalysisForm() {
     // console.log(requestBody);
     // return requestBody;
   };
+
+  const handlePreprocess = async () => {
+   await fetch("http://127.0.0.1:5000/predict", {
+    method: "POST",
+    body: JSON.stringify({checkbox}),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+
+    handleNext();
+
+
+  };
+
+  const handleAnalysis = async () => {
+    await fetch("http://127.0.0.1:5000/MLAlgorithm", {
+      method: "POST",
+      body: JSON.stringify(MLAlgorithms),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+
+      handleNext();
+  };
+
   const addPosts = async (csv: string) => {
     await fetch("http://127.0.0.1:5000/users", {
       method: "POST",
@@ -113,6 +218,8 @@ export default function CVDAnalysisForm() {
         console.log(err.message);
       });
   };
+
+  
   useEffect(() => {
     const csvFile = curFiles[0];
     async function getCSVText() {
@@ -221,12 +328,15 @@ export default function CVDAnalysisForm() {
                 )}
               </Box>
             </>
-          ) : (
+          ) : 
+          (
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
                 analysisProps: { setMLAlgos, MLAlgorithms },
-                uploadDataProps: { curFiles, setCurFiles },
+                uploadDataProps: {curFiles, setCurFiles },
+                preprocessProps: {checkbox, setCheckboxValues}
+
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
@@ -238,8 +348,12 @@ export default function CVDAnalysisForm() {
                   <Button
                     variant="contained"
                     onClick={
-                      activeStep === steps.length - 2
+                      activeStep === steps.length - 1
                         ? handleVisualise
+                        : activeStep === steps.length - 3
+                        ? handlePreprocess 
+                        : activeStep === steps.length - 2
+                        ? handleAnalysis
                         : handleNext
                     }
                     sx={{ mt: 3, ml: 1 }}

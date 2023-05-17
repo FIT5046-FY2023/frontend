@@ -93,9 +93,6 @@ function App() {
   };
   const theme = createTheme();
 
-  // if (!csvData) {
-  //   return <div>Loading...</div>;
-  // }
 
   return (
     <ThemeProvider theme={theme}>
@@ -103,43 +100,6 @@ function App() {
       <Navigation sections={sections} title={"Cardiovascular Disease Data"} />
 
       <CVDAnalysisForm/> 
-
-      <div className="App">
-    
-        <div></div>
-        <div className="add-post-container">
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              className="form-control"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <textarea
-              name=""
-              className="form-control"
-              id=""
-              cols={10}
-              rows={8}
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            ></textarea>
-            <button type="submit">Add Post</button>
-          </form>
-        </div>
-        <div className="add-csv-container">
-          <form onSubmit={handleCsvSubmit}>
-          <p>{csv}</p>
-            <button type="submit">Get Csv</button>
-          </form>
-        </div>
-        <div className="add-cvd-container">
-          <form onSubmit={getCvd}>
-            <button type="submit">Get Cvd</button>
-          </form>
-          <p>{csv}</p>
-        </div>
-      </div>
     </ThemeProvider>
   );
 }

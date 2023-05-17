@@ -9,6 +9,7 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
   const { setMLAlgos, MLAlgorithms } = props;
   const handleMLChange = (event: SelectChangeEvent<any>) => {
     setMLAlgos(event.target.value);
+    console.log(MLAlgorithms)
   };
   
   return (
@@ -26,12 +27,12 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
             onChange={handleMLChange}
             multiple={true}
           >
-            <MenuItem value={20}>Random Forest</MenuItem>
-            <MenuItem value={30}>K-Nearest Neighbours</MenuItem>
-            <MenuItem value={40}>Scaled Vector Machine</MenuItem>
-            <MenuItem value={50}>Decision Trees</MenuItem>
-            <MenuItem value={60}>Naive Bayes</MenuItem>
-            <MenuItem value={70}>Logistic Regression</MenuItem>
+            <MenuItem value={"random-forest"}>Random Forest</MenuItem>
+            <MenuItem value={"k-nearest"}>K-Nearest Neighbours</MenuItem>
+            <MenuItem value={"scaled-vector"}>Scaled Vector Machine</MenuItem>
+            <MenuItem value={"decision-trees"}>Decision Trees</MenuItem>
+            <MenuItem value={"naive-bayes"}>Naive Bayes</MenuItem>
+            <MenuItem value={"logistic-regression"}>Logistic Regression</MenuItem>
           </Select>
           </FormControl>
 
