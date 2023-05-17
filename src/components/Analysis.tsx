@@ -4,6 +4,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import React from "react";
+
 import { machineLearningAlgo } from "../enums/machineLearningAlgo";
 
 const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>}) => {
