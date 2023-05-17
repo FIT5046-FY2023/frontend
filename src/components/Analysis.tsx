@@ -1,3 +1,4 @@
+import { Box, Chip, Stack } from "@mui/material";
 import Container from "@mui/material/Container";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -5,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React from "react";
 
+import { machineLearningAlgo } from "../enums/machineLearningAlgo";
 
 const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>}) => {
   const { setMLAlgos, MLAlgorithms } = props;
@@ -14,10 +16,14 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
   };
   
   return (
-    <>
-      <Container
-        // sx={{ borderColor: "blue", borderRadius: 2, borderStyle: "solid" }}
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minWidth={'100%'}
       >
+        <Stack spacing={2} maxWidth={'40vw'} width={'100%'}>
+
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Machine Learning Algorithm</InputLabel>
           <Select
@@ -27,14 +33,26 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
             label="Machine Learning Algorithm"
             onChange={handleMLChange}
             multiple={true}
-          >
-            <MenuItem value={"random-forest"}>Random Forest</MenuItem>
-            <MenuItem value={"k-nearest"}>K-Nearest Neighbours</MenuItem>
-            <MenuItem value={"scaled-vector"}>Scaled Vector Machine</MenuItem>
-            <MenuItem value={"decision-trees"}>Decision Trees</MenuItem>
-            <MenuItem value={"naive-bayes"}>Naive Bayes</MenuItem>
-            <MenuItem value={"logistic-regression"}>Logistic Regression</MenuItem>
-          </Select>
+            size="small"
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
+            >
+          {
+            machineLearningAlgo.map((op) => (
+              <MenuItem
+              key={op.value}
+              value={op.label}
+              >
+                  {op.label}
+                </MenuItem>
+              ))
+            }
+            </Select>
           </FormControl>
 
 
@@ -48,17 +66,22 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
             label="Spatial Analytic Algorithms"
             onChange={()=>{}}
             multiple={true}
-          >
-            <MenuItem value={20}>Random Forest</MenuItem>
-            <MenuItem value={30}>K-Nearest Neighbours</MenuItem>
-            <MenuItem value={40}>Scaled Vector Machine</MenuItem>
-            <MenuItem value={50}>Decision Trees</MenuItem>
-            <MenuItem value={60}>Naive Bayes</MenuItem>
-            <MenuItem value={70}>Logistic Regression</MenuItem>
+            size="small"
+            >
+            {
+              machineLearningAlgo.map((op) => (
+                <MenuItem
+                  key={op.value}
+                  value={op.value}
+                >
+                  {op.label}
+                </MenuItem>
+              ))
+            }
           </Select>
         </FormControl>
-      </Container>
-    </>
+            </Stack>
+      </Box>
   );
 };
 
