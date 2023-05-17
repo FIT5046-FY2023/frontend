@@ -71,6 +71,7 @@ const UploadData = (props: {
       <Container component="main" sx={{ mb: 4 }}>
         <form>
           <OutlinedInput
+            size="small"
             type="file"
             id="csv-file-input"
             onChange={handleOnChangeCurFiles}
@@ -78,8 +79,10 @@ const UploadData = (props: {
           ></OutlinedInput>
           <Button
            variant="outlined"
+           disabled={false}
            onClick={handleUpload}
            startIcon={<Upload />}
+           sx={{ mx: 2}}
            > Upload </Button>
         </form>
         <Card elevation={0} sx={{ borderRadius: 2, my: 4 }} variant="outlined">
