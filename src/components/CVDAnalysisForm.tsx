@@ -160,7 +160,7 @@ export default function CVDAnalysisForm() {
 
     // console.log(requestBody);
     // return requestBody;
-  };
+
 
   const handlePreprocess = async () => {
    await fetch("http://127.0.0.1:5000/predict", {
@@ -225,7 +225,8 @@ export default function CVDAnalysisForm() {
     async function getCSVText() {
       const csv = await csvFile.text();
       return csv;
-    }
+    }});
+
   const handleUpload = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // Currently uploads only one file 
     if (curFiles.length > 0) {
