@@ -15,12 +15,12 @@ import {
   
 const Visualisation = (props: { mse: string, rmse: string, R2: string, prediction: any[]}) => {
    const { mse, rmse, prediction, R2 } = props;
-   const data = [
+   const barData = [
     {
       name: 'ML 1',
-      mse: 4000,
-      rmse: 2400,
-      R2: 2400,
+      mse: mse,
+      rmse: rmse,
+      R2: R2,
     }];
 
    return <React.Fragment>
@@ -100,7 +100,7 @@ const Visualisation = (props: { mse: string, rmse: string, R2: string, predictio
         <BarChart
           width={500}
           height={300}
-          data={data}
+          data={barData}
           margin={{
             top: 5,
             right: 30,
