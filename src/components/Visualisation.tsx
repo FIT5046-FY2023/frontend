@@ -6,10 +6,23 @@ import {
     CartesianGrid,
     XAxis,
     YAxis,
+    ResponsiveContainer,
+    BarChart,
+    Tooltip,
+    Legend,
+    Bar,
   } from "recharts";
   
 const Visualisation = (props: { mse: string, rmse: string, R2: string, prediction: any[]}) => {
    const { mse, rmse, prediction, R2 } = props;
+   const data = [
+    {
+      name: 'ML 1',
+      mse: 4000,
+      rmse: 2400,
+      R2: 2400,
+    }];
+
    return <React.Fragment>
     <Typography variant="h5" gutterBottom align="center">
       Analysis Results
@@ -77,7 +90,35 @@ const Visualisation = (props: { mse: string, rmse: string, R2: string, predictio
           fill="#8884d8"
         />
       </ScatterChart>
+      
+      
     </Paper>
+    <Paper
+    variant="outlined"
+    sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}>
+  
+        <BarChart
+          width={500}
+          height={300}
+          data={data}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="rmse" fill="#8884d8" />
+          <Bar dataKey="mse" fill="#82ca9d" />
+          <Bar dataKey="R2" fill="#b34a8d" />
+        </BarChart>
+        
+        </Paper>
   </React.Fragment>
 }
 
