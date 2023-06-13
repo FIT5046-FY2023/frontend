@@ -3,6 +3,5 @@ export const machineLearningAlgo = [
     {value: 1, label: 'K-Nearest Neighbours'},
     {value: 2, label: 'Scaled Vector Machine'},
     {value: 3, label: 'Decision Trees'},
-    {value: 4, label: 'Naive Bayes'},
-    {value: 5, label: 'Logistic Regression'},
+    {value: 4, label: 'Linear Regression'},
 ]
