@@ -13,11 +13,14 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
+import { CropLandscapeOutlined } from "@mui/icons-material";
 
 interface MyObject {
   name: number;
   uv: number;
 }
+
+
 
 const steps = ["Upload Dataset", "Preprocessing", "Analysis", "Visualisation"];
 
@@ -29,48 +32,19 @@ function getStepContent({
 }: {
   step: number;
   analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
-  uploadDataProps: { curFiles: File[]; setCurFiles: React.Dispatch<any[]>; handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void};
-  preprocessProps: {checkbox: React.SetStateAction<{obesity: boolean;
-    drinking: boolean;
-    lack_fruit: boolean;
-    lack_exercise: boolean;
-    over_65: boolean;
-    early_school: boolean;
-    low_income: boolean;
-    hcc_holder: boolean;
-    unemployed: boolean;
-    comm_support: boolean;
-    carer: boolean;
-    diabetes: boolean;
-    mental_disease: boolean;
-    psycho: boolean;
-    hypertension: boolean}>, setCheckboxValues:React.Dispatch<React.SetStateAction<{smoking: boolean;
-    obesity: boolean;
-    drinking: boolean;
-    lack_fruit: boolean;
-    lack_exercise: boolean;
-    over_65: boolean;
-    early_school: boolean;
-    low_income: boolean;
-    hcc_holder: boolean;
-    unemployed: boolean;
-    comm_support: boolean;
-    carer: boolean;
-    diabetes: boolean;
-    mental_disease: boolean;
-    psycho: boolean;
-    hypertension: boolean;}>>}; 
+  uploadDataProps: {curFiles: File[]; setCurFiles: React.Dispatch<any[]>; handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void};
+  preprocessProps: {checkbox: React.SetStateAction<any[]>, setCheckboxValues:React.Dispatch<React.SetStateAction<any[]>>, checkboxOptions:any[], corrList:any[]}; 
 
 }) {
   const { curFiles, setCurFiles, handleUpload } = uploadDataProps;
   const {setMLAlgos, MLAlgorithms } = analysisProps;
-  const {checkbox, setCheckboxValues} = preprocessProps;  
+  const {checkbox, setCheckboxValues, checkboxOptions, corrList} = preprocessProps;  
 
   switch (step) {
     case 0:
       return <UploadData setCurFiles={setCurFiles} curFiles={curFiles} handleUpload={handleUpload}/>;
     case 1:
-      return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues}/>;
+      return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues} checkboxOptions={checkboxOptions} corrList={corrList}/>;
     case 2:
       return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
     case 3:
@@ -90,47 +64,12 @@ export default function CVDAnalysisForm() {
   const [rmse, setRMSE] = useState("");
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
- // const [checkbox, setCheckboxValues] = useState<any[]>([]);
   const predictionsArray: {}[] = [];
   const [getData, setGetData] = useState(false);
   const [prediction, setPred] = useState<any[]>([]);
-  const [checkbox, setCheckboxValues] = React.useState({
-        smoking: true,
-        obesity: true,
-        drinking: true, 
-        lack_fruit: true,
-        lack_exercise: true,
-        over_65: true, 
-        early_school: true,
-        low_income: true, 
-        hcc_holder: true, 
-        unemployed: true, 
-        comm_support: true, 
-        carer: true, 
-        diabetes: true, 
-        mental_disease: true, 
-        psycho: true,
-        hypertension: true
-      });
-
-
-
-    const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
-     //const newdata = {...checkbox}
-      //const target_id = event.target.id
-     // newdata[target_id] = event.target.value
-
-     const name = event.target.value
-     const checked = event.target.checked
-     setCheckboxValues((prevValues) => ({
-       ...prevValues,
-       [name]: checked,
-     }));
-     console.log(checkbox)
-      
-      
-    }
-
+  const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
+  const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]); 
+  const [corrList, setCorrList] = useState<any[]>([]); 
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -139,6 +78,34 @@ export default function CVDAnalysisForm() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+
+  const handleVisual = async () => {
+    fetch("http://127.0.0.1:5000/predict")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      let predictiondata = JSON.parse(data);
+
+      let preddata = predictiondata.Predictions;
+
+      setPredictions(preddata);
+      setMSE(predictiondata.MeanSquareError);
+      setRMSE(predictiondata.RootMeanSquareError);
+      setR2(predictiondata.R2_Score);
+
+      const data1 = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }];
+
+      for (let i = 0; i < preddata.length; i++) {
+        let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
+        predictionsArray.push(singleObj);
+      }
+
+      setPred(predictionsArray);
+    })
+    .catch((err) => {
+      console.log(err.message);
+    })};
+
 
   const handleVisualise = (e: any) => {
     handleNext();
@@ -179,8 +146,6 @@ export default function CVDAnalysisForm() {
     });
 
     handleNext();
-
-
   };
 
   const handleAnalysis = async () => {
@@ -194,31 +159,16 @@ export default function CVDAnalysisForm() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        
       })
       .catch((err) => {
         console.log(err.message);
       });
+
+      handleVisual(); 
 
       handleNext();
   };
-
-  const addPosts = async (csv: string) => {
-    await fetch("http://127.0.0.1:5000/users", {
-      method: "POST",
-      body: JSON.stringify({ csv: csv }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
   
   useEffect(() => {
     const csvFile = curFiles[0];
@@ -245,33 +195,23 @@ export default function CVDAnalysisForm() {
     }
   };
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:5000/predict")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        let predictiondata = JSON.parse(data);
+  const handleCheckboxOptions = async () => {
+    fetch("http://127.0.0.1:5000/preprocessing")
+    .then((response) => response.json())
+    .then((data) => {
+    
+      setCheckboxOptions(data.headerLabels)
+      setCorrList(data.corrList)
 
-        let preddata = predictiondata.Predictions;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    }); 
 
-        setPredictions(preddata);
-        setMSE(predictiondata.MeanSquareError);
-        setRMSE(predictiondata.RootMeanSquareError);
-        setR2(predictiondata.R2_Score);
+    handleNext(); 
 
-        const data1 = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }];
+  }
 
-        for (let i = 0; i < preddata.length; i++) {
-          let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
-          predictionsArray.push(singleObj);
-        }
-
-        setPred(predictionsArray);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }, []);
 
   return (
     <React.Fragment>
@@ -309,6 +249,7 @@ export default function CVDAnalysisForm() {
                 rmse={rmse}
                 R2={R2}
                 prediction={prediction}
+
               ></Visualisation>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
@@ -325,7 +266,7 @@ export default function CVDAnalysisForm() {
                 step: activeStep,
                 analysisProps: { setMLAlgos, MLAlgorithms },
                 uploadDataProps: {curFiles, setCurFiles,  handleUpload },
-                preprocessProps: {checkbox, setCheckboxValues}
+                preprocessProps: {checkbox, setCheckboxValues, checkboxOptions, corrList}
 
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -344,6 +285,8 @@ export default function CVDAnalysisForm() {
                         ? handlePreprocess 
                         : activeStep === steps.length - 2
                         ? handleAnalysis
+                        : activeStep === steps.length - 4
+                        ? handleCheckboxOptions
                         : handleNext
                     }
                     sx={{ mt: 3, ml: 1 }}

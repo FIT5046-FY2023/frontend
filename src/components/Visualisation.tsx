@@ -9,7 +9,7 @@ import {
   } from "recharts";
   
 const Visualisation = (props: { mse: string, rmse: string, R2: string, prediction: any[]}) => {
-   const { mse, rmse, prediction, R2 } = props;
+   const { mse, rmse, prediction,R2 } = props;
    return <React.Fragment>
     <Typography variant="h5" gutterBottom align="center">
       Analysis Results
@@ -39,7 +39,7 @@ const Visualisation = (props: { mse: string, rmse: string, R2: string, predictio
         </Typography>
       </Box>
 
-      <Box>
+      <Box sx={{ display: "flex" }}>
         <Typography variant="subtitle1" sx={{ display: "inline" }}>
           <Typography sx={{ fontWeight: "bold", display: "inline" }}>
             {" "}
@@ -53,6 +53,8 @@ const Visualisation = (props: { mse: string, rmse: string, R2: string, predictio
     <Typography variant="h5" gutterBottom align="center">
       Visualisation Results
     </Typography>
+
+   
 
     <Paper
       variant="outlined"
@@ -78,6 +80,9 @@ const Visualisation = (props: { mse: string, rmse: string, R2: string, predictio
         />
       </ScatterChart>
     </Paper>
+    <Typography>
+      {JSON.stringify(prediction)}
+    </Typography>
   </React.Fragment>
 }
 
