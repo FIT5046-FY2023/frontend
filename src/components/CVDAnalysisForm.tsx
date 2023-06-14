@@ -72,7 +72,7 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
-      body: JSON.stringify({}),
+      body: JSON.stringify({mlAlgorithms: MLAlgorithms}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
