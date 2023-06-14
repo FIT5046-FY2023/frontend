@@ -15,11 +15,6 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { CropLandscapeOutlined } from "@mui/icons-material";
 
-interface MyObject {
-  name: number;
-  uv: number;
-}
-
 
 
 const steps = ["Upload Dataset", "Preprocessing", "Analysis", "Visualisation"];
@@ -59,14 +54,9 @@ function getStepContent({
 export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [predictions, setPredictions] = useState();
-  const [mse, setMSE] = useState("");
-  const [R2, setR2] = useState("");
-  const [rmse, setRMSE] = useState("");
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
-  const predictionsArray: {}[] = [];
   const [getData, setGetData] = useState(false);
-  const [prediction, setPred] = useState<any[]>([]);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]); 
   const [corrList, setCorrList] = useState<any[]>([]); 
@@ -90,22 +80,11 @@ export default function CVDAnalysisForm() {
     .then((response) => response.json())
     .then((data) => {
       console.log("data: \n", data);
-      
-      let predictiondata = data;
+            
+      setPredictions(data);
 
-      let preddata = predictiondata.Predictions;
 
-      setPredictions(preddata);
-      setMSE(predictiondata.MeanSquareError);
-      setRMSE(predictiondata.RootMeanSquareError);
-      setR2(predictiondata.R2_Score);
 
-      for (let i = 0; i < preddata.length; i++) {
-        let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
-        predictionsArray.push(singleObj);
-       }
-
-    setPred(predictionsArray);
     })
     .catch((err) => {
       console.log(err.message);
@@ -135,20 +114,20 @@ export default function CVDAnalysisForm() {
 
 
   const handlePreprocess = async () => {
-   await fetch("http://127.0.0.1:5000/predict", {
-    method: "POST",
-    body: JSON.stringify({checkbox}),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+  //  await fetch("http://127.0.0.1:5000/predict", {
+  //   method: "POST",
+  //   body: JSON.stringify({checkbox}),
+  //   headers: {
+  //     "Content-type": "application/json; charset=UTF-8",
+  //   },
+  // })
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     console.log(data);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err.message);
+  //   });
 
     handleNext();
   };
@@ -249,13 +228,10 @@ export default function CVDAnalysisForm() {
 
           {activeStep === steps.length - 1 ? (
             <>
-              <Visualisation
-                mse={mse}
-                rmse={rmse}
-                R2={R2}
-                prediction={prediction}
+              {!!predictions && <Visualisation
+                results={predictions}
 
-              ></Visualisation>
+              ></Visualisation>}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
                   <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
