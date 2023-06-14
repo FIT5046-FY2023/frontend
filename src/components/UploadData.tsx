@@ -75,7 +75,7 @@ const UploadData = (props: {
             type="file"
             id="csv-file-input"
             onChange={handleOnChangeCurFiles}
-            inputProps={{ accept: ".csv", multiple: "true" }}
+            inputProps={{ accept: [".csv", "image/*"], multiple: "true" }}
           ></OutlinedInput>
           <Button
            variant="outlined"
