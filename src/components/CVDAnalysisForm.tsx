@@ -100,14 +100,12 @@ export default function CVDAnalysisForm() {
       setRMSE(predictiondata.RootMeanSquareError);
       setR2(predictiondata.R2_Score);
 
-      // const data1 = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }];
+      for (let i = 0; i < preddata.length; i++) {
+        let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
+        predictionsArray.push(singleObj);
+       }
 
-      // for (let i = 0; i < preddata.length; i++) {
-      //   let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
-      //   predictionsArray.push(singleObj);
-      // }
-
-      // setPred(predictionsArray);
+    setPred(predictionsArray);
     })
     .catch((err) => {
       console.log(err.message);
