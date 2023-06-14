@@ -80,11 +80,18 @@ export default function CVDAnalysisForm() {
   };
 
   const handleVisual = async () => {
-    fetch("http://127.0.0.1:5000/predict")
+    fetch("http://127.0.0.1:5000/predict", {
+      method: "POST",
+      body: JSON.stringify({}),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      let predictiondata = JSON.parse(data);
+      console.log("data: \n", data);
+      
+      let predictiondata = data;
 
       let preddata = predictiondata.Predictions;
 
@@ -93,14 +100,14 @@ export default function CVDAnalysisForm() {
       setRMSE(predictiondata.RootMeanSquareError);
       setR2(predictiondata.R2_Score);
 
-      const data1 = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }];
+      // const data1 = [{ name: "Page A", uv: 400, pv: 2400, amt: 2400 }];
 
-      for (let i = 0; i < preddata.length; i++) {
-        let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
-        predictionsArray.push(singleObj);
-      }
+      // for (let i = 0; i < preddata.length; i++) {
+      //   let singleObj: MyObject = { name: i, uv: Number(preddata[i]) * 10 };
+      //   predictionsArray.push(singleObj);
+      // }
 
-      setPred(predictionsArray);
+      // setPred(predictionsArray);
     })
     .catch((err) => {
       console.log(err.message);
