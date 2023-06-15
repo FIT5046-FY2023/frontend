@@ -72,7 +72,7 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
-      body: JSON.stringify({mlAlgorithms: MLAlgorithms}),
+      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -80,6 +80,7 @@ export default function CVDAnalysisForm() {
     .then((response) => response.json())
     .then((data) => {
       console.log("data: \n", data);
+      console.log(checkbox)
             
       setPredictions(data);
 
@@ -128,7 +129,7 @@ export default function CVDAnalysisForm() {
   //   .catch((err) => {
   //     console.log(err.message);
   //   });
-
+    
     handleNext();
   };
 

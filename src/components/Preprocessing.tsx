@@ -34,7 +34,7 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<any[]>, setCheckbo
     <h1>Feature Selection</h1>
     <h3>Unhealthy Behaviours</h3>
      {checkboxOptions.map((option: string, index: number) => (
-        <FormControlLabel control={<Checkbox defaultChecked  onChange={handleCheckbox}/>} label={option+ "- " + corrList[index]} value={option} />
+        <FormControlLabel control={<Checkbox defaultChecked onChange={handleCheckbox}/>} label={option+ "- " + corrList[index]} value={option} />
     
       ))}  
     </FormGroup>
