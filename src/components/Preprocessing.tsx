@@ -3,16 +3,13 @@ import { FormControlLabel, FormGroup, Checkbox, Button } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import { DataGrid, GridColDef, GridValueGetterParams, GridRowSelectionModel} from '@mui/x-data-grid';
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import { DataGrid, GridColDef, GridRowSelectionModel} from '@mui/x-data-grid';
 import {
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
 } from "@mui/material";
 
