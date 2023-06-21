@@ -15,7 +15,7 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { GridRowSelectionModel } from "@mui/x-data-grid";
 
-const steps = ["Upload Dataset", "Preprocessing", "Analysis", "Visualisation"];
+const steps = ["Upload Dataset", "Preprocessing", "Algorithm Selection", "Visualisation"];
 
 function getStepContent({
   step,
