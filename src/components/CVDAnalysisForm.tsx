@@ -102,37 +102,12 @@ export default function CVDAnalysisForm() {
     const csvFile = curFiles[0];
     console.log(csvFile);
     if (csvFile) {
-      // const reader = new FileReader();
-
-      // csv = reader.readAsText(csvFile.stream().pipeTo());
-      // csv = await csvFile.text();
       setGetData(true);
     }
-    // const requestBody = {
-    //   mlAlgorithm: MLAlgorithms[0],
-    // };
   };
-
-    // console.log(requestBody);
-    // return requestBody;
 
 
   const handlePreprocess = async () => {
-  //  await fetch("http://127.0.0.1:5000/predict", {
-  //   method: "POST",
-  //   body: JSON.stringify({checkbox}),
-  //   headers: {
-  //     "Content-type": "application/json; charset=UTF-8",
-  //   },
-  // })
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     console.log(data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err.message);
-  //   });
-    
     handleNext();
   };
 
