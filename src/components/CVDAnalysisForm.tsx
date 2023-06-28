@@ -66,6 +66,7 @@ export default function CVDAnalysisForm() {
 
 
 
+
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -77,13 +78,15 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
-      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation, target: target}),
+      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation, target: target, imputation: imputation}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
     .then((response) => response.json())
     .then((data) => {
+      console.log(imputation)
+
 
       setPredictions(data);
 
