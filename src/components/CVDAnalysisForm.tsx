@@ -26,12 +26,18 @@ function getStepContent({
   preprocessProps,
 }: {
   step: number;
-  analysisProps: {setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[]};
-  uploadDataProps: {curFiles: File[]; setCurFiles: React.Dispatch<any[]>; handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void};
+  analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
+  uploadDataProps: {
+    curFiles: File[];
+    setCurFiles: React.Dispatch<any[]>;
+    handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    loading: boolean;
+  };
   preprocessProps: {checkbox: React.SetStateAction<GridRowSelectionModel>, setCheckboxValues:React.Dispatch<React.SetStateAction<GridRowSelectionModel>>, checkboxOptions:any[], setImputationValue:React.Dispatch<React.SetStateAction<string>>, imputation: React.SetStateAction<string>, setTarget: React.Dispatch<string>; target: string, heatmapString:string }; 
 
 }) {
-  const { curFiles, setCurFiles, handleUpload } = uploadDataProps;
+  
+  const { curFiles, setCurFiles, handleUpload, loading } = uploadDataProps;
   const {setMLAlgos, MLAlgorithms } = analysisProps;
   const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = preprocessProps;  
 
@@ -42,6 +48,7 @@ function getStepContent({
           setCurFiles={setCurFiles}
           curFiles={curFiles}
           handleUpload={handleUpload}
+          loading={loading}
         />
       );
     case 1:
@@ -69,11 +76,8 @@ export default function CVDAnalysisForm() {
   const [imputation, setImputationValue] = useState(""); 
   const [target, setTarget] = useState(""); 
   const [heatmapString, setHeatmapString] = useState(""); 
-
-
-
-
-
+  const [ loading, setLoading ] = useState(false);
+  
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -88,6 +92,7 @@ export default function CVDAnalysisForm() {
       body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation, target: target}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
+        
       },
     })
       .then((response) => response.json())
@@ -153,13 +158,32 @@ export default function CVDAnalysisForm() {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
+      console.log("Calling /upload endpoint...");
+      console.log("uploading file...");
+      setLoading(true);
+      const config = {
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      };
+
+
       axios
-        .post("http://127.0.0.1:5000/upload", formData)
+        .post("http://127.0.0.1:5000/upload", formData, config)
         .then((response) => {
           console.log(response);
+          setLoading(false);
+          setCurFiles([]);
         })
         .catch((error) => {
           console.log(error);
+          setLoading(false);
         });
     }
   };
@@ -247,7 +271,7 @@ export default function CVDAnalysisForm() {
               {getStepContent({
                 step: activeStep,
                 analysisProps: { setMLAlgos, MLAlgorithms },
-                uploadDataProps: {curFiles, setCurFiles,  handleUpload },
+                uploadDataProps: {curFiles, setCurFiles,  handleUpload, loading },
                 preprocessProps: {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString}
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
