@@ -70,10 +70,6 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
       .catch((err) => {
         console.log(err.message);
       })};
-
-
-
-
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
         setTarget(event.target.value);
@@ -148,14 +144,15 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
         </>
       )}
 
-    
+   
 
-    <h3>Preview of the File </h3>
 
-    <Paper sx={{ width: "100%" }}>
+        <h3>Preview of the File </h3>
+
+
+        <Paper sx={{ width: "100%" }}>
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
-            
               <TableBody>
                 {csv.map((item: any) => (
                   <TableRow key={item.id}>
@@ -170,19 +167,8 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
             </Table>
           </TableContainer>
         </Paper>
-    
-    
-
-
-
-
-
-
-
-
-
-    </div> 
- 
-</>
-}
+      </div>
+    </>
+  );
+};
 export default Preprocessing;

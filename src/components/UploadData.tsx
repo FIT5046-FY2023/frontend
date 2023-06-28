@@ -1,7 +1,6 @@
 import {
   Button,
   Card,
-  Input,
   OutlinedInput,
   Paper,
   Table,
@@ -167,34 +166,3 @@ const UploadData = (props: {
 };
 
 export default UploadData;
-
-// function CsvUploader() {
-//   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  // const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSelectedFile(event.target.files?.[0] || null);
-  // };
-
-  // const handleUpload = () => {
-  //   if (selectedFile) {
-  //     const formData = new FormData();
-  //     formData.append('file', selectedFile);
-    
-  //     axios.post('http://127.0.0.1:5000/upload', formData)
-  //       .then((response) => {
-  //         console.log(response);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //     }
-  // };
-//   return (
-//     <div>
-//       <input type="file" onChange={handleFileSelect} />
-//       <button onClick={handleUpload}>Upload</button>
-//     </div>
-//   );
-// }
-
-// export default CsvUploader;
