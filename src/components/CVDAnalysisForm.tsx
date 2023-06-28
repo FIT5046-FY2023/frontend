@@ -78,7 +78,7 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
-      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation, target: target, imputation: imputation}),
+      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation, target: target}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },

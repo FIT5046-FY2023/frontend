@@ -1,4 +1,4 @@
-import React, {useState}, {useState} from 'react';
+import React, {useState} from 'react';
 import { Box, Chip } from "@mui/material";
 import { FormControlLabel, FormGroup, Checkbox, Button } from '@mui/material';
 import Radio from '@mui/material/Radio';
@@ -7,32 +7,8 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { DataGrid, GridColDef, GridValueGetterParams, GridRowSelectionModel} from '@mui/x-data-grid';
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import { DataGrid, GridColDef, GridValueGetterParams, GridRowSelectionModel} from '@mui/x-data-grid';
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'id', width:100},
-  { field: 'feature', headerName: 'Feature', width: 250 },
-  { field: 'correlation', headerName: 'Correlation', type: 'number', width: 160 },
-  { field: 'minimum', headerName: 'Minimum', type: 'number', width: 160 },
-  { field: 'maximum', headerName: 'Maximum', type: 'number', width: 160 },
-  { field: 'mean', headerName: 'Mean', type: 'number', width: 160}
-];
 
 import {
   Paper,
@@ -95,27 +71,8 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
         console.log(err.message);
       })};
 
-    const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
-      setCheckboxValues(newSelection);
-      
-    };
 
-    const handleVisual = async () => {
-      fetch("http://127.0.0.1:5000/preprocessing", {
-        method: "POST",
-        body: JSON.stringify({imputation: imputation}),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setCSV(data)
-        
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })};
+
 
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
