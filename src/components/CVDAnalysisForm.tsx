@@ -29,18 +29,18 @@ function getStepContent({
   step: number;
   analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
   uploadDataProps: {curFiles: File[]; setCurFiles: React.Dispatch<any[]>; handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void};
-  preprocessProps: {checkbox: React.SetStateAction<GridRowSelectionModel>, setCheckboxValues:React.Dispatch<React.SetStateAction<GridRowSelectionModel>>, checkboxOptions:any[], setImputationValue:React.Dispatch<React.SetStateAction<string>>, imputation: React.SetStateAction<string>}; 
+  preprocessProps: {checkbox: React.SetStateAction<GridRowSelectionModel>, setCheckboxValues:React.Dispatch<React.SetStateAction<GridRowSelectionModel>>, checkboxOptions:any[], setImputationValue:React.Dispatch<React.SetStateAction<string>>, imputation: React.SetStateAction<string>, setTarget: React.Dispatch<string>; target: string, heatmapString:string }; 
 
 }) {
   const { curFiles, setCurFiles, handleUpload } = uploadDataProps;
   const {setMLAlgos, MLAlgorithms } = analysisProps;
-  const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation} = preprocessProps;  
+  const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = preprocessProps;  
 
   switch (step) {
     case 0:
       return <UploadData setCurFiles={setCurFiles} curFiles={curFiles} handleUpload={handleUpload}/>;
     case 1:
-      return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues} checkboxOptions={checkboxOptions} setImputationValue={setImputationValue} imputation={imputation} />; 
+      return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues} checkboxOptions={checkboxOptions} setImputationValue={setImputationValue} imputation={imputation} setTarget={setTarget} target={target} heatmapString={heatmapString} />; 
     case 2:
       return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
     case 3:
@@ -61,6 +61,9 @@ export default function CVDAnalysisForm() {
   const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]); 
   const [imputation, setImputationValue] = useState(""); 
+  const [target, setTarget] = useState(""); 
+  const [heatmapString, setHeatmapString] = useState(""); 
+
 
 
   const handleNext = () => {
@@ -74,18 +77,14 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
-      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation}),
+      body: JSON.stringify({mlAlgorithms: MLAlgorithms, checkbox: checkbox, imputation: imputation, target: target}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log("data: \n", data);
-      console.log(checkbox)
-      console.log(imputation)
 
-            
       setPredictions(data);
 
 
@@ -184,12 +183,14 @@ export default function CVDAnalysisForm() {
     }
   };
 
+
+
   const handleCheckboxOptions = async () => {
     fetch("http://127.0.0.1:5000/preprocessing")
     .then((response) => response.json())
     .then((data) => {
 
-      var rows = [] 
+    var rows = [] 
 
     for (var i = 0; i < data.corrList.length; i++) {
       
@@ -205,7 +206,7 @@ export default function CVDAnalysisForm() {
  
       rows.push(featureObject);
     }
-
+      setHeatmapString(data.encodedString); 
       setCheckboxOptions(rows) 
 
     })
@@ -268,7 +269,7 @@ export default function CVDAnalysisForm() {
                 step: activeStep,
                 analysisProps: { setMLAlgos, MLAlgorithms },
                 uploadDataProps: {curFiles, setCurFiles,  handleUpload },
-                preprocessProps: {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation}
+                preprocessProps: {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString}
 
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
