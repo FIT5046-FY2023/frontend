@@ -39,20 +39,17 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
       setIsDataVisible(!isDataVisible);
       setRealCheckboxOptions(checkboxOptions.filter((item) => item.feature != target));
       console.log(heatmapString)
+    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setImputationValue((event.target as HTMLInputElement).value);
       handleVisual();
-    };
     };
 
     const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
       setCheckboxValues(newSelection);
     };
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setImputationValue((event.target as HTMLInputElement).value);
-      handleVisual();
-    };
+
 
     const handleVisual = async () => {
       fetch("http://127.0.0.1:5000/preprocessing", {
@@ -74,7 +71,6 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
         setTarget(event.target.value);
         setIsDataVisible(false);
-        
 
       };
 
@@ -169,6 +165,5 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
         </Paper>
       </div>
     </>
-  );
 };
 export default Preprocessing;

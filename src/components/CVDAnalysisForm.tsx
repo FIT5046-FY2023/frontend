@@ -200,9 +200,6 @@ export default function CVDAnalysisForm() {
   }
 
 
-    handleNext();
-  };
-
   return (
     <React.Fragment>
       <AppBar
