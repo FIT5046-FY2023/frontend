@@ -6,9 +6,18 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React from "react";
 
 import { machineLearningAlgo } from "../enums/machineLearningAlgo";
-
-const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>}) => {
-  const { setMLAlgos, MLAlgorithms } = props;
+import { machineLearningTasks } from "../enums/machineLEarningTasks";
+const Analysis = (props: {
+  MLAlgorithms: any[]; 
+  setMLAlgos: React.Dispatch<any[]>;
+  MLTasks: any[];
+  setMLTasks: React.Dispatch<any[]>;
+}) => {
+  const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = props;
+  const handleMLTasksChange = (event: SelectChangeEvent<any>) => {
+    setMLTasks(event.target.value)
+    console.log(MLTasks)
+  }
   const handleMLChange = (event: SelectChangeEvent<any>) => {
     setMLAlgos(event.target.value);
     console.log(MLAlgorithms)
@@ -22,6 +31,37 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
         minWidth={'100%'}
       >
         <Stack spacing={2} maxWidth={'40vw'} width={'100%'}>
+
+        <FormControl fullWidth>
+          <InputLabel id="task-type-select">Choose a task</InputLabel>
+          <Select
+            labelId="task-type-select"
+            id="task-type-select"
+            value={MLTasks}
+            label="Machine Learning Tasks"
+            onChange={handleMLTasksChange}
+            multiple={true}
+            size="small"
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
+            >
+          {
+            machineLearningTasks.map((task) => (
+              <MenuItem
+              key={task.value}
+              value={task.label}
+              >
+                  {task.label}
+                </MenuItem>
+              ))
+            }
+            </Select>
+          </FormControl>  
 
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Machine Learning Algorithm</InputLabel>

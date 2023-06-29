@@ -24,7 +24,7 @@ function getStepContent({
   preprocessProps,
 }: {
   step: number;
-  analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
+  analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[]; setMLTasks: React.Dispatch<any[]>; MLTasks: any[]; };
   uploadDataProps: {
     curFiles: File[];
     setCurFiles: React.Dispatch<any[]>;
@@ -41,7 +41,7 @@ function getStepContent({
   };
 }) {
   const { curFiles, setCurFiles, handleUpload } = uploadDataProps;
-  const { setMLAlgos, MLAlgorithms } = analysisProps;
+  const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = analysisProps;
   const {
     checkbox,
     setCheckboxValues,
@@ -70,7 +70,7 @@ function getStepContent({
         />
       );
     case 2:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks}/>;
     case 3:
       return <></>;
 
@@ -84,6 +84,7 @@ export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [predictions, setPredictions] = useState();
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
+  const [MLTasks, setMLTasks] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>(
@@ -261,7 +262,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: { setMLAlgos, MLAlgorithms },
+                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks },
                 uploadDataProps: { curFiles, setCurFiles, handleUpload },
                 preprocessProps: {
                   checkbox,
