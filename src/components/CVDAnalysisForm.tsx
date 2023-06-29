@@ -13,7 +13,9 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { GridRowSelectionModel } from "@mui/x-data-grid";
+import { CropLandscapeOutlined } from "@mui/icons-material";
+import {GridRowSelectionModel} from '@mui/x-data-grid';
+
 
 const steps = ["Upload Dataset", "Preprocessing", "Algorithm Selection", "Visualisation"];
 
@@ -29,26 +31,15 @@ function getStepContent({
     curFiles: File[];
     setCurFiles: React.Dispatch<any[]>;
     handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    loading: boolean;
   };
-  preprocessProps: {
-    checkbox: React.SetStateAction<GridRowSelectionModel>;
-    setCheckboxValues: React.Dispatch<
-      React.SetStateAction<GridRowSelectionModel>
-    >;
-    checkboxOptions: any[];
-    setImputationValue: React.Dispatch<React.SetStateAction<string>>;
-    imputation: React.SetStateAction<string>;
-  };
+  preprocessProps: {checkbox: React.SetStateAction<GridRowSelectionModel>, setCheckboxValues:React.Dispatch<React.SetStateAction<GridRowSelectionModel>>, checkboxOptions:any[], setImputationValue:React.Dispatch<React.SetStateAction<string>>, imputation: React.SetStateAction<string>, setTarget: React.Dispatch<string>; target: string, heatmapString:string }; 
+
 }) {
-  const { curFiles, setCurFiles, handleUpload } = uploadDataProps;
-  const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = analysisProps;
-  const {
-    checkbox,
-    setCheckboxValues,
-    checkboxOptions,
-    setImputationValue,
-    imputation,
-  } = preprocessProps;
+  
+  const { curFiles, setCurFiles, handleUpload, loading } = uploadDataProps;
+  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = analysisProps;
+  const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = preprocessProps;  
 
   switch (step) {
     case 0:
@@ -57,18 +48,12 @@ function getStepContent({
           setCurFiles={setCurFiles}
           curFiles={curFiles}
           handleUpload={handleUpload}
+          loading={loading}
         />
       );
     case 1:
-      return (
-        <Preprocessing
-          checkbox={checkbox}
-          setCheckboxValues={setCheckboxValues}
-          checkboxOptions={checkboxOptions}
-          setImputationValue={setImputationValue}
-          imputation={imputation}
-        />
-      );
+      return <Preprocessing checkbox={checkbox} setCheckboxValues={setCheckboxValues} checkboxOptions={checkboxOptions} setImputationValue={setImputationValue} imputation={imputation} setTarget={setTarget} target={target} heatmapString={heatmapString} />; 
+
     case 2:
       return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks}/>;
     case 3:
@@ -87,12 +72,13 @@ export default function CVDAnalysisForm() {
   const [MLTasks, setMLTasks] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   const [getData, setGetData] = useState(false);
-  const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>(
-    []
-  );
-  const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
-  const [imputation, setImputationValue] = useState("");
-
+  const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>([]);
+  const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]); 
+  const [imputation, setImputationValue] = useState(""); 
+  const [target, setTarget] = useState(""); 
+  const [heatmapString, setHeatmapString] = useState(""); 
+  const [ loading, setLoading ] = useState(false);
+  
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -112,6 +98,7 @@ export default function CVDAnalysisForm() {
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
+        
       },
     })
       .then((response) => response.json())
@@ -119,7 +106,6 @@ export default function CVDAnalysisForm() {
         console.log("data: \n", data);
         console.log(checkbox);
         console.log(imputation);
-
         setPredictions(data);
       })
       .catch((err) => {
@@ -178,44 +164,71 @@ export default function CVDAnalysisForm() {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
+      console.log("Calling /upload endpoint...");
+      console.log("uploading file...");
+      setLoading(true);
+      const config = {
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      };
+
+
       axios
-        .post("http://127.0.0.1:5000/upload", formData)
+        .post("http://127.0.0.1:5000/upload", formData, config)
         .then((response) => {
           console.log(response);
+          setLoading(false);
+          setCurFiles([]);
         })
         .catch((error) => {
           console.log(error);
+          setLoading(false);
         });
     }
   };
 
+
+
   const handleCheckboxOptions = async () => {
     fetch("http://127.0.0.1:5000/preprocessing")
-      .then((response) => response.json())
-      .then((data) => {
-        let rows = [];
+    .then((response) => response.json())
+    .then((data) => {
 
-        for (let i = 0; i < data.corrList.length; i++) {
-          let featureObject = {
-            id: i,
-            feature: data.headerLabels[i],
-            correlation: data.corrList[i],
-            minimum: data.minList[i],
-            maximum: data.maxList[i],
-            mean: data.meanList[i],
-          };
+    var rows = [] 
 
-          rows.push(featureObject);
-        }
+    for (var i = 0; i < data.corrList.length; i++) {
+      
+      var featureObject = {
+        id: i, 
+        feature: data.headerLabels[i],
+        correlation: data.corrList[i],
+        minimum: data.minList[i],
+        maximum: data.maxList[i],
+        mean: data.meanList[i]
+      }; 
 
-        setCheckboxOptions(rows);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+ 
+      rows.push(featureObject);
+    }
+      setHeatmapString(data.encodedString); 
+      setCheckboxOptions(rows) 
 
-    handleNext();
-  };
+    })
+    .catch((err) => {
+      console.log(err.message);
+    }); 
+
+    handleNext(); 
+
+  }
+
 
   return (
     <React.Fragment>
@@ -264,14 +277,8 @@ export default function CVDAnalysisForm() {
               {getStepContent({
                 step: activeStep,
                 analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks },
-                uploadDataProps: { curFiles, setCurFiles, handleUpload },
-                preprocessProps: {
-                  checkbox,
-                  setCheckboxValues,
-                  checkboxOptions,
-                  setImputationValue,
-                  imputation,
-                },
+                uploadDataProps: {curFiles, setCurFiles,  handleUpload, loading },
+                preprocessProps: {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString}
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
