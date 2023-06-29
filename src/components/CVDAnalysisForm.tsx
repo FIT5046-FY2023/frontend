@@ -106,6 +106,7 @@ export default function CVDAnalysisForm() {
       method: "POST",
       body: JSON.stringify({
         mlAlgorithms: MLAlgorithms,
+        mlTasks: MLTasks,
         checkbox: checkbox,
         imputation: imputation,
       }),
