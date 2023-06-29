@@ -143,26 +143,10 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
    
 
 
-        <h3>Preview of the File </h3>
 
 
-        <Paper sx={{ width: "100%" }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableBody>
-                {csv.map((item: any) => (
-                  <TableRow key={item.id}>
-                    {Object.values(item).map((val: any) => (
-                      <TableCell key={item.code} align="center">
-                        {val}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+
+       
       </div>
     </>
 };
