@@ -23,7 +23,7 @@ import {
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'id', width:100},
   { field: 'feature', headerName: 'Feature', width: 250 },
-  { field: 'correlation', headerName: 'Correlation', type: 'number', width: 160 },
+  //{ field: 'correlation', headerName: 'Correlation', type: 'number', width: 160 },
   { field: 'minimum', headerName: 'Minimum', type: 'number', width: 160 },
   { field: 'maximum', headerName: 'Maximum', type: 'number', width: 160 },
   { field: 'mean', headerName: 'Mean', type: 'number', width: 160}
@@ -43,15 +43,16 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setImputationValue((event.target as HTMLInputElement).value);
-      handleVisual();
+      // handleVisual();
     };
 
     const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
       setCheckboxValues(newSelection);
+      console.log(checkbox)
     };
 
-
-    const handleVisual = async () => {
+/** 
+  const handleVisual = async () => {
       fetch("http://127.0.0.1:5000/preprocessing", {
         method: "POST",
         body: JSON.stringify({imputation: imputation}),
@@ -67,6 +68,8 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
       .catch((err) => {
         console.log(err.message);
       })};
+*/
+    
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
         setTarget(event.target.value);

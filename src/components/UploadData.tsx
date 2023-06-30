@@ -34,9 +34,11 @@ const UploadData = (props: {
   setCurFiles: React.Dispatch<any[]>;
   handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   loading: boolean;
+  selectedData: React.SetStateAction<string>;
+  setSelectedData: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [array, setArray] = useState<any[]>([]); // for csv preview
-  const { curFiles, setCurFiles, handleUpload, loading } = props;
+  const { curFiles, setCurFiles, handleUpload, loading, selectedData, setSelectedData } = props;
   const fileReader = new FileReader();
   const [value, setValue] = React.useState(0);
 
@@ -191,7 +193,7 @@ const UploadData = (props: {
       </TabPanel>
       <TabPanel value={value} index={1}>
         
-        <ExistingDatasetTable></ExistingDatasetTable>
+        <ExistingDatasetTable selectedData={selectedData} setSelectedData={setSelectedData}></ExistingDatasetTable>
       </TabPanel>
       </Box>
        
