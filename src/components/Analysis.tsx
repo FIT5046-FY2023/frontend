@@ -5,26 +5,35 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React from "react";
 
-import { machineLearningAlgo } from "../enums/machineLearningAlgo";
+import {
+  RegressionAlgorithmsKey,
+  machineLearningAlgo,
+  mapRegressionAlgoKeyToApiValue,
+  mapRegressionAlgoKeyToLabel,
+} from "../enums/machineLearningAlgo";
 
-const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>}) => {
+const Analysis = (props: {
+  MLAlgorithms: any[];
+  setMLAlgos: React.Dispatch<any[]>;
+}) => {
   const { setMLAlgos, MLAlgorithms } = props;
   const handleMLChange = (event: SelectChangeEvent<any>) => {
     setMLAlgos(event.target.value);
-    console.log(MLAlgorithms)
+    console.log(MLAlgorithms);
   };
-  
-  return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minWidth={'100%'}
-      >
-        <Stack spacing={2} maxWidth={'40vw'} width={'100%'}>
 
+  return (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minWidth={"100%"}
+    >
+      <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Machine Learning Algorithm</InputLabel>
+          <InputLabel id="demo-simple-select-label">
+            Machine Learning Algorithm
+          </InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -33,54 +42,57 @@ const Analysis = (props: {MLAlgorithms: any[], setMLAlgos: React.Dispatch<any[]>
             onChange={handleMLChange}
             multiple={true}
             size="small"
-            renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value} />
+            renderValue={(selected) => {
+              console.log(selected);
+              return (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                
+                {selected.map((value: RegressionAlgorithmsKey) => (
+
+                  <Chip key={value} label={mapRegressionAlgoKeyToLabel[value as RegressionAlgorithmsKey]} />
                 ))}
               </Box>
-            )}
-            >
-          {
-            machineLearningAlgo.map((op) => (
-              <MenuItem
-              key={op.value}
-              value={op.label}
-              >
-                  {op.label}
+            )}}
+          >
+            {Object.entries(mapRegressionAlgoKeyToLabel).map(([key, label]) => {
+              console.log(key, label);
+              return (
+                <MenuItem key={key} value={key}>
+                  {label}
                 </MenuItem>
-              ))
-            }
-            </Select>
-          </FormControl>
+              );
+            })}
+            
+            {/* {machineLearningAlgo.map((op) => (
+              <MenuItem key={op.value} value={op.label}>
+                {op.label}
+              </MenuItem>
+            ))} */}
+          </Select>
+        </FormControl>
 
-
-          <FormControl fullWidth>
-          
-          <InputLabel id="spatial-analytic-select">Spatial Analytic Algorithms</InputLabel>
+        <FormControl fullWidth>
+          <InputLabel id="spatial-analytic-select">
+            Spatial Analytic Algorithms
+          </InputLabel>
           <Select
             labelId="spatial-analytic-select"
             id="spatial-analytic-select"
             value={[]}
             label="Spatial Analytic Algorithms"
-            onChange={()=>{}}
+            onChange={() => {}}
             multiple={true}
             size="small"
-            >
-            {
-              machineLearningAlgo.map((op) => (
-                <MenuItem
-                  key={op.value}
-                  value={op.value}
-                >
-                  {op.label}
-                </MenuItem>
-              ))
-            }
+          >
+            {machineLearningAlgo.map((op) => (
+              <MenuItem key={op.value} value={op.value}>
+                {op.label}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
-            </Stack>
-      </Box>
+      </Stack>
+    </Box>
   );
 };
 

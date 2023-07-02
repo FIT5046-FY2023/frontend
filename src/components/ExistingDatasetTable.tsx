@@ -18,13 +18,11 @@ import { useEffect, useState } from "react";
 import React from "react";
 
 interface ExistingDatasetTableProps {
-  datasets?: any[];
   selectedData: React.SetStateAction<string>;
   setSelectedData: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ExistingDatasetTable = ({ datasets , selectedData, setSelectedData}: ExistingDatasetTableProps) => {
-  const [array, setArray] = useState<any[]>([]); // for csv preview
+const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetTableProps) => {
   const [loadingDataset, setLoadingDataset] = useState<boolean>(false);
   const [loadingDatasets, setLoadingDatasets] = useState<boolean>(false);
   const [error, setError] = useState("");
