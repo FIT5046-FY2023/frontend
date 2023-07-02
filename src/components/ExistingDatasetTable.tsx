@@ -11,7 +11,8 @@ import {
   CircularProgress,
   Radio,
   RadioGroup,
-  FormControlLabel
+  FormControlLabel,
+  Typography,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect, useState } from "react";
@@ -22,7 +23,10 @@ interface ExistingDatasetTableProps {
   setSelectedData: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetTableProps) => {
+const ExistingDatasetTable = ({
+  selectedData,
+  setSelectedData,
+}: ExistingDatasetTableProps) => {
   const [loadingDataset, setLoadingDataset] = useState<boolean>(false);
   const [loadingDatasets, setLoadingDatasets] = useState<boolean>(false);
   const [error, setError] = useState("");
@@ -31,10 +35,9 @@ const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetT
   
   // Set up cache system for already downloaded datasets so don't have to redownload
   //   const tableHeaders = ["Name", "Size", "Action"];
-  const tableHeaders = ["Name", "Action",""];
+  const tableHeaders = ["Name", "Action", ""];
 
   const handlePreview = (index: number) => {
-    // TODO:
     setLoadingDataset(true);
     handleFetchDataset(index);
   };
@@ -83,13 +86,13 @@ const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetT
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedData(event.target.value)
+    setSelectedData(event.target.value);
     //console.log("selected value: " + selectedValue)
-  
   };
 
-
-  const headerKeys = selectedDataset ? Object.keys(selectedDataset) : [];
+  const headerKeys = () =>
+    selectedDataset ? Object.keys(selectedDataset) : [];
+  console.log(headerKeys);
 
   return (
     <>
@@ -112,9 +115,6 @@ const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetT
                   console.log(datasetName);
                   return (
                     <TableRow key={datasetName}> 
-
-                      
-
                       <TableCell key={"name"} align="center">
                         {datasetName}
                       </TableCell>
@@ -130,7 +130,6 @@ const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetT
                         >
                           Preview
                         </Button>
-
                       </TableCell>
 
                       <TableCell key={"radio"} align="center">
@@ -160,25 +159,36 @@ const ExistingDatasetTable = ({ selectedData, setSelectedData}: ExistingDatasetT
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                {headerKeys.map((key) => (
-                  <TableCell key={key} align="center" style={{ minWidth: 170 }}>
+                {!!selectedDataset &&
+                  headerKeys().map((header) => (
+                    <TableCell
+                      key={header}
+                      align="center"
+                      style={{ minWidth: 170 }}
+                    >
+                      {header}
                   </TableCell>
                 ))}
+                {!selectedDataset && (
+                  <TableCell key={"key"} align="center">
+                    <Typography> No data to preview </Typography>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {!!selectedDataset &&
+              {!!selectedDataset && (
                 <TableRow key={".id"}>
                   {Object.entries(selectedDataset).map(([key, val]) => {
                     console.log(key, val);
                     return (
                     <TableCell key={key} align="center">
                       {`${val}`} 
-                    </TableCell>)
+                      </TableCell>
+                    );
                 })}
                 </TableRow>
-                
-              }
+              )}
             </TableBody>
           </Table>
         </TableContainer>

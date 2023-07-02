@@ -18,7 +18,11 @@ export interface ScatterPoint {
   uv: number;
 }
 
-const Visualisation = (props: any) => {
+export interface VisualisationProps {
+  results: any;
+}
+
+const Visualisation = (props: VisualisationProps) => {
    const results: MlResult = props?.results?.results?.map((result: string) => {
     return JSON.parse(result)
    });

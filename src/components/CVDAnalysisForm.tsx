@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Analysis, { AnalysisProps } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
 import UploadData, { UploadDataProps } from "./UploadData";
-import Visualisation from "./Visualisation";
+import Visualisation, { VisualisationProps } from "./Visualisation";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -28,11 +28,13 @@ function getStepContent({
   uploadDataProps,
   analysisProps,
   preprocessProps,
+  visualisationProps
 }: {
   step: number;
   analysisProps: AnalysisProps;
   uploadDataProps: UploadDataProps;
   preprocessProps: PreprocessProps;
+  visualisationProps: VisualisationProps;
 }) {
   const {
     curFiles,
@@ -54,6 +56,8 @@ function getStepContent({
     heatmapString,
   } = preprocessProps;
 
+  const {results: predictions} = visualisationProps;
+  
   switch (step) {
     case 0:
       return (
@@ -83,7 +87,12 @@ function getStepContent({
     case 2:
       return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
     case 3:
-      return <></>;
+      return <>
+      {!!predictions && (
+        <Visualisation results={predictions}></Visualisation>
+      )}
+
+    </>
 
     default:
       throw new Error("Unknown step");
@@ -151,17 +160,6 @@ export default function CVDAnalysisForm() {
       });
   };
 
-  const handleVisualise = (e: any) => {
-    handleNext();
-    console.log("entered handleVisualise");
-
-    const csvFile = curFiles[0];
-    console.log(csvFile);
-    if (csvFile) {
-      setGetData(true);
-    }
-  };
-
   const handlePreprocess = async () => {
     handleNext();
   };
@@ -170,14 +168,6 @@ export default function CVDAnalysisForm() {
     handleVisual();
     handleNext();
   };
-
-  useEffect(() => {
-    const csvFile = curFiles[0];
-    async function getCSVText() {
-      const csv = await csvFile.text();
-      return csv;
-    }
-  });
 
   const handleUpload = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // Currently uploads only one file
@@ -277,20 +267,7 @@ export default function CVDAnalysisForm() {
             </Stepper>
           </Container>
 
-          {activeStep === steps.length - 1 ? (
-            <>
-              {!!predictions && (
-                <Visualisation results={predictions}></Visualisation>
-              )}
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                {activeStep !== 0 && (
-                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                    Back
-                  </Button>
-                )}
-              </Box>
-            </>
-          ) : (
+          {(
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
@@ -313,6 +290,9 @@ export default function CVDAnalysisForm() {
                   target,
                   heatmapString,
                 },
+                visualisationProps: {
+                  results: predictions
+                }
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
@@ -324,9 +304,7 @@ export default function CVDAnalysisForm() {
                   <Button
                     variant="contained"
                     onClick={
-                      activeStep === steps.length - 1
-                        ? handleVisualise
-                        : activeStep === steps.length - 3
+                        activeStep === steps.length - 3
                         ? handlePreprocess
                         : activeStep === steps.length - 2
                         ? handleAnalysis
