@@ -8,14 +8,12 @@ import React from "react";
 import {
   RegressionAlgorithmsKey,
   machineLearningAlgo,
-  mapRegressionAlgoKeyToApiValue,
   mapRegressionAlgoKeyToLabel,
 } from "../enums/machineLearningAlgo";
 
-const Analysis = (props: {
-  MLAlgorithms: any[];
-  setMLAlgos: React.Dispatch<any[]>;
-}) => {
+export interface AnalysisProps { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
+
+const Analysis = (props: AnalysisProps) => {
   const { setMLAlgos, MLAlgorithms } = props;
   const handleMLChange = (event: SelectChangeEvent<any>) => {
     setMLAlgos(event.target.value);

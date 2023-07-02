@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Analysis from "./Analysis";
-import Preprocessing from "./Preprocessing";
-import UploadData from "./UploadData";
+import Analysis, { AnalysisProps } from "./Analysis";
+import Preprocessing, { PreprocessProps } from "./Preprocessing";
+import UploadData, { UploadDataProps } from "./UploadData";
 import Visualisation from "./Visualisation";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
@@ -30,27 +30,9 @@ function getStepContent({
   preprocessProps,
 }: {
   step: number;
-  analysisProps: { setMLAlgos: React.Dispatch<any[]>; MLAlgorithms: any[] };
-  uploadDataProps: {
-    curFiles: File[];
-    setCurFiles: React.Dispatch<any[]>;
-    handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    loading: boolean;
-    selectedData: React.SetStateAction<string>;
-    setSelectedData: React.Dispatch<React.SetStateAction<string>>;
-  };
-  preprocessProps: {
-    checkbox: React.SetStateAction<GridRowSelectionModel>;
-    setCheckboxValues: React.Dispatch<
-      React.SetStateAction<GridRowSelectionModel>
-    >;
-    checkboxOptions: any[];
-    setImputationValue: React.Dispatch<React.SetStateAction<string>>;
-    imputation: React.SetStateAction<string>;
-    setTarget: React.Dispatch<string>;
-    target: string;
-    heatmapString: string;
-  };
+  analysisProps: AnalysisProps;
+  uploadDataProps: UploadDataProps;
+  preprocessProps: PreprocessProps;
 }) {
   const {
     curFiles,

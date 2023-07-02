@@ -32,13 +32,13 @@ export const mapRegressionAlgoKeyToLabel = {
     [RegressionAlgorithmsKey.LinearRegression]: 'Linear Regression'
 };
 
-// export const machineLearningAlgo = [
-//     {value: RegressionAlgorithmsKey.RandomForest, label: 'Random Forest'},
-//     {value: RegressionAlgorithmsKey.KNearestNeighbours, label: 'K-Nearest Neighbours'},
-//     {value: RegressionAlgorithmsKey.ScaledVectorMachine, label: 'Scaled Vector Machine'},
-//     {value: RegressionAlgorithmsKey.DecisionTrees, label: 'Decision Trees'},
-//     {value: RegressionAlgorithmsKey.LinearRegression, label: 'Linear Regression'},
-// ];
+export const machineLearningAlgo = [
+    {value: RegressionAlgorithmsKey.RandomForest, label: 'Random Forest'},
+    {value: RegressionAlgorithmsKey.KNearestNeighbours, label: 'K-Nearest Neighbours'},
+    {value: RegressionAlgorithmsKey.ScaledVectorMachine, label: 'Scaled Vector Machine'},
+    {value: RegressionAlgorithmsKey.DecisionTrees, label: 'Decision Trees'},
+    {value: RegressionAlgorithmsKey.LinearRegression, label: 'Linear Regression'},
+];
 
 export const convertMLsToApiValues = (mlArray: RegressionAlgorithmsKey[]) => {
     const mlAlgos = mlArray.map((mlAlgoKey: RegressionAlgorithmsKey) => mapRegressionAlgoKeyToApiValue[mlAlgoKey]);

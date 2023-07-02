@@ -20,6 +20,19 @@ import {
   TableRow,
 } from "@mui/material";
 
+export interface PreprocessProps {
+  checkbox: React.SetStateAction<GridRowSelectionModel>;
+  setCheckboxValues: React.Dispatch<
+    React.SetStateAction<GridRowSelectionModel>
+  >;
+  checkboxOptions: any[];
+  setImputationValue: React.Dispatch<React.SetStateAction<string>>;
+  imputation: React.SetStateAction<string>;
+  setTarget: React.Dispatch<string>;
+  target: string;
+  heatmapString: string;
+}
+
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'id', width:100},
   { field: 'feature', headerName: 'Feature', width: 250 },
@@ -29,7 +42,7 @@ const columns: GridColDef[] = [
   { field: 'mean', headerName: 'Mean', type: 'number', width: 160}
 ];
 
-const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionModel>, setCheckboxValues:React.Dispatch<React.SetStateAction<GridRowSelectionModel>>, checkboxOptions:any[], setImputationValue: React.Dispatch<React.SetStateAction<string>>, imputation: React.SetStateAction<string>, setTarget: React.Dispatch<string>, target: string, heatmapString:string}) => {
+const Preprocessing = (props: PreprocessProps) => {
     const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = props; 
     const [isDataVisible, setIsDataVisible] = useState(false);
     const [csv, setCSV] = useState<any[]>([]);
