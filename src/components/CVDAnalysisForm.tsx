@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Analysis, { AnalysisProps } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
 import UploadData, { UploadDataProps } from "./UploadData";
@@ -15,6 +15,7 @@ import Box from "@mui/material/Box";
 import axios from "axios";
 import { GridRowSelectionModel } from "@mui/x-data-grid";
 import { convertMLsToApiValues } from "../enums/machineLearningAlgo";
+import { CircularProgress } from "@mui/material";
 
 const steps = [
   "Upload Dataset",
@@ -54,9 +55,10 @@ function getStepContent({
     setTarget,
     target,
     heatmapString,
+    loading: loadingPreprocess 
   } = preprocessProps;
 
-  const {results: predictions} = visualisationProps;
+  const {results: predictions, loading: loadingVisual} = visualisationProps;
   
   switch (step) {
     case 0:
@@ -81,6 +83,7 @@ function getStepContent({
           setTarget={setTarget}
           target={target}
           heatmapString={heatmapString}
+          loading={loadingPreprocess}
         />
       );
 
@@ -89,7 +92,7 @@ function getStepContent({
     case 3:
       return <>
       {!!predictions && (
-        <Visualisation results={predictions}></Visualisation>
+        <Visualisation results={predictions} loading={loadingVisual}></Visualisation>
       )}
 
     </>
@@ -126,6 +129,7 @@ export default function CVDAnalysisForm() {
 
   const handleVisual = async () => {
     const mlAlgorithms = convertMLsToApiValues(MLAlgorithms);
+    const selectedDatasetName = selectedData;
     console.log(
       JSON.stringify({
         mlAlgorithms: mlAlgorithms,
@@ -134,7 +138,7 @@ export default function CVDAnalysisForm() {
         target: target,
       })
     );
-
+    setLoading(true);
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
       body: JSON.stringify({
@@ -142,20 +146,24 @@ export default function CVDAnalysisForm() {
         checkbox: checkbox,
         imputation: imputation,
         target: target,
-        selectedData: selectedData,
+        selectedData: selectedDatasetName,
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        setLoading(false)
+        return response.json()})
       .then((data) => {
+
         console.log("data: \n", data);
         console.log(checkbox);
         console.log(imputation);
         setPredictions(data);
       })
       .catch((err) => {
+        setLoading(false)
         console.log(err.message);
       });
   };
@@ -205,14 +213,18 @@ export default function CVDAnalysisForm() {
   };
 
   const handleCheckboxOptions = async () => {
+    const selectedDatasetName = selectedData;
+    setLoading(true);
     fetch("http://127.0.0.1:5000/preprocessing", {
       method: "POST",
-      body: JSON.stringify({ selectedData: selectedData }),
+      body: JSON.stringify({ selectedData: selectedDatasetName }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
-      .then((response) => response.json())
+      .then((response) => { 
+        setLoading(false);
+        return response.json();})
       .then((data) => {
         var rows = [];
 
@@ -232,6 +244,7 @@ export default function CVDAnalysisForm() {
         setCheckboxOptions(rows);
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err.message);
       });
 
@@ -267,7 +280,7 @@ export default function CVDAnalysisForm() {
             </Stepper>
           </Container>
 
-          {(
+          {( 
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
@@ -289,9 +302,11 @@ export default function CVDAnalysisForm() {
                   setTarget,
                   target,
                   heatmapString,
+                  loading
                 },
                 visualisationProps: {
-                  results: predictions
+                  results: predictions,
+                  loading
                 }
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

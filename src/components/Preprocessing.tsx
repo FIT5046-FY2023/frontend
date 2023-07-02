@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, CircularProgress } from "@mui/material";
 import { FormControlLabel, FormGroup, Checkbox, Button } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -31,6 +31,7 @@ export interface PreprocessProps {
   setTarget: React.Dispatch<string>;
   target: string;
   heatmapString: string;
+  loading: boolean;
 }
 
 const columns: GridColDef[] = [
@@ -43,7 +44,7 @@ const columns: GridColDef[] = [
 ];
 
 const Preprocessing = (props: PreprocessProps) => {
-    const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = props; 
+    const {loading, checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = props; 
     const [isDataVisible, setIsDataVisible] = useState(false);
     const [csv, setCSV] = useState<any[]>([]);
     const [realCheckboxOptions, setRealCheckboxOptions] = useState<any[]>([]); 
@@ -89,9 +90,12 @@ const Preprocessing = (props: PreprocessProps) => {
         setIsDataVisible(false);
 
       };
+    
+      console.log(loading);
 
     return <> 
-    <div> 
+    {loading ? <CircularProgress /> :
+    (<div> 
 
     <h3>1. Select CVD Target </h3>
     <FormControl fullWidth>
@@ -163,7 +167,7 @@ const Preprocessing = (props: PreprocessProps) => {
 
 
        
-      </div>
+      </div>)}
     </>
 };
 export default Preprocessing;
