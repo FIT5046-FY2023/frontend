@@ -21,6 +21,14 @@ import { Upload } from "@mui/icons-material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import ExistingDatasetTable from "./ExistingDatasetTable";
 
+export interface UploadDataProps {
+  curFiles: File[];
+  setCurFiles: React.Dispatch<any[]>;
+  handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  loading: boolean;
+  selectedData: React.SetStateAction<string>;
+  setSelectedData: React.Dispatch<React.SetStateAction<string>>;
+};
 
 function a11yProps(index: number) {
   return {
@@ -29,14 +37,9 @@ function a11yProps(index: number) {
   };
 }
 // from https://refine.dev/blog/how-to-import-csv/ 
-const UploadData = (props: {
-  curFiles: File[];
-  setCurFiles: React.Dispatch<any[]>;
-  handleUpload: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  loading: boolean;
-}) => {
+const UploadData = (props: UploadDataProps) => {
   const [array, setArray] = useState<any[]>([]); // for csv preview
-  const { curFiles, setCurFiles, handleUpload, loading } = props;
+  const { curFiles, setCurFiles, handleUpload, loading, selectedData, setSelectedData } = props;
   const fileReader = new FileReader();
   const [value, setValue] = React.useState(0);
 
@@ -191,7 +194,7 @@ const UploadData = (props: {
       </TabPanel>
       <TabPanel value={value} index={1}>
         
-        <ExistingDatasetTable></ExistingDatasetTable>
+        <ExistingDatasetTable selectedData={selectedData} setSelectedData={setSelectedData}></ExistingDatasetTable>
       </TabPanel>
       </Box>
        

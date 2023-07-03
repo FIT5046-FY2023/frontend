@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, CircularProgress } from "@mui/material";
 import { FormControlLabel, FormGroup, Checkbox, Button } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -20,17 +20,31 @@ import {
   TableRow,
 } from "@mui/material";
 
+export interface PreprocessProps {
+  checkbox: React.SetStateAction<GridRowSelectionModel>;
+  setCheckboxValues: React.Dispatch<
+    React.SetStateAction<GridRowSelectionModel>
+  >;
+  checkboxOptions: any[];
+  setImputationValue: React.Dispatch<React.SetStateAction<string>>;
+  imputation: React.SetStateAction<string>;
+  setTarget: React.Dispatch<string>;
+  target: string;
+  heatmapString: string;
+  loading: boolean;
+}
+
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'id', width:100},
   { field: 'feature', headerName: 'Feature', width: 250 },
-  { field: 'correlation', headerName: 'Correlation', type: 'number', width: 160 },
+  //{ field: 'correlation', headerName: 'Correlation', type: 'number', width: 160 },
   { field: 'minimum', headerName: 'Minimum', type: 'number', width: 160 },
   { field: 'maximum', headerName: 'Maximum', type: 'number', width: 160 },
   { field: 'mean', headerName: 'Mean', type: 'number', width: 160}
 ];
 
-const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionModel>, setCheckboxValues:React.Dispatch<React.SetStateAction<GridRowSelectionModel>>, checkboxOptions:any[], setImputationValue: React.Dispatch<React.SetStateAction<string>>, imputation: React.SetStateAction<string>, setTarget: React.Dispatch<string>, target: string, heatmapString:string}) => {
-    const {checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = props; 
+const Preprocessing = (props: PreprocessProps) => {
+    const {loading, checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = props; 
     const [isDataVisible, setIsDataVisible] = useState(false);
     const [csv, setCSV] = useState<any[]>([]);
     const [realCheckboxOptions, setRealCheckboxOptions] = useState<any[]>([]); 
@@ -43,15 +57,16 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setImputationValue((event.target as HTMLInputElement).value);
-      handleVisual();
+      // handleVisual();
     };
 
     const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
       setCheckboxValues(newSelection);
+      console.log(checkbox)
     };
 
-
-    const handleVisual = async () => {
+/** 
+  const handleVisual = async () => {
       fetch("http://127.0.0.1:5000/preprocessing", {
         method: "POST",
         body: JSON.stringify({imputation: imputation}),
@@ -67,15 +82,20 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
       .catch((err) => {
         console.log(err.message);
       })};
+*/
+    
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
         setTarget(event.target.value);
         setIsDataVisible(false);
 
       };
+    
+      console.log(loading);
 
     return <> 
-    <div> 
+    {loading ? <CircularProgress /> :
+    (<div> 
 
     <h3>1. Select CVD Target </h3>
     <FormControl fullWidth>
@@ -143,27 +163,11 @@ const Preprocessing = (props: {checkbox: React.SetStateAction<GridRowSelectionMo
    
 
 
-        <h3>Preview of the File </h3>
 
 
-        <Paper sx={{ width: "100%" }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableBody>
-                {csv.map((item: any) => (
-                  <TableRow key={item.id}>
-                    {Object.values(item).map((val: any) => (
-                      <TableCell key={item.code} align="center">
-                        {val}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
-      </div>
+
+       
+      </div>)}
     </>
 };
 export default Preprocessing;

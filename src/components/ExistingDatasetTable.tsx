@@ -9,28 +9,39 @@ import {
   Button,
   Paper,
   CircularProgress,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Typography,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect, useState } from "react";
 import React from "react";
 
+interface SelectedDatasetInfo{
+    datasetName: string;
+    headers: string[];
+}
 interface ExistingDatasetTableProps {
-  datasets?: any[];
+  selectedData: React.SetStateAction<string>;
+  setSelectedData: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ExistingDatasetTable = ({ datasets }: ExistingDatasetTableProps) => {
-  const [array, setArray] = useState<any[]>([]); // for csv preview
+const ExistingDatasetTable = ({
+  selectedData,
+  setSelectedData,
+}: ExistingDatasetTableProps) => {
   const [loadingDataset, setLoadingDataset] = useState<boolean>(false);
   const [loadingDatasets, setLoadingDatasets] = useState<boolean>(false);
   const [error, setError] = useState("");
   const [selectedDataset, setSelectedDataset] = useState();
   const [datasetsResult, setDatasetsResult] = useState<string[]>([]);
+
   // Set up cache system for already downloaded datasets so don't have to redownload
   //   const tableHeaders = ["Name", "Size", "Action"];
-  const tableHeaders = ["Name", "Action"];
+  const tableHeaders = ["Name", "Action", ""];
 
   const handlePreview = (index: number) => {
-    // TODO:
     setLoadingDataset(true);
     handleFetchDataset(index);
   };
@@ -78,7 +89,14 @@ const ExistingDatasetTable = ({ datasets }: ExistingDatasetTableProps) => {
     });
   }, []);
 
-  const headerKeys = selectedDataset ? Object.keys(selectedDataset) : [];
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedData(event.target.value);
+    //console.log("selected value: " + selectedValue)
+  };
+
+  const headerKeys = () =>
+    selectedDataset ? Object.keys(selectedDataset) : [];
+  console.log(headerKeys);
 
   return (
     <>
@@ -95,7 +113,13 @@ const ExistingDatasetTable = ({ datasets }: ExistingDatasetTableProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loadingDatasets && <TableRow key={"Los"}><TableCell><CircularProgress /></TableCell></TableRow>}
+              {loadingDatasets && (
+                <TableRow key={"Los"}>
+                  <TableCell>
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              )}
               {!loadingDatasets &&
                 datasetsResult?.map((datasetName: string, index: number) => {
                   console.log(datasetName);
@@ -117,6 +141,20 @@ const ExistingDatasetTable = ({ datasets }: ExistingDatasetTableProps) => {
                           Preview
                         </Button>
                       </TableCell>
+
+                      <TableCell key={"radio"} align="center">
+                        <RadioGroup
+                          aria-label="dataset-selection"
+                          value={selectedData}
+                          onChange={handleChange}
+                        >
+                          <FormControlLabel
+                            value={datasetName}
+                            control={<Radio />}
+                            label=""
+                          />
+                        </RadioGroup>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -131,25 +169,36 @@ const ExistingDatasetTable = ({ datasets }: ExistingDatasetTableProps) => {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                {headerKeys.map((key) => (
-                  <TableCell key={key} align="center" style={{ minWidth: 170 }}>
-                    {key}
+                {!!selectedDataset &&
+                  headerKeys().map((header) => (
+                    <TableCell
+                      key={header}
+                      align="center"
+                      style={{ minWidth: 170 }}
+                    >
+                      {header}
+                    </TableCell>
+                  ))}
+                {!selectedDataset && (
+                  <TableCell key={"key"} align="center">
+                    <Typography> No data to preview </Typography>
                   </TableCell>
-                ))}
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {!!selectedDataset &&
-              
+              {!!selectedDataset && (
                 <TableRow key={".id"}>
                   {Object.entries(selectedDataset).map(([key, val]) => {
                     console.log(key, val);
-                    return (<TableCell key={key} align="center">
-                      {`${val}`} 
-                    </TableCell>)
-                })}
+                    return (
+                      <TableCell key={key} align="center">
+                        {`${val}`}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
-              }
+              )}
             </TableBody>
           </Table>
         </TableContainer>

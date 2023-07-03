@@ -1,11 +1,51 @@
+
+export enum RegressionAlgorithmsKey{
+    RandomForest,
+    KNearestNeighbours,
+    ScaledVectorMachine,
+    DecisionTrees,
+    LinearRegression,
+}
+
+export enum RegressionAlgorithmsApiValues {
+    RandomForest = 'Random Forest',
+    KNearestNeighbours = 'K-Nearest Neighbours',
+    ScaledVectorMachine = 'Scaled Vector Machine',
+    DecisionTrees = 'Decision Trees',
+    LinearRegression = 'Linear Regression'
+}
+
+export const mapRegressionAlgoKeyToApiValue = {
+    [RegressionAlgorithmsKey.RandomForest]: RegressionAlgorithmsApiValues.RandomForest,
+    [RegressionAlgorithmsKey.KNearestNeighbours]: RegressionAlgorithmsApiValues.KNearestNeighbours,
+    [RegressionAlgorithmsKey.ScaledVectorMachine]: RegressionAlgorithmsApiValues.ScaledVectorMachine,
+    [RegressionAlgorithmsKey.DecisionTrees]: RegressionAlgorithmsApiValues.DecisionTrees,
+    [RegressionAlgorithmsKey.LinearRegression]: RegressionAlgorithmsApiValues.LinearRegression,
+};
+
+// Can rename labels to anything without issue affecting request
+export const mapRegressionAlgoKeyToLabel = {
+    [RegressionAlgorithmsKey.RandomForest]: 'Random Forest', 
+    [RegressionAlgorithmsKey.KNearestNeighbours]: 'K-Nearest Neighbours', 
+    [RegressionAlgorithmsKey.ScaledVectorMachine]: 'Scaled Vector Machine', 
+    [RegressionAlgorithmsKey.DecisionTrees]: 'Decision Trees', 
+    [RegressionAlgorithmsKey.LinearRegression]: 'Linear Regression'
+};
+
 export const machineLearningAlgo = [
-    {value: 0, label: 'Random Forest Regressor'},
-    {value: 1, label: 'K-Nearest Neighbours Regressor'},
-    {value: 2, label: 'Scaled Vector Machine Regressor'},
-    {value: 3, label: 'Decision Trees Regressor'},
-    {value: 4, label: 'Linear Regression'},
     {value: 5, label: 'Random Forest Classifier'},
     {value: 6, label: 'K-Nearest Neighbours Classifier'},
     {value: 7, label: 'Decision Trees Classifier'},
-    {value: 8, label: 'Naive Bayes Classifier'}
-]
+    {value: 8, label: 'Naive Bayes Classifier'},
+    {value: RegressionAlgorithmsKey.RandomForest, label: 'Random Forest'},
+    {value: RegressionAlgorithmsKey.KNearestNeighbours, label: 'K-Nearest Neighbours'},
+    {value: RegressionAlgorithmsKey.ScaledVectorMachine, label: 'Scaled Vector Machine'},
+    {value: RegressionAlgorithmsKey.DecisionTrees, label: 'Decision Trees'},
+    {value: RegressionAlgorithmsKey.LinearRegression, label: 'Linear Regression'},
+];
+
+export const convertMLsToApiValues = (mlArray: RegressionAlgorithmsKey[]) => {
+    const mlAlgos = mlArray.map((mlAlgoKey: RegressionAlgorithmsKey) => mapRegressionAlgoKeyToApiValue[mlAlgoKey]);
+    console.log(mlAlgos);
+    return mlAlgos;
+}
