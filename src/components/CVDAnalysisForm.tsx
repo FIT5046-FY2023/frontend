@@ -45,7 +45,6 @@ function getStepContent({
     selectedData,
     setSelectedData,
   } = uploadDataProps;
-  const { setMLAlgos, MLAlgorithms } = analysisProps;
   const {
     checkbox,
     setCheckboxValues,
@@ -60,6 +59,9 @@ function getStepContent({
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   
+  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = analysisProps;
+  
+
   switch (step) {
     case 0:
       return (
@@ -88,9 +90,10 @@ function getStepContent({
       );
 
     case 2:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} />;
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks}/>;
     case 3:
       return <>
+      {loading && <CircularProgress />}
       {!!predictions && (
         <Visualisation results={predictions} loading={loadingVisual}></Visualisation>
       )}
@@ -107,6 +110,7 @@ export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [predictions, setPredictions] = useState();
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
+  const [MLTasks, setMLTasks] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>(
@@ -133,8 +137,10 @@ export default function CVDAnalysisForm() {
     console.log(
       JSON.stringify({
         mlAlgorithms: mlAlgorithms,
+        mlTasks: MLTasks,
         checkbox: checkbox,
         imputation: imputation,
+        selectedData: selectedDatasetName,
         target: target,
       })
     );
@@ -143,10 +149,11 @@ export default function CVDAnalysisForm() {
       method: "POST",
       body: JSON.stringify({
         mlAlgorithms: mlAlgorithms,
+        mlTasks: MLTasks,
         checkbox: checkbox,
         imputation: imputation,
-        target: target,
         selectedData: selectedDatasetName,
+        target: target
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
@@ -284,7 +291,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: { setMLAlgos, MLAlgorithms },
+                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,

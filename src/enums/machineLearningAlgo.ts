@@ -33,6 +33,10 @@ export const mapRegressionAlgoKeyToLabel = {
 };
 
 export const machineLearningAlgo = [
+    {value: 5, label: 'Random Forest Classifier'},
+    {value: 6, label: 'K-Nearest Neighbours Classifier'},
+    {value: 7, label: 'Decision Trees Classifier'},
+    {value: 8, label: 'Naive Bayes Classifier'},
     {value: RegressionAlgorithmsKey.RandomForest, label: 'Random Forest'},
     {value: RegressionAlgorithmsKey.KNearestNeighbours, label: 'K-Nearest Neighbours'},
     {value: RegressionAlgorithmsKey.ScaledVectorMachine, label: 'Scaled Vector Machine'},
