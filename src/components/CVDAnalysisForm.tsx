@@ -131,6 +131,10 @@ export default function CVDAnalysisForm() {
     setActiveStep(activeStep - 1);
   };
 
+  const handleStartOver = () => {
+    setActiveStep(0);
+  };
+
   const handleVisual = async () => {
     const mlAlgorithms = convertMLsToApiValues(MLAlgorithms);
     const selectedDatasetName = selectedData;
@@ -322,6 +326,13 @@ export default function CVDAnalysisForm() {
                     Back
                   </Button>
                 )}
+
+                {activeStep == steps.length - 1 && (
+                  <Button onClick={handleStartOver} sx={{ mt: 3, ml: 1 }}>
+                    Start Over
+                  </Button>
+                )}
+
                 {activeStep < steps.length - 1 && (
                   <Button
                     variant="contained"
