@@ -41,6 +41,34 @@ const Analysis = (props: AnalysisProps) => {
 
     const [ hideOldForm, setHideOldForm ] = useState<boolean>();
 
+    // const handleMLTaskChange2 = (event: SelectChangeEvent<any>, index: number) => {
+    //   console.log("Handle ML Task");
+    //   console.log("index:", index);
+    //   let newMLData: MLData[] = [];
+    //   console.log(formValues);
+    //   Object.assign(newMLData, formValues);
+    //   console.log(newMLData);
+    //   let updatedMLDataObj = {...formValues[index],
+    //   mlTask: event.target.value as MLTypes}
+    //   console.log('updatedOBJ', updatedMLDataObj);
+    //   console.log('event val:', event.target.value );
+    //   newMLData[index] = updatedMLDataObj;
+      
+    //   console.log(newMLData);
+    //   setFormValues(newMLData);
+    //   // setFormValues((prev) => {
+    //   //   let newMLData = [...prev];
+    //   //   newMLData[index].mlType = event.target.value as 
+    //   //   MLTypes
+    //   //   console.log(newMLData)
+    //   // return newMLData})
+
+    // }
+
+    // useEffect(()=> {
+    //   console.log('Rerender')
+    // }, [formValues])
+
     return (
      <Box
         display="flex"
