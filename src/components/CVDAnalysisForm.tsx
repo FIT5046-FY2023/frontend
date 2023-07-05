@@ -13,7 +13,7 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { GridRowSelectionModel } from "@mui/x-data-grid";
+import { GridRowSelectionModel, GridRowId } from "@mui/x-data-grid";
 import { convertMLsToApiValues } from "../enums/machineLearningAlgo";
 import { CircularProgress } from "@mui/material";
 
@@ -116,7 +116,7 @@ export default function CVDAnalysisForm() {
   const [MLTasks, setMLTasks] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   const [getData, setGetData] = useState(false);
-  const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>([]);
+  const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
   const [target, setTarget] = useState("");
