@@ -141,10 +141,14 @@ const Visualisation = (props: VisualisationProps) => {
 
           <Paper
             variant="outlined"
-            sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
+            sx={{
+              my: { xs: 4, md: 6 },
+              p: { xs: 2, md: 3 },
+            }}
+            
           >
             <BarChart
-              width={500}
+              width={1100}
               height={300}
               data={barData}
               margin={{
