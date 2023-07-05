@@ -17,7 +17,6 @@ type MlResult = {
   MeanSquareError: string;
   RootMeanSquareError: string;
   R2_Score: string;
-  Predictions: any[];
 }[];
 export interface ScatterPoint {
   name: number;
@@ -140,50 +139,6 @@ const Visualisation = (props: VisualisationProps) => {
             Visualisation Results
           </Typography>
 
-          <Paper
-            variant="outlined"
-            sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
-          >
-            {!!results &&
-              results.map((result) => {
-                const { Name: name, Predictions: predictions } = result;
-                console.log("prediction", predictions);
-                const predictionsArray: {}[] = [];
-                for (let i = 0; i < predictions.length; i++) {
-                  let singleObj: ScatterPoint = {
-                    name: i,
-                    uv: Number(predictions[i]) * 10,
-                  };
-                  predictionsArray.push(singleObj);
-                }
-                return (
-                  <>
-                    <Typography variant="subtitle1" gutterBottom align="left">
-                      {`${name} Predictions`}
-                    </Typography>
-                    <ScatterChart
-                      width={450}
-                      height={300}
-                      margin={{
-                        top: 20,
-                        right: 20,
-                        bottom: 10,
-                        left: 10,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="5 5" />
-                      <XAxis dataKey="name" type="number" name="" />
-                      <YAxis dataKey="uv" type="number" name="Predictions" />
-                      <Scatter
-                        name={`${name} Predictions`}
-                        data={predictionsArray}
-                        fill="#8884d8"
-                      />
-                    </ScatterChart>
-                  </>
-                );
-              })}
-          </Paper>
           <Paper
             variant="outlined"
             sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
