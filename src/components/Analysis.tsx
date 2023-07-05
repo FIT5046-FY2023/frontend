@@ -39,15 +39,20 @@ const Analysis = (props: AnalysisProps) => {
       // console.log(MLAlgorithms);
     };
 
+    const [ hideOldForm, setHideOldForm ] = useState<boolean>();
+
     return (
-      <Box
+     <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
         minWidth={"100%"}
+        flexDirection={"column"}
       >
+        
         <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
-        {formValues.map((mlData, index) => (
+        
+        { hideOldForm && formValues.map((mlData, index) => (
         <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
         <Typography> ML Task #{index+1}</Typography>
           <FormControl fullWidth>
@@ -143,10 +148,14 @@ const Analysis = (props: AnalysisProps) => {
           
         </Stack>
         ))}
-        <Button variant="contained" onClick={() => {setFormValues((prevValues) => [...prevValues, emptyForm]
-        )}}>Add</Button>
+       {hideOldForm && <Button variant="contained" onClick={() => {setFormValues((prevValues) => [...prevValues, emptyForm]
+        )}}>Add</Button>}
+        
         <MLForm formRef={formRef} />
         </Stack>
+        <Box sx={{marginTop:"3rem"}}>
+        <Button variant="outlined" onClick={() => setHideOldForm(!hideOldForm)}>show/hide old form</Button>
+        </Box>
       </Box>
     );
   };
