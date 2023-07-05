@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Analysis, { AnalysisProps } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
 import UploadData, { UploadDataProps } from "./UploadData";
@@ -16,6 +16,8 @@ import axios from "axios";
 import { GridRowSelectionModel } from "@mui/x-data-grid";
 import { convertMLsToApiValues } from "../enums/machineLearningAlgo";
 import { CircularProgress } from "@mui/material";
+import { MLDataList } from "./MLForm";
+import { FormikProps } from "formik";
 
 const steps = [
   "Upload Dataset",
@@ -59,7 +61,7 @@ function getStepContent({
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   
-  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = analysisProps;
+  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
   
 
   switch (step) {
@@ -90,7 +92,7 @@ function getStepContent({
       );
 
     case 2:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks}/>;
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
     case 3:
       return <>
       {loading && <CircularProgress />}
@@ -123,6 +125,8 @@ export default function CVDAnalysisForm() {
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
 
+  const formRef = useRef<FormikProps<MLDataList> | null>(null);
+
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -138,8 +142,11 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     const mlAlgorithms = convertMLsToApiValues(MLAlgorithms);
     const selectedDatasetName = selectedData;
+    console.log("formValues" , formRef.current?.values);
+    const mlData = formRef.current?.values.MLData;
     console.log(
       JSON.stringify({
+        mlData: mlData,
         mlAlgorithms: mlAlgorithms,
         mlTasks: MLTasks,
         checkbox: checkbox,
@@ -152,6 +159,7 @@ export default function CVDAnalysisForm() {
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
       body: JSON.stringify({
+        mlData: mlData,
         mlAlgorithms: mlAlgorithms,
         mlTasks: MLTasks,
         checkbox: checkbox,
@@ -295,7 +303,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks },
+                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
@@ -327,7 +335,7 @@ export default function CVDAnalysisForm() {
                   </Button>
                 )}
 
-                {activeStep == steps.length - 1 && (
+                {activeStep === steps.length - 1 && (
                   <Button onClick={handleStartOver} sx={{ mt: 3, ml: 1 }}>
                     Start Over
                   </Button>

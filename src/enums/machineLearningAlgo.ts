@@ -7,11 +7,18 @@ export enum RegressionAlgorithmsKey{
     LinearRegression,
 }
 
+export enum ClassificationAlgorithmsApiValues {
+    RandomForest = 'Random Forest Classifier',
+    KNearestNeighbours = 'K-Nearest Neighbours Classifier',
+    DecisionTrees = 'Decision Trees Classifier',
+    NaiveBayes = 'Naive Bayes'
+}
+
 export enum RegressionAlgorithmsApiValues {
-    RandomForest = 'Random Forest',
-    KNearestNeighbours = 'K-Nearest Neighbours',
+    RandomForest = 'Random Forest Regressor',
+    KNearestNeighbours = 'K-Nearest Neighbours Regressor',
     ScaledVectorMachine = 'Scaled Vector Machine',
-    DecisionTrees = 'Decision Trees',
+    DecisionTrees = 'Decision Trees Regressor',
     LinearRegression = 'Linear Regression'
 }
 
@@ -32,16 +39,18 @@ export const mapRegressionAlgoKeyToLabel = {
     [RegressionAlgorithmsKey.LinearRegression]: 'Linear Regression'
 };
 
-export const machineLearningAlgo = [
-    {value: 5, label: 'Random Forest Classifier'},
-    {value: 6, label: 'K-Nearest Neighbours Classifier'},
-    {value: 7, label: 'Decision Trees Classifier'},
-    {value: 8, label: 'Naive Bayes Classifier'},
-    {value: RegressionAlgorithmsKey.RandomForest, label: 'Random Forest'},
-    {value: RegressionAlgorithmsKey.KNearestNeighbours, label: 'K-Nearest Neighbours'},
-    {value: RegressionAlgorithmsKey.ScaledVectorMachine, label: 'Scaled Vector Machine'},
-    {value: RegressionAlgorithmsKey.DecisionTrees, label: 'Decision Trees'},
-    {value: RegressionAlgorithmsKey.LinearRegression, label: 'Linear Regression'},
+export const classificationMachineLearningAlgo = [
+    {value: ClassificationAlgorithmsApiValues.RandomForest, label: 'Random Forest Classifier'},
+    {value: ClassificationAlgorithmsApiValues.KNearestNeighbours, label: 'K-Nearest Neighbours Classifier'},
+    {value: ClassificationAlgorithmsApiValues.DecisionTrees, label: 'Decision Trees Classifier'},
+    {value: ClassificationAlgorithmsApiValues.NaiveBayes, label: 'Naive Bayes Classifier'},
+];
+export const regressionMachineLearningAlgo = [
+    {value: RegressionAlgorithmsApiValues.RandomForest, label: 'Random Forest'},
+    {value: RegressionAlgorithmsApiValues.KNearestNeighbours, label: 'K-Nearest Neighbours'},
+    {value: RegressionAlgorithmsApiValues.ScaledVectorMachine, label: 'Scaled Vector Machine'},
+    {value: RegressionAlgorithmsApiValues.DecisionTrees, label: 'Decision Trees'},
+    {value: RegressionAlgorithmsApiValues.LinearRegression, label: 'Linear Regression'},
 ];
 
 export const convertMLsToApiValues = (mlArray: RegressionAlgorithmsKey[]) => {

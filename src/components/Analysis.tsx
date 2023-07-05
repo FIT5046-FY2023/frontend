@@ -1,32 +1,42 @@
-import { Box, Chip, Stack } from "@mui/material";
+import { Box, Button, Chip, Stack, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import React from "react";
-import { machineLearningTasks } from "../enums/machineLearningTasks";
+import React, { useEffect, useState } from "react";
+import { MLTypes, machineLearningTasks, mlTypesList } from "../enums/machineLearningTasks";
 import {
   RegressionAlgorithmsKey,
-  machineLearningAlgo,
+  classificationMachineLearningAlgo,
   mapRegressionAlgoKeyToLabel,
 } from "../enums/machineLearningAlgo";
+import MLForm, { MLData, MLDataList } from "./MLForm";
+import { FormikProps } from "formik";
 
 export interface AnalysisProps {
   setMLAlgos: React.Dispatch<any[]>;
   MLAlgorithms: any[];
   setMLTasks: React.Dispatch<any[]>; 
   MLTasks: any[]; 
+  formRef: React.MutableRefObject<FormikProps<MLDataList> | null>;
 }
 
+const emptyForm: MLData = { mlType: "", mlAlgo: "", mlOptions: {} };
+const initialFormValues: MLData[] = [emptyForm];
+
 const Analysis = (props: AnalysisProps) => {
-    const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks } = props;
+    const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = props;
+    const [ MLType, setMLType ] = useState<string>();
+    const [ formValues, setFormValues ] = useState<MLData[]>(initialFormValues);
     const handleMLTasksChange = (event: SelectChangeEvent<any>) => {
-      setMLTasks(event.target.value);
+      setMLType(event.target.value);
+      setMLTasks([event.target.value]);
+      console.log(MLType);
       console.log(MLTasks);
     };
     const handleMLChange = (event: SelectChangeEvent<any>) => {
       setMLAlgos(event.target.value);
-      console.log(MLAlgorithms);
+      // console.log(MLAlgorithms);
     };
 
     return (
@@ -37,6 +47,9 @@ const Analysis = (props: AnalysisProps) => {
         minWidth={"100%"}
       >
         <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
+        {formValues.map((mlData, index) => (
+        <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
+        <Typography> ML Task #{index+1}</Typography>
           <FormControl fullWidth>
             <InputLabel id="task-type-select">Choose a task</InputLabel>
             <Select
@@ -45,17 +58,18 @@ const Analysis = (props: AnalysisProps) => {
               value={MLTasks}
               label="Machine Learning Tasks"
               onChange={handleMLTasksChange}
-              multiple={true}
+              multiple={false}
               size="small"
-              renderValue={(selected) => (
+              renderValue={(selected) => {
+                console.log('render value');
+                console.log(selected);
+                return (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} />
-                  ))}
+                    <Chip label={selected} />
                 </Box>
-              )}
+              )}}
             >
-              {machineLearningTasks.map((task) => (
+              {mlTypesList.map((task) => (
                 <MenuItem key={task.value} value={task.label}>
                   {task.label}
                 </MenuItem>
@@ -95,7 +109,7 @@ const Analysis = (props: AnalysisProps) => {
             >
               {Object.entries(mapRegressionAlgoKeyToLabel).map(
                 ([key, label]) => {
-                  console.log(key, label);
+                  // console.log(key, label);
                   return (
                     <MenuItem key={key} value={key}>
                       {label}
@@ -119,13 +133,19 @@ const Analysis = (props: AnalysisProps) => {
               multiple={true}
               size="small"
             >
-              {machineLearningAlgo.map((op) => (
+              {classificationMachineLearningAlgo.map((op) => (
                 <MenuItem key={op.value} value={op.value}>
                   {op.label}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          
+        </Stack>
+        ))}
+        <Button variant="contained" onClick={() => {setFormValues((prevValues) => [...prevValues, emptyForm]
+        )}}>Add</Button>
+        <MLForm formRef={formRef} />
         </Stack>
       </Box>
     );
