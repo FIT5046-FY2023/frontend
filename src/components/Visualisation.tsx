@@ -1,5 +1,5 @@
 import { Typography, Paper, Box, CircularProgress } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState} from "react";
 import {
   ScatterChart,
   Scatter,
@@ -11,6 +11,8 @@ import {
   Legend,
   Bar,
 } from "recharts";
+import { geocode } from "@esri/arcgis-rest-geocoding";
+import MapVisualization from "./MapVisualization";
 
 type MlResult = {
   Name: string;
@@ -36,6 +38,42 @@ const Visualisation = (props: VisualisationProps) => {
 
   console.log("props", props);
   console.log("results", results);
+
+  const [data, setData] = useState<{lat: number; lng: number; name: string;}[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try{
+        const areaNames = ['Adamstown - Kotara ',
+        'Albion Park - Macquarie Pass ',
+        'Albion Park Rail/ Shellharbour - Oak Flats ',
+        'Albury - East',
+        'Albury - North/ Lavington',
+        'Albury - South/ Albury Region',
+        'Anna Bay/ Nelson Bay Peninsula ',
+        'Armidale '
+        ];
+        const geocodeResults = await Promise.all(
+          areaNames.map(async (areaName) => {
+            const response = await geocode(areaName);
+
+            const result = response.candidates[0];
+            const { y: lat, x: lng } = result.location;
+            const name = result.address;
+
+            return { lat, lng, name};
+          })
+        );
+
+        setData(geocodeResults as { lat: number; lng: number; name: string; }[]);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, [results]);
+
   const barData = results?.map((result) => {
     const { Name, MeanSquareError, RootMeanSquareError, R2_Score } = result;
     console.log(Name, MeanSquareError, RootMeanSquareError, R2_Score);
@@ -164,6 +202,8 @@ const Visualisation = (props: VisualisationProps) => {
               <Bar dataKey="R2" fill="#b34a8d" />
             </BarChart>
           </Paper>
+
+          <MapVisualization data={data} apiKey="ENTER_API_KEY" />
         </>
       )}
     </React.Fragment>

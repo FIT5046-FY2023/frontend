@@ -4,7 +4,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React from "react";
-import { machineLearningTasks } from "../enums/machineLearningTasks";
+import { machineLearningTasks } from "../enums/machineLEarningTasks";
 import {
   RegressionAlgorithmsKey,
   machineLearningAlgo,

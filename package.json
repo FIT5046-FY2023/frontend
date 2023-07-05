@@ -6,6 +6,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@esri/arcgis-rest-geocoding": "^3.6.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.12.2",
@@ -19,6 +20,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "axios": "^1.4.0",
+    "esri-loader": "^3.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
