@@ -13,7 +13,7 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { GridRowSelectionModel } from "@mui/x-data-grid";
+import { GridRowSelectionModel, GridRowId } from "@mui/x-data-grid";
 import { convertMLsToApiValues } from "../enums/machineLearningAlgo";
 import { CircularProgress } from "@mui/material";
 
@@ -53,8 +53,9 @@ function getStepContent({
     imputation,
     setTarget,
     target,
-    heatmapString,
-    loading: loadingPreprocess 
+    loading: loadingPreprocess,
+    setLoading
+
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
@@ -84,8 +85,10 @@ function getStepContent({
           imputation={imputation}
           setTarget={setTarget}
           target={target}
-          heatmapString={heatmapString}
           loading={loadingPreprocess}
+          selectedData={selectedData}
+          setLoading={setLoading}
+
         />
       );
 
@@ -113,13 +116,10 @@ export default function CVDAnalysisForm() {
   const [MLTasks, setMLTasks] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   const [getData, setGetData] = useState(false);
-  const [checkbox, setCheckboxValues] = React.useState<GridRowSelectionModel>(
-    []
-  );
+  const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
   const [target, setTarget] = useState("");
-  const [heatmapString, setHeatmapString] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
 
@@ -226,9 +226,9 @@ export default function CVDAnalysisForm() {
   const handleCheckboxOptions = async () => {
     const selectedDatasetName = selectedData;
     setLoading(true);
-    fetch("http://127.0.0.1:5000/preprocessing", {
+    fetch("http://127.0.0.1:5000/dropdown", {
       method: "POST",
-      body: JSON.stringify({ selectedData: selectedDatasetName }),
+      body: JSON.stringify({ selectedData: selectedDatasetName}),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -237,22 +237,7 @@ export default function CVDAnalysisForm() {
         setLoading(false);
         return response.json();})
       .then((data) => {
-        var rows = [];
-
-        for (var i = 0; i < data.headerLabels.length; i++) {
-          var featureObject = {
-            id: i,
-            feature: data.headerLabels[i],
-            //correlation: data.corrList[i],
-            minimum: data.minList[i],
-            maximum: data.maxList[i],
-            mean: data.meanList[i],
-          };
-
-          rows.push(featureObject);
-        }
-        setHeatmapString(data.encodedString);
-        setCheckboxOptions(rows);
+        setCheckboxOptions(data.headerLabels)
       })
       .catch((err) => {
         setLoading(false);
@@ -312,8 +297,9 @@ export default function CVDAnalysisForm() {
                   imputation,
                   setTarget,
                   target,
-                  heatmapString,
-                  loading
+                  loading,
+                  selectedData,
+                  setLoading
                 },
                 visualisationProps: {
                   results: predictions,

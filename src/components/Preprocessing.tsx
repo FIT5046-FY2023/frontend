@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Chip, CircularProgress } from "@mui/material";
 import { FormControlLabel, FormGroup, Checkbox, Button } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { DataGrid, GridColDef, GridValueGetterParams, GridRowSelectionModel} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams, GridRowSelectionModel, GridInputRowSelectionModel} from '@mui/x-data-grid';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 
 export interface PreprocessProps {
-  checkbox: React.SetStateAction<GridRowSelectionModel>;
+  checkbox: React.SetStateAction<GridInputRowSelectionModel>;
   setCheckboxValues: React.Dispatch<
     React.SetStateAction<GridRowSelectionModel>
   >;
@@ -30,9 +30,11 @@ export interface PreprocessProps {
   imputation: React.SetStateAction<string>;
   setTarget: React.Dispatch<string>;
   target: string;
-  heatmapString: string;
-  loading: boolean;
+  loading: boolean; 
+  selectedData: React.SetStateAction<string>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
+
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'id', width:100},
@@ -44,14 +46,62 @@ const columns: GridColDef[] = [
 ];
 
 const Preprocessing = (props: PreprocessProps) => {
-    const {loading, checkbox, setCheckboxValues, checkboxOptions, setImputationValue, imputation, setTarget, target, heatmapString} = props; 
+    const {loading, checkbox, setCheckboxValues, setImputationValue, imputation, setTarget, target, selectedData, checkboxOptions, setLoading} = props; 
     const [isDataVisible, setIsDataVisible] = useState(false);
     const [csv, setCSV] = useState<any[]>([]);
+    const [heatmapString, setHeatmapString] = useState("");
     const [realCheckboxOptions, setRealCheckboxOptions] = useState<any[]>([]); 
+    const [selectedRows, setSelectedRows] = React.useState([]);
+    const [precheckedRows, setPrecheckedRows] = useState<any[]>([]);
+
+
+    
+    const handleCheckboxOptions = async () => {
+      setLoading(true);
+      fetch("http://127.0.0.1:5000/preprocessing", {
+        method: "POST",
+        body: JSON.stringify({ selectedData: selectedData, target: target}),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => { 
+          setLoading(false);
+          return response.json();})
+        .then((data) => {
+          var rows = [];
+  
+          for (var i = 0; i < data.headerLabels.length; i++) {
+            var featureObject = {
+              id: i,
+              feature: data.headerLabels[i],
+              //correlation: data.corrList[i],
+              minimum: data.minList[i],
+              maximum: data.maxList[i],
+              mean: data.meanList[i],
+            };
+  
+            rows.push(featureObject);
+          }
+          setHeatmapString(data.encodedString);
+          setRealCheckboxOptions(rows.filter((item) => item.feature != target));
+          setCheckboxValues(data.selectedIndices)
+          setPrecheckedRows(data.selectedIndices)
+          console.log(data.selectedIndices)
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
+  
+    };
+
+
 
     const handleButtonClick = () => {
+      handleCheckboxOptions(); 
       setIsDataVisible(!isDataVisible);
-      setRealCheckboxOptions(checkboxOptions.filter((item) => item.feature != target));
+      
       console.log(heatmapString)
     };
 
@@ -62,27 +112,11 @@ const Preprocessing = (props: PreprocessProps) => {
 
     const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
       setCheckboxValues(newSelection);
+      setPrecheckedRows(newSelection); 
       console.log(checkbox)
     };
 
-/** 
-  const handleVisual = async () => {
-      fetch("http://127.0.0.1:5000/preprocessing", {
-        method: "POST",
-        body: JSON.stringify({imputation: imputation}),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setCSV(data)
-        
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })};
-*/
+
     
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
@@ -110,10 +144,10 @@ const Preprocessing = (props: PreprocessProps) => {
           {
             checkboxOptions.map((op) => (
               <MenuItem
-              key={op.feature}
-              value={op.feature}
+              key={op}
+              value={op}
               >
-                  {op.feature}
+                  {op}
                 </MenuItem>
               ))
             }
@@ -132,6 +166,7 @@ const Preprocessing = (props: PreprocessProps) => {
               columns={columns}
               checkboxSelection
               onRowSelectionModelChange={handleSelectionChange}
+              rowSelectionModel={precheckedRows}
             />
           </div>
 
@@ -139,9 +174,7 @@ const Preprocessing = (props: PreprocessProps) => {
     
     <img src={"data:image/jpeg;charset=utf-8;base64, " + heatmapString}></img>
 
-    <h3>3. Handling string data </h3>
-
-    <h3>4. How do you want to handle missing data? </h3>
+    <h3>3. How do you want to handle missing data? </h3>
 
     <FormControl>
       <RadioGroup
