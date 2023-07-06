@@ -12,11 +12,19 @@ import {
   Bar,
 } from "recharts";
 
-type MlResult = {
+type RegressionMlResult = {
   Name: string;
   MeanSquareError: string;
   RootMeanSquareError: string;
   R2_Score: string;
+}[];
+
+type ClassificationMlResult = {
+  Name: string;
+  AccuracyScore: string;
+  PrecisionScore: string;
+  RecallScore: string;
+  F1Score: string;
 }[];
 export interface ScatterPoint {
   name: number;
@@ -30,13 +38,18 @@ export interface VisualisationProps {
 
 const Visualisation = (props: VisualisationProps) => {
   const { loading } = props;
-  const results: MlResult = props?.results?.results?.map((result: string) => {
+  const regression_results: RegressionMlResult = props?.results?.regression_results?.map((result: string) => {
+    return JSON.parse(result);
+  });
+  const classification_results: ClassificationMlResult = props?.results?.classification_results?.map((result: string) => {
     return JSON.parse(result);
   });
 
+  
+
   console.log("props", props);
-  console.log("results", results);
-  const barData = results?.map((result) => {
+  console.log("results", regression_results);
+  const regressionBarData = regression_results?.map((result) => {
     const { Name, MeanSquareError, RootMeanSquareError, R2_Score } = result;
     console.log(Name, MeanSquareError, RootMeanSquareError, R2_Score);
     return {
@@ -44,6 +57,17 @@ const Visualisation = (props: VisualisationProps) => {
       mse: MeanSquareError,
       rmse: RootMeanSquareError,
       R2: R2_Score,
+    };
+  });
+  const classificationBarData = classification_results?.map((result) => {
+    const { Name, AccuracyScore,PrecisionScore,RecallScore,F1Score} = result;
+    console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score);
+    return {
+      name: Name,
+      accuracy: AccuracyScore,
+      precision: PrecisionScore,
+      recall: RecallScore,
+      f1: F1Score
     };
   });
 
@@ -57,8 +81,8 @@ const Visualisation = (props: VisualisationProps) => {
         <CircularProgress />
       ) : (
         <>
-          {!!results &&
-            results.map((result) => {
+          {!!regression_results &&
+            regression_results.map((result) => {
               const {
                 Name: name,
                 MeanSquareError: mse,
@@ -147,10 +171,13 @@ const Visualisation = (props: VisualisationProps) => {
             }}
             
           >
+           { regressionBarData.length > 0 && <><Typography variant="h5" gutterBottom align="center">
+            Regression Results
+          </Typography>
             <BarChart
               width={1100}
               height={300}
-              data={barData}
+              data={regressionBarData}
               margin={{
                 top: 5,
                 right: 30,
@@ -166,7 +193,31 @@ const Visualisation = (props: VisualisationProps) => {
               <Bar dataKey="rmse" fill="#8884d8" />
               <Bar dataKey="mse" fill="#82ca9d" />
               <Bar dataKey="R2" fill="#b34a8d" />
-            </BarChart>
+            </BarChart></>}
+           {classificationBarData.length > 0 && <><Typography variant="h5" gutterBottom align="center">
+            Classification Results
+          </Typography>
+            <BarChart
+              width={500}
+              height={300}
+              data={classificationBarData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="accuracy" fill="#8884d8" />
+              <Bar dataKey="precision" fill="#82ca9d" />
+              <Bar dataKey="recall" fill="#b34a8d" />
+              <Bar dataKey="f1" fill="#c99a8d" />
+            </BarChart></>}
           </Paper>
         </>
       )}
