@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { loadModules } from "esri-loader";
 
 interface MapVisualizationProps {
@@ -11,16 +11,17 @@ interface MapVisualizationProps {
   }
 
 const MapVisualization: React.FC<MapVisualizationProps> = ({ data, apiKey }) => {
-    useEffect(() => {
-        loadModules(["esri/Map", "esri/views/MapView", "esri/layers/GraphicsLayer", "esri/Graphic"], {
-            css: true,
-        }).then(([Map, MapView, GraphicsLayer, Graphic]) => {
+    const mapRef = useRef<HTMLDivElement | null>(null);
+    const [mapLoaded, setMapLoaded] = useState(false);
+
+    useLayoutEffect(() => {
+        loadModules(["esri/Map", "esri/views/MapView", "esri/Graphic", "esri/layers/GraphicsLayer"],).then(([Map, MapView, Graphic, GraphicsLayer]) => {
             const map = new Map({
                 basemap: "topo-vector",
             });
 
             const view = new MapView({
-                container: "map",
+                container: mapRef.current!,
                 map: map,
                 zoom: 5,
                 center: [133.7751, -25.2744], //Australia coordinates
@@ -28,7 +29,7 @@ const MapVisualization: React.FC<MapVisualizationProps> = ({ data, apiKey }) => 
 
             const graphicsLayer = new GraphicsLayer();
 
-            view.map.add(graphicsLayer);
+            map.add(graphicsLayer);
 
             data.forEach((location) => {
                 const { lat, lng, name } = location;
@@ -56,10 +57,22 @@ const MapVisualization: React.FC<MapVisualizationProps> = ({ data, apiKey }) => 
                 });
                 graphicsLayer.add(pointGraphic);
             });
+
+            view.when(() => {
+                setMapLoaded(true);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading the ArcGIS API for JavaScript:", error);
         });
     }, [data, apiKey]);
 
-    return <div id="map" style={{ height: "400px"}}></div>;
+    return (
+        <div style={{ height: "400px", position: "relative" }}>
+            {!mapLoaded && <div>Loading map...</div>}
+            <div ref={mapRef} style={{ display: mapLoaded ? "block" : "none", height: "100%" }} />
+        </div>
+    );
 };
 
 export default MapVisualization;

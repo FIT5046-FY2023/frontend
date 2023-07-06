@@ -258,7 +258,7 @@ const Visualisation = (props: VisualisationProps) => {
             </BarChart></>}
           </Paper>
 
-          <MapVisualization data={data} apiKey="ENTER_API_KEY" />
+          <MapVisualization data={data} apiKey="Enter API KEY" />
         </>
       )}
     </React.Fragment>
