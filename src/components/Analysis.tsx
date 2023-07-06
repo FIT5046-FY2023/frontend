@@ -4,7 +4,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
-import { MLTypes, machineLearningTasks, mlTypesList } from "../enums/machineLearningTasks";
+import { MLTypes, machineLearningTasks, mlTypesList } from "../enums/machineLEarningTasks";
 import {
   RegressionAlgorithmsKey,
   classificationMachineLearningAlgo,

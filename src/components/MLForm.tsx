@@ -9,7 +9,7 @@ import {
   useFormik,
   FormikProps,
 } from "formik";
-import { MLTypes, mlTypesList } from "../enums/machineLearningTasks";
+import { MLTypes, mlTypesList } from "../enums/machineLEarningTasks";
 import {
   ClassificationAlgorithmsApiValues,
   RegressionAlgorithmsApiValues,

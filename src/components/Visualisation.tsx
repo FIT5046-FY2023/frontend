@@ -85,7 +85,7 @@ const Visualisation = (props: VisualisationProps) => {
     };
 
     fetchData();
-  }, [results]);
+  }, [regression_results]);
 
   const regressionBarData = regression_results?.map((result) => {
     const { Name, MeanSquareError, RootMeanSquareError, R2_Score } = result;
