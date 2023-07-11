@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Analysis, { AnalysisProps } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
+import DataWrangling from "./DataWrangling";
 import UploadData, { UploadDataProps } from "./UploadData";
 import Visualisation, { VisualisationProps } from "./Visualisation";
 import AppBar from "@mui/material/AppBar";
@@ -21,7 +22,8 @@ import { FormikProps } from "formik";
 
 const steps = [
   "Upload Dataset",
-  "Preprocessing",
+  "Data Wrangling",
+  "Feature Selection",
   "Algorithm Selection",
   "Visualisation",
 ];
@@ -78,6 +80,8 @@ function getStepContent({
         />
       );
     case 1:
+      return <DataWrangling></DataWrangling>
+    case 2:
       return (
         <Preprocessing
           checkbox={checkbox}
@@ -94,9 +98,9 @@ function getStepContent({
         />
       );
 
-    case 2:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
     case 3:
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
+    case 4:
       return <>
       {loading && <CircularProgress />}
       {!!predictions && (

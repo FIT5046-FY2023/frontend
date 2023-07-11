@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { Box, Chip, CircularProgress } from "@mui/material";
+import { Box, Chip, CircularProgress, TextField } from "@mui/material";
 import { FormControlLabel, FormGroup, Checkbox, Button } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
@@ -53,8 +54,41 @@ const Preprocessing = (props: PreprocessProps) => {
     const [realCheckboxOptions, setRealCheckboxOptions] = useState<any[]>([]); 
     const [selectedRows, setSelectedRows] = React.useState([]);
     const [precheckedRows, setPrecheckedRows] = useState<any[]>([]);
+    const [featureOption, setFeatureOption] = useState("Filter");
+    const [selectedAlgo, setSelectedAlgo] = useState('regression');
+    const [selectedAlgoOption, setSelectedAlgoOption] = useState('');
+    const [selectedMethod, setSelectedMethod] = useState('');
+    const featureSelectionOptions = ["Filter", "Wrapper", "Other"]
+    const wrapperMethods = ["Forward Selection", "Backward Selection", "Stepwise Selection"]
+    const filterMethods = ["Select K Features"]
+    const regressionOptions = ['Linear Regression'];
+    const classificationOptions = ['K-Nearest'];
+    const otherOptions = ['PCA'];
 
 
+    const selectedAlgos = selectedAlgo === 'regression' ? regressionOptions : classificationOptions 
+    const selectedMethods = featureOption === 'Filter' ? filterMethods: featureOption === 'Wrapper' ? wrapperMethods: otherOptions;
+
+
+
+    const handleAlgoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSelectedAlgo((event.target as HTMLInputElement).value);
+      setSelectedAlgoOption("")
+      // handleVisual();
+    };
+
+    const handlefeatureOption = (event: SelectChangeEvent<any>) => {
+      setFeatureOption(event.target.value);
+      setSelectedAlgoOption("")
+      setSelectedMethod("")
+      setSelectedAlgo("")
+      console.log(featureOption)
+      // handleVisual();
+    };
+    
+    const handleAlgoOptionChange = (event: SelectChangeEvent<any>) => {
+      setSelectedAlgoOption(event.target.value);
+    };
     
     const handleCheckboxOptions = async () => {
       setLoading(true);
@@ -101,8 +135,6 @@ const Preprocessing = (props: PreprocessProps) => {
     const handleButtonClick = () => {
       handleCheckboxOptions(); 
       setIsDataVisible(!isDataVisible);
-      
-      console.log(heatmapString)
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,30 +148,155 @@ const Preprocessing = (props: PreprocessProps) => {
       console.log(checkbox)
     };
 
+    const handleFeatureSelectionChange = (event: SelectChangeEvent<any>) => {
+      setSelectedMethod(event.target.value);
 
-    
+    };
+
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => {
         setTarget(event.target.value);
         setIsDataVisible(false);
 
       };
-    
-      console.log(loading);
 
     return <> 
     {loading ? <CircularProgress /> :
     (<div> 
 
-    <h3>1. Select CVD Target </h3>
-    <FormControl fullWidth>
+<h2> Feature Selection </h2>
+
+<FormControl sx={{ m: 1, minWidth: 350 }}>
+    <InputLabel id="demo-simple-select-label">Feature Selection Method </InputLabel>
+    <Select
+      labelId="demo-simple-select-label"
+      id="demo-simple-select"
+      value={featureOption}
+      label="Feature Selection Method"
+      onChange={handlefeatureOption}
+      size="small"
+      >
+    {
+        featureSelectionOptions.map((op) => (
+        <MenuItem
+        key={op}
+        value={op}
+        >
+            {op}
+          </MenuItem>
+        ))
+      }
+      </Select>
+    
+      
+    </FormControl>
+
+<br></br>
+
+<FormControl sx={{ m: 1, minWidth: 350 }}>
+    <InputLabel id="demo-simple-select-label">Feature Selection Method </InputLabel>
+    <Select
+      labelId="demo-simple-select-label"
+      id="demo-simple-select"
+      value={selectedMethod}
+      label="Feature Selection Method"
+      onChange={handleFeatureSelectionChange}
+      size="small"
+      >
+    {
+      selectedMethods.map((op) => (
+        <MenuItem
+        key={op}
+        value={op}
+        >
+            {op}
+          </MenuItem>
+        ))
+      }
+      </Select>
+    
+      
+    </FormControl>
+
+{featureOption=="Wrapper" && (<>
+
+
+
+
+
+  <br></br>
+
+  <FormControl sx={{ m: 1, minWidth: 100 }}>
+  <RadioGroup
+    row
+    aria-labelledby="demo-radio-buttons-group-label"
+    defaultValue="regression"
+    name="radio-buttons-group"
+    value={selectedAlgo}
+    onChange={handleAlgoChange}
+  >
+    <FormControlLabel value="regression" control={<Radio />} label="Regression" />
+    <FormControlLabel value="classification" control={<Radio />} label="Classification" />
+  </RadioGroup>
+</FormControl>
+
+
+
+
+    <br></br>
+
+    <FormControl sx={{ m: 1, minWidth: 350 }}>
+    <InputLabel id="demo-simple-select-label"> Machine Learning Algorithm </InputLabel>
+    <Select
+      labelId="demo-simple-select-label"
+      id="demo-simple-select"
+      value={selectedAlgoOption}
+      label="Machine Learning Algorithm"
+      onChange={handleAlgoOptionChange}
+      size="small"
+      >
+    {
+        selectedAlgos.map((op) => (
+        <MenuItem
+        key={op}
+        value={op}
+        >
+            {op}
+          </MenuItem>
+        ))
+      }
+      </Select>
+    
+      
+    </FormControl>
+  
+    <br></br>
+
+<TextField  sx={{ m: 1, minWidth: 50 }}
+      id="siglevel"
+      label="Significance Level"
+      defaultValue="0.05"
+      size = "small"
+    />
+  </>
+
+
+    )
+
+}
+<br></br>
+    
+<h3> Target </h3>
+    <FormControl sx={{ m: 1, minWidth: 500 }}>
+          <InputLabel id="demo-simple-select-label">CVD Target</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={target}
-            label="Machine Learning Algorithm"
+            label="CVD Target"
             onChange={handleTargetChange}
-            size="small"
+            size = "small"
+
             >
           {
             checkboxOptions.map((op) => (
@@ -154,12 +311,17 @@ const Preprocessing = (props: PreprocessProps) => {
             </Select>
           </FormControl>
       <br></br>
-      <div ><Button variant="outlined" onClick={handleButtonClick}>Show Data</Button></div>
+
+      
+
+
+      <div ><Button variant="outlined" onClick={handleButtonClick}>Show Selected Features</Button></div>
+
     
 
       {isDataVisible && (
         <>
-          <h3>2. Select Features</h3>
+          <h3> Select Features</h3>
           <div style={{ height: 500, width: '100%' }}>
             <DataGrid
               rows={realCheckboxOptions}
@@ -174,7 +336,7 @@ const Preprocessing = (props: PreprocessProps) => {
     
     <img src={"data:image/jpeg;charset=utf-8;base64, " + heatmapString}></img>
 
-    <h3>3. How do you want to handle missing data? </h3>
+    <h3> How do you want to handle missing data? </h3>
 
     <FormControl>
       <RadioGroup
