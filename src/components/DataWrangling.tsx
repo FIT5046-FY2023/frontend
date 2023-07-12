@@ -1,8 +1,17 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup, FormLabel } from "@mui/material";
 import React from "react";
 
+export interface DataWranglingProps {
+  setImputationValue: React.Dispatch<React.SetStateAction<string>>;
+  imputation: React.SetStateAction<string>;
+}
 
-const DataWrangling = () => {
+const DataWrangling = (props:DataWranglingProps) => {
+  const {setImputationValue, imputation} = props; 
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setImputationValue((event.target as HTMLInputElement).value);
+  };
 
     return <> 
 
@@ -14,8 +23,8 @@ const DataWrangling = () => {
         row
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
-        //value={}
-        //onChange={}
+        value={imputation}
+        onChange={handleChange}
       >
         <FormControlLabel value="mean" control={<Radio />} label="Mean" />
         <FormControlLabel value="mode" control={<Radio />} label="Mode" />

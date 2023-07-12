@@ -27,8 +27,6 @@ export interface PreprocessProps {
     React.SetStateAction<GridRowSelectionModel>
   >;
   checkboxOptions: any[];
-  setImputationValue: React.Dispatch<React.SetStateAction<string>>;
-  imputation: React.SetStateAction<string>;
   setTarget: React.Dispatch<string>;
   target: string;
   loading: boolean; 
@@ -47,7 +45,7 @@ const columns: GridColDef[] = [
 ];
 
 const Preprocessing = (props: PreprocessProps) => {
-    const {loading, checkbox, setCheckboxValues, setImputationValue, imputation, setTarget, target, selectedData, checkboxOptions, setLoading} = props; 
+    const {loading, checkbox, setCheckboxValues, setTarget, target, selectedData, checkboxOptions, setLoading} = props; 
     const [isDataVisible, setIsDataVisible] = useState(false);
     const [csv, setCSV] = useState<any[]>([]);
     const [heatmapString, setHeatmapString] = useState("");
@@ -74,6 +72,7 @@ const Preprocessing = (props: PreprocessProps) => {
     const handleAlgoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedAlgo((event.target as HTMLInputElement).value);
       setSelectedAlgoOption("")
+      setIsDataVisible(false);
       // handleVisual();
     };
 
@@ -82,19 +81,30 @@ const Preprocessing = (props: PreprocessProps) => {
       setSelectedAlgoOption("")
       setSelectedMethod("")
       setSelectedAlgo("")
+      setIsDataVisible(false);
       console.log(featureOption)
       // handleVisual();
     };
     
     const handleAlgoOptionChange = (event: SelectChangeEvent<any>) => {
       setSelectedAlgoOption(event.target.value);
+      setIsDataVisible(false);
     };
     
     const handleCheckboxOptions = async () => {
       setLoading(true);
+      let preprocessBody = ""; 
+      if (featureOption === "Filter") {
+      preprocessBody = JSON.stringify({ selectedData: selectedData, target: target, featureOption: featureOption, featureMethod:selectedMethod})
+      } else {
+      preprocessBody = JSON.stringify({ selectedData: selectedData, target: target, featureOption: featureOption, featureMethod:selectedMethod,selectedAlgo:selectedAlgo, selectedAlgoOption:selectedAlgoOption})
+      }
+
+      console.log(preprocessBody)
+
       fetch("http://127.0.0.1:5000/preprocessing", {
         method: "POST",
-        body: JSON.stringify({ selectedData: selectedData, target: target}),
+        body: preprocessBody,
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
@@ -134,13 +144,9 @@ const Preprocessing = (props: PreprocessProps) => {
 
     const handleButtonClick = () => {
       handleCheckboxOptions(); 
-      setIsDataVisible(!isDataVisible);
+      setIsDataVisible(true);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setImputationValue((event.target as HTMLInputElement).value);
-      // handleVisual();
-    };
 
     const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
       setCheckboxValues(newSelection);
@@ -150,11 +156,12 @@ const Preprocessing = (props: PreprocessProps) => {
 
     const handleFeatureSelectionChange = (event: SelectChangeEvent<any>) => {
       setSelectedMethod(event.target.value);
+      setIsDataVisible(false);
 
     };
 
     
-      const handleTargetChange = (event: SelectChangeEvent<any>) => {
+      const handleTargetChange = (event: SelectChangeEvent<any>) => { 
         setTarget(event.target.value);
         setIsDataVisible(false);
 
@@ -272,12 +279,6 @@ const Preprocessing = (props: PreprocessProps) => {
   
     <br></br>
 
-<TextField  sx={{ m: 1, minWidth: 50 }}
-      id="siglevel"
-      label="Significance Level"
-      defaultValue="0.05"
-      size = "small"
-    />
   </>
 
 
@@ -335,22 +336,6 @@ const Preprocessing = (props: PreprocessProps) => {
           <br></br>
     
     <img src={"data:image/jpeg;charset=utf-8;base64, " + heatmapString}></img>
-
-    <h3> How do you want to handle missing data? </h3>
-
-    <FormControl>
-      <RadioGroup
-        row
-        aria-labelledby="demo-row-radio-buttons-group-label"
-        name="row-radio-buttons-group"
-        value={imputation}
-        onChange={handleChange}
-      >
-        <FormControlLabel value="mean" control={<Radio />} label="Mean Imputation" />
-        <FormControlLabel value="mode" control={<Radio />} label="Mode Imputation" />
-        <FormControlLabel value="median" control={<Radio />} label="Median Imputation" />
-      </RadioGroup>
-    </FormControl>
 
         </>
       )}

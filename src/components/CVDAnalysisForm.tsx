@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import Analysis, { AnalysisProps } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
-import DataWrangling from "./DataWrangling";
+import DataWrangling, { DataWranglingProps} from "./DataWrangling";
 import UploadData, { UploadDataProps } from "./UploadData";
 import Visualisation, { VisualisationProps } from "./Visualisation";
 import AppBar from "@mui/material/AppBar";
@@ -31,6 +31,7 @@ const steps = [
 function getStepContent({
   step,
   uploadDataProps,
+  dataWranglingProps, 
   analysisProps,
   preprocessProps,
   visualisationProps
@@ -38,6 +39,7 @@ function getStepContent({
   step: number;
   analysisProps: AnalysisProps;
   uploadDataProps: UploadDataProps;
+  dataWranglingProps: DataWranglingProps; 
   preprocessProps: PreprocessProps;
   visualisationProps: VisualisationProps;
 }) {
@@ -53,8 +55,6 @@ function getStepContent({
     checkbox,
     setCheckboxValues,
     checkboxOptions,
-    setImputationValue,
-    imputation,
     setTarget,
     target,
     loading: loadingPreprocess,
@@ -63,8 +63,8 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-  
   const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
+  const {setImputationValue, imputation} = dataWranglingProps; 
   
 
   switch (step) {
@@ -80,15 +80,16 @@ function getStepContent({
         />
       );
     case 1:
-      return <DataWrangling></DataWrangling>
+      return <DataWrangling 
+      setImputationValue={setImputationValue}
+      imputation={imputation}
+      ></DataWrangling>
     case 2:
       return (
         <Preprocessing
           checkbox={checkbox}
           setCheckboxValues={setCheckboxValues}
           checkboxOptions={checkboxOptions}
-          setImputationValue={setImputationValue}
-          imputation={imputation}
           setTarget={setTarget}
           target={target}
           loading={loadingPreprocess}
@@ -301,12 +302,11 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
+                dataWranglingProps: {setImputationValue, imputation}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
                   checkboxOptions,
-                  setImputationValue,
-                  imputation,
                   setTarget,
                   target,
                   loading,
