@@ -25,6 +25,8 @@ type ClassificationMlResult = {
   PrecisionScore: string;
   RecallScore: string;
   F1Score: string;
+  Roc_Auc: string;
+  Specificity: string;
 }[];
 export interface ScatterPoint {
   name: number;
@@ -60,14 +62,16 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
   const classificationBarData = classification_results?.map((result) => {
-    const { Name, AccuracyScore,PrecisionScore,RecallScore,F1Score} = result;
-    console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score);
+    const { Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity} = result;
+    console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
     return {
       name: Name,
       accuracy: AccuracyScore,
       precision: PrecisionScore,
       recall: RecallScore,
-      f1: F1Score
+      f1: F1Score,
+      roc_auc: Roc_Auc,
+      specificity: Specificity
     };
   });
 
@@ -175,8 +179,8 @@ const Visualisation = (props: VisualisationProps) => {
             Regression Results
           </Typography>
             <BarChart
-              width={1100}
-              height={300}
+              width={1000}
+              height={700}
               data={regressionBarData}
               margin={{
                 top: 5,
@@ -198,8 +202,8 @@ const Visualisation = (props: VisualisationProps) => {
             Classification Results
           </Typography>
             <BarChart
-              width={500}
-              height={300}
+              width={1000}
+              height={700}
               data={classificationBarData}
               margin={{
                 top: 5,
@@ -217,6 +221,8 @@ const Visualisation = (props: VisualisationProps) => {
               <Bar dataKey="precision" fill="#82ca9d" />
               <Bar dataKey="recall" fill="#b34a8d" />
               <Bar dataKey="f1" fill="#c99a8d" />
+              <Bar dataKey="roc_auc" fill="#ff7f50" />
+              <Bar dataKey="specificity" fill="#00ced1" />
             </BarChart></>}
           </Paper>
         </>
