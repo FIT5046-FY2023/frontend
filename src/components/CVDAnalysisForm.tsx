@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Analysis, { AnalysisProps } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
+import DataWrangling, { DataWranglingProps} from "./DataWrangling";
 import UploadData, { UploadDataProps } from "./UploadData";
 import Visualisation, { VisualisationProps } from "./Visualisation";
 import AppBar from "@mui/material/AppBar";
@@ -21,7 +22,8 @@ import { FormikProps } from "formik";
 
 const steps = [
   "Upload Dataset",
-  "Preprocessing",
+  "Data Wrangling",
+  "Feature Selection",
   "Algorithm Selection",
   "Visualisation",
 ];
@@ -29,6 +31,7 @@ const steps = [
 function getStepContent({
   step,
   uploadDataProps,
+  dataWranglingProps, 
   analysisProps,
   preprocessProps,
   visualisationProps
@@ -36,6 +39,7 @@ function getStepContent({
   step: number;
   analysisProps: AnalysisProps;
   uploadDataProps: UploadDataProps;
+  dataWranglingProps: DataWranglingProps; 
   preprocessProps: PreprocessProps;
   visualisationProps: VisualisationProps;
 }) {
@@ -51,8 +55,6 @@ function getStepContent({
     checkbox,
     setCheckboxValues,
     checkboxOptions,
-    setImputationValue,
-    imputation,
     setTarget,
     target,
     loading: loadingPreprocess,
@@ -61,8 +63,8 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-  
   const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
+  const {setImputationValue, imputation} = dataWranglingProps; 
   
 
   switch (step) {
@@ -78,13 +80,16 @@ function getStepContent({
         />
       );
     case 1:
+      return <DataWrangling 
+      setImputationValue={setImputationValue}
+      imputation={imputation}
+      ></DataWrangling>
+    case 2:
       return (
         <Preprocessing
           checkbox={checkbox}
           setCheckboxValues={setCheckboxValues}
           checkboxOptions={checkboxOptions}
-          setImputationValue={setImputationValue}
-          imputation={imputation}
           setTarget={setTarget}
           target={target}
           loading={loadingPreprocess}
@@ -94,9 +99,9 @@ function getStepContent({
         />
       );
 
-    case 2:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
     case 3:
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
+    case 4:
       return <>
       {loading && <CircularProgress />}
       {!!predictions && (
@@ -297,12 +302,11 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
+                dataWranglingProps: {setImputationValue, imputation}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
                   checkboxOptions,
-                  setImputationValue,
-                  imputation,
                   setTarget,
                   target,
                   loading,
