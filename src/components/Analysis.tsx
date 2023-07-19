@@ -1,4 +1,6 @@
-import { Box, Button, Chip, Stack, Typography } from "@mui/material";
+
+import { Box, Button, Chip, Stack, Typography, IconButton } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,65 +11,83 @@ import {
   RegressionAlgorithmsKey,
   classificationMachineLearningAlgo,
   mapRegressionAlgoKeyToLabel,
+  regressionMachineLearningAlgo,
 } from "../enums/machineLearningAlgo";
-import MLForm, { MLData, MLDataList } from "./MLForm";
+import MLForm, { MLData, MLDataList, ParametersSection } from "./MLForm";
 import { FormikProps } from "formik";
 
 export interface AnalysisProps {
-  setMLAlgos: React.Dispatch<any[]>;
-  MLAlgorithms: any[];
-  setMLTasks: React.Dispatch<any[]>; 
-  MLTasks: any[]; 
+  setMLData: React.Dispatch<any[]>; 
+  mlData: any[]; 
   formRef: React.MutableRefObject<FormikProps<MLDataList> | null>;
 }
 
 const emptyForm: MLData = { mlType: "", mlAlgo: "", mlOptions: {} };
-const initialFormValues: MLData[] = [emptyForm];
+export const initialFormValues: MLData[] = [{...emptyForm}];
 
 const Analysis = (props: AnalysisProps) => {
-    const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = props;
-    const [ MLType, setMLType ] = useState<string>();
-    const [ formValues, setFormValues ] = useState<MLData[]>(initialFormValues);
-    const handleMLTasksChange = (event: SelectChangeEvent<any>) => {
-      setMLType(event.target.value);
-      setMLTasks([event.target.value]);
-      console.log(MLType);
-      console.log(MLTasks);
+    const { setMLData: setFormValues, mlData: formValues, formRef } = props;
+    // const [ formValues, setFormValues ] = useState<MLData[]>(initialFormValues);
+    const handleMLTasksChange = (event: SelectChangeEvent<any>, index: number) => {
+      // setMLType(event.target.value);
+      // setMLTasks([event.target.value]);
+      let formValuesCopy = formValues.map(object => object);
+      formValuesCopy[index].mlType = event.target.value;
+      formValuesCopy[index].mlAlgo = "";
+      setFormValues(formValuesCopy);
+      console.log(formValuesCopy);
     };
-    const handleMLChange = (event: SelectChangeEvent<any>) => {
-      setMLAlgos(event.target.value);
+    const handleMLChange = (event: SelectChangeEvent<any>, index: number) => {
+      // setMLAlgos(event.target.value);
       // console.log(MLAlgorithms);
+      let formValuesCopy = formValues.map(object => object);
+      formValuesCopy[index].mlAlgo = event.target.value;
+      setFormValues(formValuesCopy);
+      console.log(formValuesCopy);
+    };
+    const handleAddTask = (event: any, index?: number) => {
+      // setMLAlgos(event.target.value);
+      // console.log(MLAlgorithms);
+      let formValuesCopy = formValues.map(object => object);
+      console.log({...emptyForm})
+      console.log(formValuesCopy);
+      formValuesCopy = [...formValuesCopy, { mlType: "", mlAlgo: "", mlOptions: {} }];
+      console.log(formValuesCopy);
+      setFormValues(formValuesCopy);
+      console.log("in handleAddTask");
+      
+    };
+    const handleRemoveTask = (event: any, indexToRemove: number) => {
+      let formValuesCopy = formValues.filter((_object, index) => index !== indexToRemove);
+      console.log(formValuesCopy);
+      setFormValues([...formValuesCopy]);
+      console.log("in handleRemoveTask");
+      
     };
 
-    const [ hideOldForm, setHideOldForm ] = useState<boolean>();
-
-    // const handleMLTaskChange2 = (event: SelectChangeEvent<any>, index: number) => {
-    //   console.log("Handle ML Task");
-    //   console.log("index:", index);
-    //   let newMLData: MLData[] = [];
-    //   console.log(formValues);
-    //   Object.assign(newMLData, formValues);
-    //   console.log(newMLData);
-    //   let updatedMLDataObj = {...formValues[index],
-    //   mlTask: event.target.value as MLTypes}
-    //   console.log('updatedOBJ', updatedMLDataObj);
-    //   console.log('event val:', event.target.value );
-    //   newMLData[index] = updatedMLDataObj;
+    const handleParamChange = (event: any, indexToRemove: number) => {
+      let name = event.target.name;
+      const value = event.target.value;
+      console.log(name);
+      console.log(value);
+      const [_name, index, mlOptions, parameter] = name.split(".");
+      let formValuesCopy = formValues.map((object, i) => {
+        console.log(name);
+        if ( i == index) {
+          (object as any).mlOptions[parameter] = value;
+        }
+        console.log(object);
+        return object});
+      console.log(formValuesCopy);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // (formValuesCopy as any)[parseInt(index as string)].mlOptions[parameter] = value;
+      // (formValuesCopy as any)[parseInt(index as string)][mlOptions as string][parameter as string]
+      console.log(formValuesCopy);
+      setFormValues([...formValuesCopy]);
+      console.log("in handleRemoveTask");
       
-    //   console.log(newMLData);
-    //   setFormValues(newMLData);
-    //   // setFormValues((prev) => {
-    //   //   let newMLData = [...prev];
-    //   //   newMLData[index].mlType = event.target.value as 
-    //   //   MLTypes
-    //   //   console.log(newMLData)
-    //   // return newMLData})
-
-    // }
-
-    // useEffect(()=> {
-    //   console.log('Rerender')
-    // }, [formValues])
+    };
+    const [ hideOldForm, setHideOldForm ] = useState<boolean>();
 
     return (
      <Box
@@ -80,104 +100,89 @@ const Analysis = (props: AnalysisProps) => {
         
         <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
         
-        { hideOldForm && formValues.map((mlData, index) => (
-        <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
-        <Typography> ML Task #{index+1}</Typography>
-          <FormControl fullWidth>
-            <InputLabel id="task-type-select">Choose a task</InputLabel>
-            <Select
-              labelId="task-type-select"
-              id="task-type-select"
-              value={MLTasks}
-              label="Machine Learning Tasks"
-              onChange={handleMLTasksChange}
-              multiple={false}
-              size="small"
-              renderValue={(selected) => {
-                console.log('render value');
-                console.log(selected);
-                return (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    <Chip label={selected} />
-                </Box>
-              )}}
-            >
-              {mlTypesList.map((task) => (
-                <MenuItem key={task.value} value={task.label}>
-                  {task.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">
-              Machine Learning Algorithm
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={MLAlgorithms}
-              label="Machine Learning Algorithm"
-              onChange={handleMLChange}
-              multiple={true}
-              size="small"
-              renderValue={(selected) => {
-                console.log(selected);
-                return (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                    {selected.map((value: RegressionAlgorithmsKey) => (
-                      <Chip
-                        key={value}
-                        label={
-                          mapRegressionAlgoKeyToLabel[
-                            value as RegressionAlgorithmsKey
-                          ]
-                        }
-                      />
-                    ))}
-                  </Box>
-                );
-              }}
-            >
-              {Object.entries(mapRegressionAlgoKeyToLabel).map(
-                ([key, label]) => {
-                  // console.log(key, label);
-                  return (
-                    <MenuItem key={key} value={key}>
-                      {label}
+        { hideOldForm && formValues.map((mlData, index) => {
+          return (
+            <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
+              <Box> <IconButton size="small" onClick={(e) => handleRemoveTask(e, index)} >
+                <DeleteIcon />
+              </IconButton>
+              <Typography> ML Task #{index + 1}</Typography>
+              </Box>
+              <FormControl fullWidth>
+                <InputLabel id="task-type-select">Machine Learning Tasks</InputLabel>
+                <Select
+                  labelId="task-type-select"
+                  id="task-type-select"
+                  value={mlData.mlType ? formValues[index].mlType : ""}
+                  label="Machine Learning Tasks"
+                  onChange={(e) => handleMLTasksChange(e, index)}
+                  multiple={false}
+                  size="small"
+                >
+                  {mlTypesList.map((task) => (
+                    <MenuItem key={task.value} value={task.label}>
+                      {task.label}
                     </MenuItem>
-                  );
-                }
-              )}
-            </Select>
-          </FormControl>
+                  ))}
+                </Select>
+              </FormControl>
 
-          <FormControl fullWidth>
-            <InputLabel id="spatial-analytic-select">
-              Spatial Analytic Algorithms
-            </InputLabel>
-            <Select
-              labelId="spatial-analytic-select"
-              id="spatial-analytic-select"
-              value={[]}
-              label="Spatial Analytic Algorithms"
-              onChange={() => {}}
-              multiple={true}
-              size="small"
-            >
-              {classificationMachineLearningAlgo.map((op) => (
-                <MenuItem key={op.value} value={op.value}>
-                  {op.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          
-        </Stack>
-        ))}
-       {hideOldForm && <Button variant="contained" onClick={() => {setFormValues((prevValues) => [...prevValues, emptyForm]
-        )}}>Add</Button>}
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Machine Learning Algorithm
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={mlData.mlAlgo}
+                  label="Machine Learning Algorithm"
+                  onChange={(e) => handleMLChange(e, index)}
+                  multiple={false}
+                  size="small"
+                >
+                  {mlData.mlType === MLTypes.Regression && regressionMachineLearningAlgo.map(
+                    (op) => {
+                      // console.log(key, label);
+                      return (
+                        <MenuItem key={op.value} value={op.value}>
+                          {op.label}
+                        </MenuItem>
+                      );
+                    }
+                  )}
+                  {mlData.mlType === MLTypes.Classification && classificationMachineLearningAlgo.map((op) => (
+                    <MenuItem key={op.value} value={op.value}>
+                      {op.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth>
+                <InputLabel id="spatial-analytic-select">
+                  Spatial Analytic Algorithms
+                </InputLabel>
+                <Select
+                  labelId="spatial-analytic-select"
+                  id="spatial-analytic-select"
+                  value={[]}
+                  label="Spatial Analytic Algorithms"
+                  onChange={() => { } }
+                  multiple={true}
+                  size="small"
+                >
+                  {classificationMachineLearningAlgo.map((op) => (
+                    <MenuItem key={op.value} value={op.value}>
+                      {op.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {!!mlData.mlAlgo && <ParametersSection algoName={mlData.mlAlgo} index={index} handleChange={handleParamChange} data={mlData} />}
+            </Stack>
+          );
+        })}
+       {hideOldForm && <Button variant="contained" onClick={(e) => handleAddTask(e)}>Add</Button>}
         
         <MLForm formRef={formRef} />
         </Stack>

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import Analysis, { AnalysisProps } from "./Analysis";
+import Analysis, { AnalysisProps, initialFormValues } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
 import DataWrangling, { DataWranglingProps} from "./DataWrangling";
 import UploadData, { UploadDataProps } from "./UploadData";
@@ -17,7 +17,7 @@ import axios from "axios";
 import { GridRowSelectionModel, GridRowId } from "@mui/x-data-grid";
 import { convertMLsToApiValues } from "../enums/machineLearningAlgo";
 import { CircularProgress } from "@mui/material";
-import { MLDataList } from "./MLForm";
+import { MLData, MLDataList } from "./MLForm";
 import { FormikProps } from "formik";
 
 const steps = [
@@ -63,7 +63,7 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
+  const {setMLData, mlData, formRef } = analysisProps;
   const {setImputationValue, imputation} = dataWranglingProps; 
   
 
@@ -100,7 +100,7 @@ function getStepContent({
       );
 
     case 3:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
+      return <Analysis setMLData={setMLData} mlData={mlData} formRef={formRef}/>;
     case 4:
       return <>
       {loading && <CircularProgress />}
@@ -119,10 +119,9 @@ function getStepContent({
 export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [predictions, setPredictions] = useState();
-  const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
-  const [MLTasks, setMLTasks] = useState<any[]>([]);
+  const [mlData, setMlData] = useState<MLData[]>(initialFormValues);
   const [curFiles, setCurFiles] = useState<File[]>([]);
-  const [getData, setGetData] = useState(false);
+  // const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
@@ -145,15 +144,12 @@ export default function CVDAnalysisForm() {
   };
 
   const handleVisual = async () => {
-    const mlAlgorithms = convertMLsToApiValues(MLAlgorithms);
     const selectedDatasetName = selectedData;
     console.log("formValues" , formRef.current?.values);
-    const mlData = formRef.current?.values.MLData;
+    // const mlData = formRef.current?.values.MLData;
     console.log(
       JSON.stringify({
         mlData: mlData,
-        mlAlgorithms: mlAlgorithms,
-        mlTasks: MLTasks,
         checkbox: checkbox,
         imputation: imputation,
         selectedData: selectedDatasetName,
@@ -165,8 +161,6 @@ export default function CVDAnalysisForm() {
       method: "POST",
       body: JSON.stringify({
         mlData: mlData,
-        mlAlgorithms: mlAlgorithms,
-        mlTasks: MLTasks,
         checkbox: checkbox,
         imputation: imputation,
         selectedData: selectedDatasetName,
@@ -293,7 +287,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef },
+                analysisProps: {  setMLData: setMlData, mlData: mlData, formRef },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
