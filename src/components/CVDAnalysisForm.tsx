@@ -63,7 +63,7 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-  const {setMLData, mlData, formRef } = analysisProps;
+  const {setMLData, mlData, formRef, setStateList, stateList } = analysisProps;
   const {setImputationValue, imputation} = dataWranglingProps; 
   
 
@@ -100,7 +100,7 @@ function getStepContent({
       );
 
     case 3:
-      return <Analysis setMLData={setMLData} mlData={mlData} formRef={formRef}/>;
+      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList}formRef={formRef}/>;
     case 4:
       return <>
       {loading && <CircularProgress />}
@@ -120,6 +120,7 @@ export default function CVDAnalysisForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [predictions, setPredictions] = useState();
   const [mlData, setMlData] = useState<MLData[]>(initialFormValues);
+  const [stateList, setStateList] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   // const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
@@ -154,6 +155,8 @@ export default function CVDAnalysisForm() {
         imputation: imputation,
         selectedData: selectedDatasetName,
         target: target,
+        stateList: stateList
+      
       })
     );
     setLoading(true);
@@ -164,7 +167,8 @@ export default function CVDAnalysisForm() {
         checkbox: checkbox,
         imputation: imputation,
         selectedData: selectedDatasetName,
-        target: target
+        target: target,
+        stateList:stateList
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
@@ -287,7 +291,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: {  setMLData: setMlData, mlData: mlData, formRef },
+                analysisProps: {  setMLData: setMlData, mlData: mlData, formRef, setStateList, stateList },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
