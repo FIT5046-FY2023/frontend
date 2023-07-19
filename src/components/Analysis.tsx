@@ -14,16 +14,17 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React, { useState } from "react";
 import { MLTypes, mlTypesList } from "../enums/machineLearningTasks";
 import {
-  spatialAnalysisStates,
-  SpatialStates,
   spatialStatesList,
 } from "../enums/spatialAnalysisStates";
 import {
   classificationMachineLearningAlgo,
   regressionMachineLearningAlgo,
 } from "../enums/machineLearningAlgo";
-import MLForm, { MLData, MLDataList, ParametersSection } from "./MLForm";
+// import MLForm from "./MLForm";
 import { FormikProps } from "formik";
+import { ParametersSection } from "./AnalysisFormComponents/ParametersSection";
+import { MLDataList, MLData } from "./AnalysisFormComponents/mlDatatypes";
+import MLForm from "./MLForm";
 
 export interface AnalysisProps {
   setMLData: React.Dispatch<any[]>;
@@ -49,8 +50,6 @@ const Analysis = (props: AnalysisProps) => {
     event: SelectChangeEvent<any>,
     index: number
   ) => {
-    // setMLType(event.target.value);
-    // setMLTasks([event.target.value]);
     let formValuesCopy = formValues.map((object) => object);
     formValuesCopy[index].mlType = event.target.value;
     formValuesCopy[index].mlAlgo = "";
@@ -59,8 +58,6 @@ const Analysis = (props: AnalysisProps) => {
   };
 
   const handleMLChange = (event: SelectChangeEvent<any>, index: number) => {
-    // setMLAlgos(event.target.value);
-    // console.log(MLAlgorithms);
     let formValuesCopy = formValues.map((object) => object);
     formValuesCopy[index].mlAlgo = event.target.value;
     setFormValues(formValuesCopy);
@@ -72,9 +69,7 @@ const Analysis = (props: AnalysisProps) => {
     console.log(stateList);
   };
 
-  const handleAddTask = (event: any, index?: number) => {
-    // setMLAlgos(event.target.value);
-    // console.log(MLAlgorithms);
+  const handleAddTask = (event: any) => {
     let formValuesCopy = formValues.map((object) => object);
     console.log({ ...emptyForm });
     console.log(formValuesCopy);
@@ -95,26 +90,29 @@ const Analysis = (props: AnalysisProps) => {
     console.log("in handleRemoveTask");
   };
 
-  const handleParamChange = (event: any, indexToRemove: number) => {
+  const handleParamChange = (event: any, indexToRemove: number, option: string) => {
     let name = event.target.name;
     const value = event.target.value;
     console.log(name);
     console.log(value);
-    const [_name, index, mlOptions, parameter] = name.split(".");
+    // const [_name, index, mlOptions, parameter] = name.split(".");
     let formValuesCopy = formValues.map((object, i) => {
       console.log(name);
-      if (i == index) {
-        (object as any).mlOptions[parameter] = value;
+      if (i == indexToRemove) {
+        (object as any).mlOptions[option] = value;
       }
+      // if (i == index) {
+      //   (object as any).mlOptions[parameter] = value;
+      // }
       console.log(object);
       return object;
     });
     console.log(formValuesCopy);
     // (formValuesCopy as any)[parseInt(index as string)].mlOptions[parameter] = value;
     // (formValuesCopy as any)[parseInt(index as string)][mlOptions as string][parameter as string]
-    console.log(formValuesCopy);
+    // console.log(formValuesCopy);
     setFormValues([...formValuesCopy]);
-    console.log("in handleRemoveTask");
+    console.log("in handleParamChange");
   };
   const [hideOldForm, setHideOldForm] = useState<boolean>();
 
@@ -127,7 +125,12 @@ const Analysis = (props: AnalysisProps) => {
       flexDirection={"column"}
     >
       <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
-        <Typography variant="h6" gutterBottom marginTop={1} sx={{fontWeight: "bold"}}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          marginTop={1}
+          sx={{ fontWeight: "bold" }}
+        >
           {" "}
           Spatial Analysis
         </Typography>
@@ -159,9 +162,9 @@ const Analysis = (props: AnalysisProps) => {
             ))}
           </Select>
         </FormControl>
-        
-        <Box paddingTop={1} ></Box>
-        <Typography variant="h6" gutterBottom  sx={{fontWeight: "bold"}} >
+
+        <Box paddingTop={1}></Box>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
           {" "}
           ML Analysis
         </Typography>
@@ -169,7 +172,13 @@ const Analysis = (props: AnalysisProps) => {
         {formValues.map((mlData, index) => {
           return (
             <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
-              <Box>
+              <Box
+                display="flex"
+                justifyContent="flex-start"
+                alignItems="center"
+                minWidth={"100%"}
+                flexDirection={"row"}
+              >
                 {" "}
                 <IconButton
                   size="small"
@@ -177,7 +186,10 @@ const Analysis = (props: AnalysisProps) => {
                 >
                   <DeleteIcon />
                 </IconButton>
-                <Typography> ML Task #{index + 1}</Typography>
+                <Typography align="left" variant="subtitle2">
+                  {" "}
+                  ML Task #{index + 1}
+                </Typography>
               </Box>
               <FormControl fullWidth>
                 <InputLabel id="task-type-select">

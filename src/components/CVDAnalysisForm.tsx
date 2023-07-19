@@ -15,10 +15,9 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import { GridRowSelectionModel, GridRowId } from "@mui/x-data-grid";
-import { convertMLsToApiValues } from "../enums/machineLearningAlgo";
 import { CircularProgress } from "@mui/material";
-import { MLData, MLDataList } from "./MLForm";
 import { FormikProps } from "formik";
+import { MLData, MLDataList } from "./AnalysisFormComponents/mlDatatypes";
 
 const steps = [
   "Upload Dataset",
@@ -147,6 +146,7 @@ export default function CVDAnalysisForm() {
   const handleVisual = async () => {
     const selectedDatasetName = selectedData;
     console.log("formValues" , formRef.current?.values);
+    // uncomment the following to use old analysus form
     // const mlData = formRef.current?.values.MLData;
     console.log(
       JSON.stringify({
@@ -173,6 +173,10 @@ export default function CVDAnalysisForm() {
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
+      mode: "cors", // no-cors, *cors, same-origin
+      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: "same-origin", // include, *same-origin, omit
+
     })
       .then((response) => {
         setLoading(false)
