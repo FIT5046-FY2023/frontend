@@ -5,6 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
 import { MLTypes, machineLearningTasks, mlTypesList } from "../enums/machineLearningTasks";
+import{ spatialAnalysisStates, SpatialStates, spatialStatesList } from "../enums/spatialAnalysisStates"
 import {
   RegressionAlgorithmsKey,
   classificationMachineLearningAlgo,
@@ -19,13 +20,15 @@ export interface AnalysisProps {
   setMLTasks: React.Dispatch<any[]>; 
   MLTasks: any[]; 
   formRef: React.MutableRefObject<FormikProps<MLDataList> | null>;
+  setStateList:React.Dispatch<any[]>;
+  stateList: any[];
 }
 
 const emptyForm: MLData = { mlType: "", mlAlgo: "", mlOptions: {} };
 const initialFormValues: MLData[] = [emptyForm];
 
 const Analysis = (props: AnalysisProps) => {
-    const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = props;
+    const { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef, stateList, setStateList } = props;
     const [ MLType, setMLType ] = useState<string>();
     const [ formValues, setFormValues ] = useState<MLData[]>(initialFormValues);
     const handleMLTasksChange = (event: SelectChangeEvent<any>) => {
@@ -33,6 +36,11 @@ const Analysis = (props: AnalysisProps) => {
       setMLTasks([event.target.value]);
       console.log(MLType);
       console.log(MLTasks);
+    };
+
+    const handleSpatialChange = (event: SelectChangeEvent<any>) => {
+      setStateList(event.target.value); 
+      console.log(stateList)
     };
     const handleMLChange = (event: SelectChangeEvent<any>) => {
       setMLAlgos(event.target.value);
@@ -153,31 +161,48 @@ const Analysis = (props: AnalysisProps) => {
             </Select>
           </FormControl>
 
-          <FormControl fullWidth>
-            <InputLabel id="spatial-analytic-select">
-              Spatial Analytic Algorithms
-            </InputLabel>
-            <Select
-              labelId="spatial-analytic-select"
-              id="spatial-analytic-select"
-              value={[]}
-              label="Spatial Analytic Algorithms"
-              onChange={() => {}}
-              multiple={true}
-              size="small"
-            >
-              {classificationMachineLearningAlgo.map((op) => (
-                <MenuItem key={op.value} value={op.value}>
-                  {op.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+
           
         </Stack>
         ))}
        {hideOldForm && <Button variant="contained" onClick={() => {setFormValues((prevValues) => [...prevValues, emptyForm]
         )}}>Add</Button>}
+
+{ hideOldForm && <FormControl fullWidth>
+            <InputLabel id="spatial-analytic-select">
+              Choose States
+            </InputLabel>
+            <Select
+              labelId="task-type-select"
+              id="task-type-select"
+              value={stateList}
+              label="Spatial Analysis"
+              onChange={handleSpatialChange}
+              multiple={true}
+              size="small"
+              renderValue={(selected) => {
+                console.log(selected);
+                return (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((task) => (
+                      <Chip
+                        key={task}
+                        label={task
+                        }
+                      />
+                    ))}
+                  </Box>
+                );
+              }}
+
+            >
+              {spatialStatesList.map((task) => (
+                <MenuItem key={task.value} value={task.label}>
+                  {task.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>}
         
         <MLForm formRef={formRef} />
         </Stack>
