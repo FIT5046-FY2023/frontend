@@ -63,7 +63,7 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
+  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef, setStateList, stateList } = analysisProps;
   const {setImputationValue, imputation} = dataWranglingProps; 
   
 
@@ -100,7 +100,7 @@ function getStepContent({
       );
 
     case 3:
-      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} formRef={formRef}/>;
+      return <Analysis setMLAlgos={setMLAlgos} MLAlgorithms={MLAlgorithms} setMLTasks={setMLTasks} MLTasks={MLTasks} setStateList={setStateList} stateList ={stateList}formRef={formRef}/>;
     case 4:
       return <>
       {loading && <CircularProgress />}
@@ -121,6 +121,7 @@ export default function CVDAnalysisForm() {
   const [predictions, setPredictions] = useState();
   const [MLAlgorithms, setMLAlgos] = useState<any[]>([]);
   const [MLTasks, setMLTasks] = useState<any[]>([]);
+  const [stateList, setStateList] = useState<any[]>([]);
   const [curFiles, setCurFiles] = useState<File[]>([]);
   const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
@@ -158,6 +159,8 @@ export default function CVDAnalysisForm() {
         imputation: imputation,
         selectedData: selectedDatasetName,
         target: target,
+        stateList: stateList
+      
       })
     );
     setLoading(true);
@@ -170,7 +173,8 @@ export default function CVDAnalysisForm() {
         checkbox: checkbox,
         imputation: imputation,
         selectedData: selectedDatasetName,
-        target: target
+        target: target,
+        stateList:stateList
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
@@ -293,7 +297,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef },
+                analysisProps: { setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef, setStateList, stateList },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
