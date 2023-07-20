@@ -13,22 +13,19 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import React, { useState } from "react";
 import { MLTypes, mlTypesList } from "../enums/machineLearningTasks";
-import {
-  spatialStatesList,
-} from "../enums/spatialAnalysisStates";
+import { spatialStatesList } from "../enums/spatialAnalysisStates";
 import {
   classificationMachineLearningAlgo,
   regressionMachineLearningAlgo,
 } from "../enums/machineLearningAlgo";
-// import MLForm from "./MLForm";
 import { FormikProps } from "formik";
 import { ParametersSection } from "./AnalysisFormComponents/ParametersSection";
 import { MLDataList, MLData } from "./AnalysisFormComponents/mlDatatypes";
 import MLForm from "./MLForm";
 
 export interface AnalysisProps {
-  setMLData: React.Dispatch<any[]>;
-  mlData: any[];
+  setMLData: React.Dispatch<MLData[]>;
+  mlData: MLData[];
   formRef: React.MutableRefObject<FormikProps<MLDataList> | null>;
   setStateList: React.Dispatch<any[]>;
   stateList: any[];
@@ -53,6 +50,7 @@ const Analysis = (props: AnalysisProps) => {
     let formValuesCopy = formValues.map((object) => object);
     formValuesCopy[index].mlType = event.target.value;
     formValuesCopy[index].mlAlgo = "";
+    formValuesCopy[index].mlOptions = {};
     setFormValues(formValuesCopy);
     console.log(formValuesCopy);
   };
@@ -60,6 +58,7 @@ const Analysis = (props: AnalysisProps) => {
   const handleMLChange = (event: SelectChangeEvent<any>, index: number) => {
     let formValuesCopy = formValues.map((object) => object);
     formValuesCopy[index].mlAlgo = event.target.value;
+    formValuesCopy[index].mlOptions = {};
     setFormValues(formValuesCopy);
     console.log(formValuesCopy);
   };
@@ -90,27 +89,24 @@ const Analysis = (props: AnalysisProps) => {
     console.log("in handleRemoveTask");
   };
 
-  const handleParamChange = (event: any, indexToRemove: number, option: string) => {
+  const handleParamChange = (
+    event: React.ChangeEvent<any>,
+    indexToRemove: number,
+    option: string
+  ) => {
     let name = event.target.name;
     const value = event.target.value;
     console.log(name);
     console.log(value);
-    // const [_name, index, mlOptions, parameter] = name.split(".");
     let formValuesCopy = formValues.map((object, i) => {
       console.log(name);
       if (i == indexToRemove) {
         (object as any).mlOptions[option] = value;
       }
-      // if (i == index) {
-      //   (object as any).mlOptions[parameter] = value;
-      // }
       console.log(object);
       return object;
     });
     console.log(formValuesCopy);
-    // (formValuesCopy as any)[parseInt(index as string)].mlOptions[parameter] = value;
-    // (formValuesCopy as any)[parseInt(index as string)][mlOptions as string][parameter as string]
-    // console.log(formValuesCopy);
     setFormValues([...formValuesCopy]);
     console.log("in handleParamChange");
   };

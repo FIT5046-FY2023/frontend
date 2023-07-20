@@ -14,7 +14,6 @@ import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { GridRowSelectionModel, GridRowId } from "@mui/x-data-grid";
 import { CircularProgress } from "@mui/material";
 import { FormikProps } from "formik";
 import { MLData, MLDataList } from "./AnalysisFormComponents/mlDatatypes";

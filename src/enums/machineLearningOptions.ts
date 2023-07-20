@@ -1,6 +1,4 @@
-export const mlOptionFields = {
-    KNNneighbours: "KNNneighbours", 
-    RFTrees: "trees"
+export enum mlOptionFields {
+    KNNneighbours = "KNNneighbours", 
+    RFTrees = "trees"
 };
-
-export {}
