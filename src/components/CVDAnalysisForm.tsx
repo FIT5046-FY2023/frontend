@@ -54,17 +54,17 @@ function getStepContent({
   const {
     checkbox,
     setCheckboxValues,
-    checkboxOptions,
     setTarget,
     target,
     loading: loadingPreprocess,
-    setLoading
+    setLoading,
+    checkboxOptions
 
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
-  const {setImputationValue, imputation, setOutlierValue, outlier} = dataWranglingProps; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox} = dataWranglingProps; 
   
 
   switch (step) {
@@ -85,6 +85,8 @@ function getStepContent({
       imputation={imputation}
       setOutlierValue={setOutlierValue}
       outlier= {outlier}
+      dataWranglingOptions={dataWranglingOptions}
+      setDataWranglingCheckbox={setDataWranglingCheckbox}
       ></DataWrangling>
     case 2:
       return (
@@ -127,6 +129,8 @@ export default function CVDAnalysisForm() {
   const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
+  const [dataWranglingCheckbox, setDataWranglingCheckbox] = useState<any[]>([]);
+  const [dataWranglingOptions, setDataWranglingOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
   const [outlier, setOutlierValue] = useState("");
   const [target, setTarget] = useState("");
@@ -256,11 +260,30 @@ export default function CVDAnalysisForm() {
         return response.json();})
       .then((data) => {
         setCheckboxOptions(data.headerLabels)
+
+        var rows = [];
+  
+          for (var i = 0; i < data.headerLabels.length; i++) {
+            var featureObject = {
+              id: i,
+              feature: data.headerLabels[i],
+              //correlation: data.corrList[i],
+              minimum: data.minList[i],
+              maximum: data.maxList[i],
+              mean: data.meanList[i],
+            };
+  
+            rows.push(featureObject);
+          }
+        setDataWranglingOptions(rows)
+        
       })
       .catch((err) => {
         setLoading(false);
         console.log(err.message);
       });
+
+      
 
     handleNext();
   };
@@ -307,7 +330,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
@@ -317,6 +340,7 @@ export default function CVDAnalysisForm() {
                   loading,
                   selectedData,
                   setLoading, 
+                  
                   
                 },
                 visualisationProps: {
@@ -345,7 +369,7 @@ export default function CVDAnalysisForm() {
                         ? handlePreprocess
                         : activeStep === steps.length - 2
                         ? handleAnalysis
-                        : activeStep === steps.length - 4
+                        : activeStep === steps.length - 5
                         ? handleCheckboxOptions
                         : handleNext
                     }

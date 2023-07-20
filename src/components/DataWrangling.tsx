@@ -1,4 +1,5 @@
-import { FormControl, FormControlLabel, Radio, RadioGroup, FormLabel } from "@mui/material";
+import { FormControl, FormControlLabel, Radio, RadioGroup, FormLabel, Button } from "@mui/material";
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import React from "react";
 
 export interface DataWranglingProps {
@@ -6,22 +7,53 @@ export interface DataWranglingProps {
   imputation: React.SetStateAction<string>;
   setOutlierValue: React.Dispatch<React.SetStateAction<string>>;
   outlier: React.SetStateAction<string>;
+  dataWranglingOptions: any[];
+  setDataWranglingCheckbox: React.Dispatch<
+  React.SetStateAction<GridRowSelectionModel>
+>; 
 }
 
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'id', width:100},
+  { field: 'feature', headerName: 'Feature', width: 250 },
+  //{ field: 'correlation', headerName: 'Correlation', type: 'number', width: 160 },
+  { field: 'minimum', headerName: 'Minimum', type: 'number', width: 160 },
+  { field: 'maximum', headerName: 'Maximum', type: 'number', width: 160 },
+  { field: 'mean', headerName: 'Mean', type: 'number', width: 160}
+];
+
 const DataWrangling = (props:DataWranglingProps) => {
-  const {setImputationValue, imputation, setOutlierValue, outlier} = props; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox} = props; 
+  
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setImputationValue((event.target as HTMLInputElement).value);
+  };
+
+  const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
+    setDataWranglingCheckbox(newSelection);
   };
 
   const handleOutliers = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOutlierValue((event.target as HTMLInputElement).value);
   };
 
+  const handleApplyButton = () => {
+  };
+
     return <> 
 
 <h2> Data Wrangling </h2>
+
+<div style={{ height: 500, width: '100%' }}>
+  <DataGrid
+    rows={dataWranglingOptions}
+    columns={columns}
+    checkboxSelection
+    onRowSelectionModelChange={handleSelectionChange}
+  />
+</div>
+
 
 <FormControl>
     <FormLabel>Imputation</FormLabel>
@@ -55,6 +87,8 @@ const DataWrangling = (props:DataWranglingProps) => {
         <FormControlLabel value="iqr" control={<Radio />} label="IQR" />  
       </RadioGroup>
 </FormControl>
+
+<div ><Button variant="outlined" onClick={handleApplyButton}>Apply</Button></div>
 
     </>
 };
