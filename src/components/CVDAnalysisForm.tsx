@@ -64,7 +64,7 @@ function getStepContent({
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
-  const {setImputationValue, imputation} = dataWranglingProps; 
+  const {setImputationValue, imputation, setOutlierValue, outlier} = dataWranglingProps; 
   
 
   switch (step) {
@@ -83,6 +83,8 @@ function getStepContent({
       return <DataWrangling 
       setImputationValue={setImputationValue}
       imputation={imputation}
+      setOutlierValue={setOutlierValue}
+      outlier= {outlier}
       ></DataWrangling>
     case 2:
       return (
@@ -126,9 +128,11 @@ export default function CVDAnalysisForm() {
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
+  const [outlier, setOutlierValue] = useState("");
   const [target, setTarget] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
+
 
   const formRef = useRef<FormikProps<MLDataList> | null>(null);
 
@@ -160,6 +164,7 @@ export default function CVDAnalysisForm() {
         target: target,
       })
     );
+    setPredictions(undefined)
     setLoading(true);
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
@@ -302,7 +307,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
@@ -311,7 +316,8 @@ export default function CVDAnalysisForm() {
                   target,
                   loading,
                   selectedData,
-                  setLoading
+                  setLoading, 
+                  
                 },
                 visualisationProps: {
                   results: predictions,
