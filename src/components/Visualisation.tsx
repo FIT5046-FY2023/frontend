@@ -28,6 +28,18 @@ type ClassificationMlResult = {
   Roc_Auc: string;
   Specificity: string;
 }[];
+
+type SpatialResult = {
+  Name: string;
+  State: string;
+  AccuracyScore: string;
+  PrecisionScore: string;
+  RecallScore: string;
+  F1Score: string;
+  Roc_Auc: string;
+  Specificity: string;
+}[];
+
 export interface ScatterPoint {
   name: number;
   uv: number;
@@ -46,7 +58,9 @@ const Visualisation = (props: VisualisationProps) => {
   const classification_results: ClassificationMlResult = props?.results?.classification_results?.map((result: string) => {
     return JSON.parse(result);
   });
-
+  const spatial_results: SpatialResult = props?.results?.spatial_results?.map((result: string) => {
+    return JSON.parse(result);
+  });
   
 
   console.log("props", props);
@@ -66,6 +80,20 @@ const Visualisation = (props: VisualisationProps) => {
     console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
     return {
       name: Name,
+      accuracy: AccuracyScore,
+      precision: PrecisionScore,
+      recall: RecallScore,
+      f1: F1Score,
+      roc_auc: Roc_Auc,
+      specificity: Specificity
+    };
+  });
+  const spatialBarData = spatial_results?.map((result) => {
+    const { Name, State, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity} = result;
+    console.log(Name, State, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
+    return {
+      name: Name,
+      state: State,
       accuracy: AccuracyScore,
       precision: PrecisionScore,
       recall: RecallScore,
@@ -205,6 +233,32 @@ const Visualisation = (props: VisualisationProps) => {
               width={1000}
               height={700}
               data={classificationBarData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="accuracy" fill="#8884d8" />
+              <Bar dataKey="precision" fill="#82ca9d" />
+              <Bar dataKey="recall" fill="#b34a8d" />
+              <Bar dataKey="f1" fill="#c99a8d" />
+              <Bar dataKey="roc_auc" fill="#ff7f50" />
+              <Bar dataKey="specificity" fill="#00ced1" />
+            </BarChart></>}
+            {spatialBarData.length > 0 && <><Typography variant="h5" gutterBottom align="center">
+            Spatial Analysis Results
+          </Typography>
+            <BarChart
+              width={1000}
+              height={700}
+              data={spatialBarData}
               margin={{
                 top: 5,
                 right: 30,
