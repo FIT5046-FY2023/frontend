@@ -6,7 +6,6 @@ import {
   ErrorMessage,
   FieldArray,
   FieldArrayRenderProps,
-  useFormik,
   FormikProps,
 } from "formik";
 import { MLTypes, mlTypesList } from "../enums/machineLearningTasks";
@@ -17,23 +16,7 @@ import {
   regressionMachineLearningAlgo,
 } from "../enums/machineLearningAlgo";
 import { Box, Button, Stack, Typography } from "@mui/material";
-
-interface KNNOptions {
-  KNNneighbours?: number;
-}
-
-interface RandomForestOptions {
-  trees?: number;
-}
-
-export interface MLData {
-  mlType: MLTypes | "";
-  mlAlgo:
-    | RegressionAlgorithmsApiValues
-    | ClassificationAlgorithmsApiValues
-    | "";
-  mlOptions: KNNOptions | RandomForestOptions | {};
-}
+import { MLData } from "./AnalysisFormComponents/mlDatatypes";
 
 export interface MLDataList {
   MLData: MLData[];
