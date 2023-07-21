@@ -1,7 +1,7 @@
 import { Stack, TextField } from "@mui/material";
 import { RegressionAlgorithmsApiValues, ClassificationAlgorithmsApiValues } from "../../enums/machineLearningAlgo";
 import { mlOptionFields } from "../../enums/machineLearningOptions";
-import { MLData } from "./mlDatatypes";
+import { KNNOptions, MLData } from "./mlDatatypes";
 
 export type ParameterSectionProps = {
     algoName: string; 
@@ -25,7 +25,7 @@ export type ParameterSectionProps = {
             id="filled-number"
             label="Number of Trees"
             type="number"
-            value={data.mlOptions?.trees ? data.mlOptions?.trees : ""} 
+            value={data.mlOptions? mlOptionFields.RFTrees in data.mlOptions ?  data.mlOptions[mlOptionFields.RFTrees] : "" : ""} 
             onChange={(e) => handleChange(e, index, mlOptionFields.RFTrees)}
             // onChange={(e) => handleChange(e, index, 'trees')}
             InputLabelProps={{
@@ -68,7 +68,7 @@ export type ParameterSectionProps = {
             id="filled-number"
             label="Number of Neighbours"
             type="number"
-            value={data.mlOptions?.KNNneighbours ? data.mlOptions?.KNNneighbours : ""} 
+            value={data.mlOptions ? (data.mlOptions as KNNOptions)[mlOptionFields.KNNneighbours] ? (data.mlOptions as KNNOptions)[mlOptionFields.KNNneighbours] : "" :""}
             onChange={(e) => handleChange(e, index, mlOptionFields.KNNneighbours)}
             InputLabelProps={{
               shrink: true,

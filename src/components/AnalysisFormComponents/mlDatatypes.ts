@@ -1,12 +1,13 @@
 import { RegressionAlgorithmsApiValues, ClassificationAlgorithmsApiValues } from "../../enums/machineLearningAlgo";
+import { mlOptionFields } from "../../enums/machineLearningOptions";
 import { MLTypes } from "../../enums/machineLearningTasks";
 
-interface KNNOptions {
-    KNNneighbours?: number;
-  }
+export type KNNOptions = {
+    [mlOptionFields.KNNneighbours]?: number;
+};
   
   interface RandomForestOptions {
-    trees?: number;
+    [mlOptionFields.RFTrees]?: number;
   }
   
   export interface MLData {
@@ -15,7 +16,7 @@ interface KNNOptions {
       | RegressionAlgorithmsApiValues
       | ClassificationAlgorithmsApiValues
       | "";
-    mlOptions: KNNOptions & RandomForestOptions & {};
+    mlOptions: KNNOptions | RandomForestOptions | {};
   }
   
   export interface MLDataList {
