@@ -10,7 +10,9 @@ export interface DataWranglingProps {
   dataWranglingOptions: any[];
   setDataWranglingCheckbox: React.Dispatch<
   React.SetStateAction<GridRowSelectionModel>
+  
 >; 
+dataWranglingCheckbox: any[]; 
 }
 
 const columns: GridColDef[] = [
@@ -23,7 +25,7 @@ const columns: GridColDef[] = [
 ];
 
 const DataWrangling = (props:DataWranglingProps) => {
-  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox} = props; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox} = props; 
   
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +40,29 @@ const DataWrangling = (props:DataWranglingProps) => {
     setOutlierValue((event.target as HTMLInputElement).value);
   };
 
-  const handleApplyButton = () => {
+  const handleApplyButton = async () => {
+
+    let dataWranglingBody = JSON.stringify({imputation: imputation, outliermethod: outlier, checkboxes: dataWranglingCheckbox})
+
+    console.log(dataWranglingBody)
+
+    fetch("http://127.0.0.1:5000/applydatawrangling", {
+        method: "POST",
+        body: dataWranglingBody,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((response) => { 
+          //setLoading(false);
+          return response.json();})
+        .then((data) => {
+          console.log(data)
+        })
+        .catch((err) => {
+          //setLoading(false);
+          console.log(err.message);
+        });
   };
 
     return <> 

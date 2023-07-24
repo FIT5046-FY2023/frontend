@@ -64,7 +64,7 @@ function getStepContent({
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
-  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox} = dataWranglingProps; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox} = dataWranglingProps; 
   
 
   switch (step) {
@@ -87,6 +87,7 @@ function getStepContent({
       outlier= {outlier}
       dataWranglingOptions={dataWranglingOptions}
       setDataWranglingCheckbox={setDataWranglingCheckbox}
+      dataWranglingCheckbox={dataWranglingCheckbox}
       ></DataWrangling>
     case 2:
       return (
@@ -257,9 +258,13 @@ export default function CVDAnalysisForm() {
     })
       .then((response) => { 
         setLoading(false);
+        
         return response.json();})
       .then((data) => {
+        
         setCheckboxOptions(data.headerLabels)
+
+        console.log(data)
 
         var rows = [];
   
@@ -275,7 +280,10 @@ export default function CVDAnalysisForm() {
   
             rows.push(featureObject);
           }
+        
         setDataWranglingOptions(rows)
+
+        
         
       })
       .catch((err) => {
@@ -330,7 +338,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
