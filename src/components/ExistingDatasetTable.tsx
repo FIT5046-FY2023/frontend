@@ -13,14 +13,25 @@ import {
   RadioGroup,
   FormControlLabel,
   Typography,
+  LinearProgress,
+  IconButton,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect, useState } from "react";
 import React from "react";
+import {
+  DataGrid,
+  GRID_CHECKBOX_SELECTION_COL_DEF,
+  GridColDef,
+  GridNoRowsOverlay,
+  GridRowsProp,
+} from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { LoadingButton } from "@mui/lab";
 
-interface SelectedDatasetInfo{
-    datasetName: string;
-    headers: string[];
+interface SelectedDatasetInfo {
+  datasetName: string;
+  headers: string[];
 }
 interface ExistingDatasetTableProps {
   selectedData: React.SetStateAction<string>;
@@ -36,6 +47,7 @@ const ExistingDatasetTable = ({
   const [error, setError] = useState("");
   const [selectedDataset, setSelectedDataset] = useState();
   const [datasetsResult, setDatasetsResult] = useState<string[]>([]);
+  const [processingDelete, setProcessingDelete] = useState<boolean>(false);
 
   // Set up cache system for already downloaded datasets so don't have to redownload
   //   const tableHeaders = ["Name", "Size", "Action"];
@@ -44,6 +56,45 @@ const ExistingDatasetTable = ({
   const handlePreview = (index: number) => {
     setLoadingDataset(true);
     handleFetchDataset(index);
+  };
+
+  const removeDataset = (indexToRemove: number) => {
+    const updatedDatasetResult = datasetsResult.filter((_dataset, idx) => idx !== indexToRemove);
+    setDatasetsResult(updatedDatasetResult);
+  }
+
+  const handleDeleteDataset = async (e: any, index:number) => {
+    console.log("handleDeleteDataset", e, index);
+    setProcessingDelete(true);
+    console.log("Request body:\n",  JSON.stringify({
+      datasetNames: [datasetsResult[index]],
+    }));
+
+    fetch("http://127.0.0.1:5000/db_datasets", {
+      method: "DELETE",
+      body: JSON.stringify({
+        datasetNames: [datasetsResult[index]],
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => {
+        setProcessingDelete(false);
+        console.log(response);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("data", data);
+        console.log("data", data.document);
+        removeDataset(index);
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setLoadingDataset(false);
+        setError(err.message);
+      });
+
   };
 
   const handleFetchDataset = async (index: number) => {
@@ -97,6 +148,75 @@ const ExistingDatasetTable = ({
   const headerKeys = () =>
     selectedDataset ? Object.keys(selectedDataset) : [];
   console.log(headerKeys);
+
+  const newTableHeaderKeys = () => {
+    const [name, action, _] = tableHeaders;
+    const columns: GridColDef[] = [
+      {
+        ...GRID_CHECKBOX_SELECTION_COL_DEF,
+        width: 100,
+      },
+      { field: "name", headerName: name, width: 350 },
+
+      {
+        field: "action",
+        headerName: action,
+        width: 150,
+        renderCell: (params) => {
+          const idx =
+            typeof params.id === "string"
+              ? parseInt(params.id)
+              : (params.id as number);
+          return <PreviewBtn index={idx} />;
+        },
+      },
+
+      {
+        field: "delete",
+        headerName: "Delete",
+        width: 150,
+        renderCell: (params) => {
+          const idx =
+            typeof params.id === "string"
+              ? parseInt(params.id)
+              : (params.id as number);
+            const name = params.row.name;
+            console.log("render call name:", name);
+          return <DeleteBtn index={idx} />;
+        },
+      },
+    ];
+    return columns;
+  };
+
+  const PreviewBtn = ({ index }: { index: number }) => {
+    return (
+      <Button
+        variant="outlined"
+        onClick={(e) => handlePreview(index)}
+        startIcon={<VisibilityIcon />}
+      >
+        Preview
+      </Button>
+    );
+  };
+  const DeleteBtn = ({ index }: { index: number }) => {
+    return (
+      <IconButton size="small" onClick={(e) => handleDeleteDataset(e, index)}>
+        <DeleteIcon />
+      </IconButton>
+    );
+  };
+
+  const rows: GridRowsProp<{id: number, name: string}> = datasetsResult?.map(
+    (datasetName: string, index: number) => {
+      console.log(datasetName);
+      return {
+        id: index,
+        name: datasetName
+      };
+    }
+  );
 
   return (
     <>
@@ -162,6 +282,26 @@ const ExistingDatasetTable = ({
           </Table>
         </TableContainer>
       </Card>
+
+      <>
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            checkboxSelection
+            columns={newTableHeaderKeys()}
+            slots={{
+              loadingOverlay: LinearProgress,
+              noRowsOverlay: GridNoRowsOverlay,
+            }}
+            loading={loadingDatasets}
+            disableRowSelectionOnClick
+            onRowSelectionModelChange={(rowSelectionModel) =>
+              console.log(rowSelectionModel)
+            }
+          />
+        </div>
+      </>
+
       <br />
       {loadingDataset && <CircularProgress />}
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
