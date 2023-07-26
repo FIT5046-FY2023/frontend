@@ -203,7 +203,7 @@ const Visualisation = (props: VisualisationProps) => {
             }}
             
           >
-           { regressionBarData.length > 0 && <><Typography variant="h5" gutterBottom align="center">
+           { regressionBarData?.length > 0 && <><Typography variant="h5" gutterBottom align="center">
             Regression Results
           </Typography>
             <BarChart
@@ -226,7 +226,7 @@ const Visualisation = (props: VisualisationProps) => {
               <Bar dataKey="mse" fill="#82ca9d" />
               <Bar dataKey="R2" fill="#b34a8d" />
             </BarChart></>}
-           {classificationBarData.length > 0 && <><Typography variant="h5" gutterBottom align="center">
+           {classificationBarData?.length > 0 && <><Typography variant="h5" gutterBottom align="center">
             Classification Results
           </Typography>
             <BarChart
@@ -252,7 +252,7 @@ const Visualisation = (props: VisualisationProps) => {
               <Bar dataKey="roc_auc" fill="#ff7f50" />
               <Bar dataKey="specificity" fill="#00ced1" />
             </BarChart></>}
-            {spatialBarData.length > 0 && <><Typography variant="h5" gutterBottom align="center">
+            {spatialBarData?.length > 0 && <><Typography variant="h5" gutterBottom align="center">
             Spatial Analysis Results
           </Typography>
             <BarChart

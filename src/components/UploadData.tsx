@@ -197,7 +197,6 @@ const UploadData = (props: UploadDataProps) => {
       <TabPanel value={value} index={1}>
         
         <ExistingDatasetTable selectedData={selectedData} setSelectedData={setSelectedData}></ExistingDatasetTable>
-        <CheckboxSelectionCustom />
       </TabPanel>
       </Box>
        
@@ -231,33 +230,3 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 export default UploadData;
-
-
-
-export function CheckboxSelectionCustom() {
-  const rows: GridRowsProp = [
-    { id: 1, col1: 'Hello', col2: 'World' },
-    { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-    { id: 3, col1: 'MUI', col2: 'is Amazing' },
-  ];
-  
-  const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Column 1', width: 150 },
-    { field: 'col2', headerName: 'Column 2', width: 150 },
-    {
-      ...GRID_CHECKBOX_SELECTION_COL_DEF,
-      width: 100,
-    },
-  ];
-
-  return (
-    <>
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid rows={rows} checkboxSelection columns={columns} />
-    </div>
-    <div style={{ height: 300, width: '100%' }}>
-    <DataGrid rows={rows} columns={columns} />
-  </div>
-  </>
-  );
-}
