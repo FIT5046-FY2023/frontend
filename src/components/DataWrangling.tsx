@@ -10,8 +10,9 @@ export interface DataWranglingProps {
   dataWranglingOptions: any[];
   setDataWranglingCheckbox: React.Dispatch<
   React.SetStateAction<GridRowSelectionModel>
-  
+ 
 >; 
+setDataWranglingOptions: React.Dispatch<React.SetStateAction<any[]>>
 dataWranglingCheckbox: any[]; 
 }
 
@@ -25,7 +26,7 @@ const columns: GridColDef[] = [
 ];
 
 const DataWrangling = (props:DataWranglingProps) => {
-  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox} = props; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = props; 
   
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +58,22 @@ const DataWrangling = (props:DataWranglingProps) => {
           //setLoading(false);
           return response.json();})
         .then((data) => {
-          console.log(data)
+          var rows = [];
+  
+          for (var i = 0; i < data.headerLabels.length; i++) {
+            var featureObject = {
+              id: i,
+              feature: data.headerLabels[i],
+              //correlation: data.corrList[i],
+              minimum: data.minList[i],
+              maximum: data.maxList[i],
+              mean: data.meanList[i],
+            };
+  
+            rows.push(featureObject);
+          }
+        
+        setDataWranglingOptions(rows)
         })
         .catch((err) => {
           //setLoading(false);

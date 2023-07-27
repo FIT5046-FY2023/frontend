@@ -64,7 +64,7 @@ function getStepContent({
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
-  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox} = dataWranglingProps; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = dataWranglingProps; 
   
 
   switch (step) {
@@ -86,6 +86,7 @@ function getStepContent({
       setOutlierValue={setOutlierValue}
       outlier= {outlier}
       dataWranglingOptions={dataWranglingOptions}
+      setDataWranglingOptions = {setDataWranglingOptions}
       setDataWranglingCheckbox={setDataWranglingCheckbox}
       dataWranglingCheckbox={dataWranglingCheckbox}
       ></DataWrangling>
@@ -338,7 +339,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
