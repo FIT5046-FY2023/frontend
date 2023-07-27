@@ -52,17 +52,19 @@ function getStepContent({
   const {
     checkbox,
     setCheckboxValues,
-    checkboxOptions,
     setTarget,
     target,
     loading: loadingPreprocess,
-    setLoading
+    setLoading,
+    checkboxOptions
 
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-  const {setMLData, mlData, formRef, setStateList, stateList } = analysisProps;
-  const {setImputationValue, imputation} = dataWranglingProps; 
+
+  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox} = dataWranglingProps; 
+
   
 
   switch (step) {
@@ -81,6 +83,11 @@ function getStepContent({
       return <DataWrangling 
       setImputationValue={setImputationValue}
       imputation={imputation}
+      setOutlierValue={setOutlierValue}
+      outlier= {outlier}
+      dataWranglingOptions={dataWranglingOptions}
+      setDataWranglingCheckbox={setDataWranglingCheckbox}
+      dataWranglingCheckbox={dataWranglingCheckbox}
       ></DataWrangling>
     case 2:
       return (
@@ -123,10 +130,14 @@ export default function CVDAnalysisForm() {
   // const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
+  const [dataWranglingCheckbox, setDataWranglingCheckbox] = useState<any[]>([]);
+  const [dataWranglingOptions, setDataWranglingOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
+  const [outlier, setOutlierValue] = useState("");
   const [target, setTarget] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
+
 
   const formRef = useRef<FormikProps<MLDataList> | null>(null);
 
@@ -158,6 +169,7 @@ export default function CVDAnalysisForm() {
       
       })
     );
+    setPredictions(undefined)
     setLoading(true);
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
@@ -249,14 +261,40 @@ export default function CVDAnalysisForm() {
     })
       .then((response) => { 
         setLoading(false);
+        
         return response.json();})
       .then((data) => {
+        
         setCheckboxOptions(data.headerLabels)
+
+        console.log(data)
+
+        var rows = [];
+  
+          for (var i = 0; i < data.headerLabels.length; i++) {
+            var featureObject = {
+              id: i,
+              feature: data.headerLabels[i],
+              //correlation: data.corrList[i],
+              minimum: data.minList[i],
+              maximum: data.maxList[i],
+              mean: data.meanList[i],
+            };
+  
+            rows.push(featureObject);
+          }
+        
+        setDataWranglingOptions(rows)
+
+        
+        
       })
       .catch((err) => {
         setLoading(false);
         console.log(err.message);
       });
+
+      
 
     handleNext();
   };
@@ -303,7 +341,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
@@ -312,7 +350,9 @@ export default function CVDAnalysisForm() {
                   target,
                   loading,
                   selectedData,
-                  setLoading
+                  setLoading, 
+                  
+                  
                 },
                 visualisationProps: {
                   results: predictions,
@@ -340,7 +380,7 @@ export default function CVDAnalysisForm() {
                         ? handlePreprocess
                         : activeStep === steps.length - 2
                         ? handleAnalysis
-                        : activeStep === steps.length - 4
+                        : activeStep === steps.length - 5
                         ? handleCheckboxOptions
                         : handleNext
                     }
