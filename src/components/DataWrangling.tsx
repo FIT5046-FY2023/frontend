@@ -1,5 +1,6 @@
 import { FormControl, FormControlLabel, Radio, RadioGroup, FormLabel, Button } from "@mui/material";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { CircularProgress } from "@mui/material";
 import React from "react";
 
 export interface DataWranglingProps {
@@ -10,10 +11,12 @@ export interface DataWranglingProps {
   dataWranglingOptions: any[];
   setDataWranglingCheckbox: React.Dispatch<
   React.SetStateAction<GridRowSelectionModel>
+  
  
 >; 
 setDataWranglingOptions: React.Dispatch<React.SetStateAction<any[]>>
 dataWranglingCheckbox: any[]; 
+loading:boolean; 
 }
 
 const columns: GridColDef[] = [
@@ -26,7 +29,7 @@ const columns: GridColDef[] = [
 ];
 
 const DataWrangling = (props:DataWranglingProps) => {
-  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = props; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions, loading} = props; 
   
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +85,9 @@ const DataWrangling = (props:DataWranglingProps) => {
   };
 
     return <> 
-
+ {loading ? <CircularProgress /> :
+    (
+      <div>
 <h2> Data Wrangling </h2>
 
 <div style={{ height: 500, width: '100%' }}>
@@ -129,7 +134,9 @@ const DataWrangling = (props:DataWranglingProps) => {
 </FormControl>
 
 <div ><Button variant="outlined" onClick={handleApplyButton}>Apply</Button></div>
-
+</div>
+)}; 
     </>
+   
 };
 export default DataWrangling;

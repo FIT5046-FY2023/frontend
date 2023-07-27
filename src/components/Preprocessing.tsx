@@ -169,7 +169,9 @@ const Preprocessing = (props: PreprocessProps) => {
 
     return <> 
     {loading ? <CircularProgress /> :
-    (<div> 
+    (
+    
+    <div> 
 
 <h2> Feature Selection </h2>
 

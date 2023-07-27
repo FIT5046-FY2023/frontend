@@ -78,7 +78,7 @@ function getStepContent({
         />
       );
     case 1:
-      return <DataWrangling 
+      return <><DataWrangling 
       setImputationValue={setImputationValue}
       imputation={imputation}
       setOutlierValue={setOutlierValue}
@@ -87,7 +87,9 @@ function getStepContent({
       setDataWranglingOptions = {setDataWranglingOptions}
       setDataWranglingCheckbox={setDataWranglingCheckbox}
       dataWranglingCheckbox={dataWranglingCheckbox}
+      loading={loading}
       ></DataWrangling>
+      </>
     case 2:
       return (
         <Preprocessing
@@ -339,7 +341,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions, loading}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
