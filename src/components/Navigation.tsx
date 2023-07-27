@@ -1,4 +1,3 @@
-import { IconButton, Link } from "@mui/material";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -33,18 +32,7 @@ const Navigation = (props: HeaderProps) => {
                 </>
                 ))}
             </Toolbar>
-            <Toolbar sx={{ borderColor: 'divider' }}>
-              <Typography
-                component="h2"
-                variant="h5"
-                color="inherit"
-                align="center"
-                noWrap
-                sx={{ flex: 1 }}
-              >
-                {title}
-              </Typography>
-            </Toolbar>
+        
           </React.Fragment>
         );
       
