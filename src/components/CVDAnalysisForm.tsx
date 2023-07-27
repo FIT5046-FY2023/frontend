@@ -61,8 +61,7 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
-
-  const {setMLAlgos, MLAlgorithms, setMLTasks, MLTasks, formRef } = analysisProps;
+  const {setMLData, mlData, formRef, setStateList, stateList } = analysisProps;
   const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = dataWranglingProps; 
   
 
@@ -105,7 +104,7 @@ function getStepContent({
       );
 
     case 3:
-      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList}formRef={formRef}/>;
+      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList} formRef={formRef}/>;
     case 4:
       return <>
       {loading && <CircularProgress />}
@@ -266,7 +265,6 @@ export default function CVDAnalysisForm() {
       .then((data) => {
         
         setCheckboxOptions(data.headerLabels)
-
         console.log(data)
 
         var rows = [];
@@ -332,7 +330,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: {  setMLData: setMlData, mlData: mlData, formRef, setStateList, stateList },
+                analysisProps: {setMLData: setMlData, mlData: mlData, formRef, setStateList, stateList },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
