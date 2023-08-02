@@ -17,7 +17,7 @@ type RegressionMlResult = {
   MeanSquareError: string;
   RootMeanSquareError: string;
   R2_Score: string;
-}[];
+};
 
 type ClassificationMlResult = {
   Name: string;
@@ -27,7 +27,7 @@ type ClassificationMlResult = {
   F1Score: string;
   Roc_Auc: string;
   Specificity: string;
-}[];
+};
 
 type SpatialResult = {
   Name: string;
@@ -38,7 +38,7 @@ type SpatialResult = {
   F1Score: string;
   Roc_Auc: string;
   Specificity: string;
-}[];
+};
 
 export interface ScatterPoint {
   name: number;
@@ -51,17 +51,20 @@ export interface VisualisationProps {
 }
 
 const Visualisation = (props: VisualisationProps) => {
-  const { loading } = props;
-  const regression_results: RegressionMlResult = props?.results?.regression_results?.map((result: string) => {
+  const { loading, results } = props;
+  console.log(results)
+  console.log(props)
+
+  const regression_results: RegressionMlResult[] = props?.results?.regression_results?.map((result: string) => {
     return JSON.parse(result);
   });
-  const classification_results: ClassificationMlResult = props?.results?.classification_results?.map((result: string) => {
+  const classification_results: ClassificationMlResult[] = props?.results?.classification_results?.map((result: string) => {
     return JSON.parse(result);
   });
-  const spatial_results: SpatialResult = props?.results?.spatial_results?.map((result: string) => {
-    return JSON.parse(result);
+  const spatial_results: SpatialResult[] = props?.results?.spatial_results?.map((result: string) => {
+    return result;
   });
-  
+
 
   console.log("props", props);
   console.log("results", regression_results);
@@ -88,11 +91,15 @@ const Visualisation = (props: VisualisationProps) => {
       specificity: Specificity
     };
   });
-  const spatialBarData = spatial_results?.map((result) => {
+  
+  console.log(spatial_results);
+  
+  const spatialBarData = spatial_results?.map((result: SpatialResult) => {
+    console.log(result);
     const { Name, State, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity} = result;
     console.log(Name, State, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
     return {
-      name: Name,
+      name: `${Name} (${State})`,
       state: State,
       accuracy: AccuracyScore,
       precision: PrecisionScore,
