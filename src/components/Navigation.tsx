@@ -2,9 +2,11 @@ import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const sections = [
-  { title: "Home", url: "#" },
+  { title: "Analyse Dataset", url: "/" },
+  { title: "Compare Results", url: "compare-results" },
   { title: "About", url: "#" },
 ];
 
@@ -28,7 +30,8 @@ const Navigation = (props: HeaderProps) => {
             >
                 {sections.map((section) => (
                 <>
-                <Button size="small">{section.title}</Button>
+                <Link to={section.url}>
+                <Button size="small">{section.title}</Button></Link>
                 </>
                 ))}
             </Toolbar>

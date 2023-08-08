@@ -1,37 +1,32 @@
-import {
-  Card,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Button,
-  Paper,
-  CircularProgress,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Typography,
-  LinearProgress,
-  IconButton,
-} from "@mui/material";
+import { AppBar, Button, CircularProgress, Container, IconButton, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { GridRowsProp, GridColDef, GRID_CHECKBOX_SELECTION_COL_DEF, DataGrid, GridNoRowsOverlay } from "@mui/x-data-grid";
+import { useState, useEffect } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useEffect, useState } from "react";
-import React from "react";
-import {
-  DataGrid,
-  GRID_CHECKBOX_SELECTION_COL_DEF,
-  GridColDef,
-  GridNoRowsOverlay,
-  GridRowsProp,
-} from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-interface SelectedDatasetInfo {
-  datasetName: string;
-  headers: string[];
+export default function SelectResultsForComparison({handleComparison}:{handleComparison: React.MouseEventHandler<HTMLButtonElement>}) {
+  return (
+    <Container component="main" sx={{ mb: 4, br: 32 }}>
+      <ExistingDatasetTable
+        selectedData={""}
+        setSelectedData={function (value: React.SetStateAction<string>): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
+      <AppBar
+        position="absolute"
+        color="default"
+        elevation={0}
+        sx={{
+          position: "relative",
+          borderBottom: (t) => `1px solid ${t.palette.divider}`,
+        }}
+      ></AppBar>
+
+    </Container>
+  );
 }
+
 interface ExistingDatasetTableProps {
   selectedData: React.SetStateAction<string>;
   setSelectedData: React.Dispatch<React.SetStateAction<string>>;
@@ -160,7 +155,7 @@ const ExistingDatasetTable = ({
   const handleSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedData(event.target.value);
     //console.log("selected value: " + selectedValue)
-  }; 
+  };
 
   const headerKeys = () =>
     selectedDataset ? Object.keys(selectedDataset) : [];
@@ -243,35 +238,30 @@ const ExistingDatasetTable = ({
 
   return (
     <>
-      
-
-      
-        <div style={{ height: 400, width: "100%" }}>
-          <DataGrid
-            rows={rows}
-            checkboxSelection
-            columns={newTableHeaderKeys()}
-            slots={{
-              loadingOverlay: LinearProgress,
-              noRowsOverlay: GridNoRowsOverlay,
-            }}
-            loading={loadingDatasets}
-            disableRowSelectionOnClick
-            onRowSelectionModelChange={(rowSelectionModel) =>
-              {
-                console.log("rowSelectionModel");
-                console.log(rowSelectionModel)
-                let index = rowSelectionModel[0];
-                if (index !== undefined){
-                  index = typeof index === "string" ? parseInt(index)
-                  : (index as number);
-                  console.log(rows[index].name);
-                  setSelectedData(rows[index].name);
-                }
-              }
+      <div style={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          checkboxSelection
+          columns={newTableHeaderKeys()}
+          slots={{
+            loadingOverlay: LinearProgress,
+            noRowsOverlay: GridNoRowsOverlay,
+          }}
+          loading={loadingDatasets}
+          disableRowSelectionOnClick
+          onRowSelectionModelChange={(rowSelectionModel) => {
+            console.log("rowSelectionModel");
+            console.log(rowSelectionModel);
+            let index = rowSelectionModel[0];
+            if (index !== undefined) {
+              index =
+                typeof index === "string" ? parseInt(index) : (index as number);
+              console.log(rows[index].name);
+              setSelectedData(rows[index].name);
             }
-          />
-        </div>
+          }}
+        />
+      </div>
 
       <br />
       {loadingDataset && <CircularProgress />}
@@ -343,6 +333,3 @@ const fetchDatasets = async ({
       });
   }
 };
-
-export default ExistingDatasetTable;
-export { fetchDatasets };

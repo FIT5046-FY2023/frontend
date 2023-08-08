@@ -131,7 +131,7 @@ const Analysis = (props: AnalysisProps) => {
           Spatial Analysis
         </Typography>
         <FormControl fullWidth>
-          <InputLabel id="spatial-analytic-select">Choose States</InputLabel>
+           <InputLabel size="small" id="spatial-analytic-select">Choose States</InputLabel>
           <Select
             labelId="task-type-select"
             id="task-type-select"
@@ -188,7 +188,7 @@ const Analysis = (props: AnalysisProps) => {
                 </Typography>
               </Box>
               <FormControl fullWidth>
-                <InputLabel id="task-type-select">
+                 <InputLabel size="small" id="task-type-select">
                   Machine Learning Task
                 </InputLabel>
                 <Select
@@ -209,7 +209,7 @@ const Analysis = (props: AnalysisProps) => {
               </FormControl>
 
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
+                 <InputLabel size="small" id="demo-simple-select-label">
                   Machine Learning Algorithm
                 </InputLabel>
                 <Select
@@ -218,7 +218,6 @@ const Analysis = (props: AnalysisProps) => {
                   value={mlData.mlAlgo}
                   label="Machine Learning Algorithm"
                   onChange={(e) => handleMLChange(e, index)}
-                  multiple={false}
                   size="small"
                 >
                   {mlData.mlType === MLTypes.Regression &&

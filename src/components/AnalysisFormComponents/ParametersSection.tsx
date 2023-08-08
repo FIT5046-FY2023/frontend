@@ -31,7 +31,8 @@ export type ParameterSectionProps = {
             InputLabelProps={{
               shrink: true,
             }}
-            variant="filled"
+            variant="outlined"
+            size="small"
           />
           {/* <label
             htmlFor={`MLData.${index}.mlOptions.maxDepth`}
