@@ -1,5 +1,5 @@
 import { LoadingButton } from "@mui/lab";
-import { Typography, Paper, Box, CircularProgress, Button } from "@mui/material";
+import { Typography, Paper, Box } from "@mui/material";
 import React, { useState } from "react";
 import {
   CartesianGrid,
@@ -47,7 +47,7 @@ export interface ScatterPoint {
 export interface VisualisationProps {
   results: any;
   loading: boolean;
-  handleSaveResults: (results:any) => void;
+  handleSaveResults: (results:any, setResultsSaved:React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
 const Visualisation = (props: VisualisationProps) => {
@@ -114,19 +114,22 @@ const Visualisation = (props: VisualisationProps) => {
 
   const handleSaveResults = () => {
     // TODO: Post to backend
-    saveResults(results);
-    setResultsSaved(true);
+    saveResults(results, setResultsSaved);
+    // setResultsSaved(true);
   }
 
   const saveResultsText = resultsSaved ? "Results saved" : "Save Results"
 
   return (
     <React.Fragment>
+
+      {!loading && (
+        <>
       <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
         <LoadingButton 
         variant="contained" 
         onClick={handleSaveResults}
-        loading={resultsSaved}
+        loading={loading}
         loadingPosition="start"
         disabled={resultsSaved}
            >{saveResultsText}</LoadingButton>
@@ -134,9 +137,6 @@ const Visualisation = (props: VisualisationProps) => {
       <Typography variant="h5" gutterBottom align="center">
         Analysis Results
       </Typography>
-
-      {!loading && (
-        <>
           {!!regression_results &&
             regression_results.map((result) => {
               const {

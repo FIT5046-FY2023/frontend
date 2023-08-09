@@ -102,7 +102,7 @@ function getStepContent({
     case 4:
       return <>
       {loading && <CircularProgress />}
-      {!!predictions && (
+      {!!predictions && !loading && (
         <Visualisation results={predictions} loading={loadingVisual} handleSaveResults={handleSaveResults}></Visualisation>
       )}
 
@@ -261,10 +261,10 @@ export default function CVDAnalysisForm() {
     handleNext();
   };
 
-  const handleSaveResults = async (results:any) => {
+  const handleSaveResults = async (results:any, setResultsSaved:React.Dispatch<React.SetStateAction<boolean>>) => {
     console.log("save results POST");
     console.log(JSON.stringify({ results: results, datasetName: selectedData}));
-
+    setLoading(true);
     fetch("http://127.0.0.1:5000/save_results", {
       method: "POST",
       body: JSON.stringify({ results: results, datasetName: selectedData}),
@@ -272,8 +272,11 @@ export default function CVDAnalysisForm() {
         "Content-type": "application/json; charset=UTF-8",
       },
     }).then((response) => { 
+      setLoading(false);
+      setResultsSaved(true);
       return response.json();})
     .catch((err) => {
+      setLoading(false);
       console.log(err.message);
     });
   }
