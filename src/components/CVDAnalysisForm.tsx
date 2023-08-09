@@ -60,7 +60,7 @@ function getStepContent({
 
   } = preprocessProps;
 
-  const {results: predictions, loading: loadingVisual} = visualisationProps;
+  const {results: predictions, loading: loadingVisual, handleSaveResults} = visualisationProps;
   const {setMLData, mlData, formRef, setStateList, stateList } = analysisProps;
   const {setImputationValue, imputation} = dataWranglingProps; 
   
@@ -103,7 +103,7 @@ function getStepContent({
       return <>
       {loading && <CircularProgress />}
       {!!predictions && (
-        <Visualisation results={predictions} loading={loadingVisual}></Visualisation>
+        <Visualisation results={predictions} loading={loadingVisual} handleSaveResults={handleSaveResults}></Visualisation>
       )}
 
     </>
@@ -261,6 +261,23 @@ export default function CVDAnalysisForm() {
     handleNext();
   };
 
+  const handleSaveResults = async (results:any) => {
+    console.log("save results POST");
+    console.log(JSON.stringify({ results: results, datasetName: selectedData}));
+
+    fetch("http://127.0.0.1:5000/save_results", {
+      method: "POST",
+      body: JSON.stringify({ results: results, datasetName: selectedData}),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    }).then((response) => { 
+      return response.json();})
+    .catch((err) => {
+      console.log(err.message);
+    });
+  }
+
   return (
     <React.Fragment>
       <AppBar
@@ -316,7 +333,8 @@ export default function CVDAnalysisForm() {
                 },
                 visualisationProps: {
                   results: predictions,
-                  loading
+                  loading,
+                  handleSaveResults: handleSaveResults
                 }
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

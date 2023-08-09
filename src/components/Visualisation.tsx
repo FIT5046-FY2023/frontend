@@ -1,8 +1,7 @@
-import { Typography, Paper, Box, CircularProgress } from "@mui/material";
-import React from "react";
+import { LoadingButton } from "@mui/lab";
+import { Typography, Paper, Box, CircularProgress, Button } from "@mui/material";
+import React, { useState } from "react";
 import {
-  ScatterChart,
-  Scatter,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -48,12 +47,15 @@ export interface ScatterPoint {
 export interface VisualisationProps {
   results: any;
   loading: boolean;
+  handleSaveResults: (results:any) => void;
 }
 
 const Visualisation = (props: VisualisationProps) => {
-  const { loading, results } = props;
-  console.log(results)
-  console.log(props)
+  const { loading, results, handleSaveResults: saveResults } = props;
+  const [ resultsSaved, setResultsSaved ] = useState<boolean>(false);
+  console.log("results");
+  console.log(results);
+  console.log(props);
 
   const regression_results: RegressionMlResult[] = props?.results?.regression_results?.map((result: string) => {
     return JSON.parse(result);
@@ -110,15 +112,30 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
 
+  const handleSaveResults = () => {
+    // TODO: Post to backend
+    saveResults(results);
+    setResultsSaved(true);
+  }
+
+  const saveResultsText = resultsSaved ? "Results saved" : "Save Results"
+
   return (
     <React.Fragment>
+      <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+        <LoadingButton 
+        variant="contained" 
+        onClick={handleSaveResults}
+        loading={resultsSaved}
+        loadingPosition="start"
+        disabled={resultsSaved}
+           >{saveResultsText}</LoadingButton>
+      </Box>
       <Typography variant="h5" gutterBottom align="center">
         Analysis Results
       </Typography>
 
-      {loading ? (
-        <CircularProgress />
-      ) : (
+      {!loading && (
         <>
           {!!regression_results &&
             regression_results.map((result) => {
