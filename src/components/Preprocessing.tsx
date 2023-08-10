@@ -61,7 +61,7 @@ const Preprocessing = (props: PreprocessProps) => {
     const filterMethods = ["Select K Features"]
     const regressionOptions = ['Linear Regression'];
     const classificationOptions = ['K-Nearest'];
-    const otherOptions = ['PCA'];
+    const otherOptions = ['PCA']; 
 
 
     const selectedAlgos = selectedAlgo === 'regression' ? regressionOptions : classificationOptions 
@@ -169,12 +169,14 @@ const Preprocessing = (props: PreprocessProps) => {
 
     return <> 
     {loading ? <CircularProgress /> :
-    (<div> 
+    (
+    
+    <div> 
 
 <h2> Feature Selection </h2>
 
 <FormControl sx={{ m: 1, minWidth: 350 }}>
-    <InputLabel id="demo-simple-select-label">Feature Selection Method </InputLabel>
+    <InputLabel id="demo-simple-select-label">Feature Selection Method</InputLabel>
     <Select
       labelId="demo-simple-select-label"
       id="demo-simple-select"

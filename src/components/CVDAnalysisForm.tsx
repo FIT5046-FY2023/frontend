@@ -52,17 +52,17 @@ function getStepContent({
   const {
     checkbox,
     setCheckboxValues,
-    checkboxOptions,
     setTarget,
     target,
     loading: loadingPreprocess,
-    setLoading
+    setLoading,
+    checkboxOptions
 
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual} = visualisationProps;
   const {setMLData, mlData, formRef, setStateList, stateList } = analysisProps;
-  const {setImputationValue, imputation} = dataWranglingProps; 
+  const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = dataWranglingProps; 
   
 
   switch (step) {
@@ -78,10 +78,18 @@ function getStepContent({
         />
       );
     case 1:
-      return <DataWrangling 
+      return <><DataWrangling 
       setImputationValue={setImputationValue}
       imputation={imputation}
+      setOutlierValue={setOutlierValue}
+      outlier= {outlier}
+      dataWranglingOptions={dataWranglingOptions}
+      setDataWranglingOptions = {setDataWranglingOptions}
+      setDataWranglingCheckbox={setDataWranglingCheckbox}
+      dataWranglingCheckbox={dataWranglingCheckbox}
+      loading={loading}
       ></DataWrangling>
+      </>
     case 2:
       return (
         <Preprocessing
@@ -98,7 +106,7 @@ function getStepContent({
       );
 
     case 3:
-      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList}formRef={formRef}/>;
+      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList} formRef={formRef}/>;
     case 4:
       return <>
       {loading && <CircularProgress />}
@@ -123,10 +131,14 @@ export default function CVDAnalysisForm() {
   // const [getData, setGetData] = useState(false);
   const [checkbox, setCheckboxValues] = React.useState<any[]>([]);
   const [checkboxOptions, setCheckboxOptions] = useState<any[]>([]);
+  const [dataWranglingCheckbox, setDataWranglingCheckbox] = useState<any[]>([]);
+  const [dataWranglingOptions, setDataWranglingOptions] = useState<any[]>([]);
   const [imputation, setImputationValue] = useState("");
+  const [outlier, setOutlierValue] = useState("");
   const [target, setTarget] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
+
 
   const formRef = useRef<FormikProps<MLDataList> | null>(null);
 
@@ -154,10 +166,11 @@ export default function CVDAnalysisForm() {
         imputation: imputation,
         selectedData: selectedDatasetName,
         target: target,
-        stateList: stateList
+        stateList: stateList 
       
       })
     );
+    setPredictions(undefined)
     setLoading(true);
     fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
@@ -238,7 +251,8 @@ export default function CVDAnalysisForm() {
   };
 
   const handleCheckboxOptions = async () => {
-    const selectedDatasetName = selectedData;
+    let selectedDatasetName = selectedData;
+    console.log(selectedDatasetName)
     setLoading(true);
     fetch("http://127.0.0.1:5000/dropdown", {
       method: "POST",
@@ -249,14 +263,39 @@ export default function CVDAnalysisForm() {
     })
       .then((response) => { 
         setLoading(false);
+        
         return response.json();})
       .then((data) => {
+        
         setCheckboxOptions(data.headerLabels)
+        console.log(data)
+
+        var rows = [];
+  
+          for (var i = 0; i < data.headerLabels.length; i++) {
+            var featureObject = {
+              id: i,
+              feature: data.headerLabels[i],
+              //correlation: data.corrList[i],
+              minimum: data.minList[i],
+              maximum: data.maxList[i],
+              mean: data.meanList[i],
+            };
+  
+            rows.push(featureObject);
+          }
+        
+        setDataWranglingOptions(rows)
+
+        
+        
       })
       .catch((err) => {
         setLoading(false);
         console.log(err.message);
       });
+
+      
 
     handleNext();
   };
@@ -294,7 +333,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: {  setMLData: setMlData, mlData: mlData, formRef, setStateList, stateList },
+                analysisProps: {setMLData: setMlData, mlData: mlData, formRef, setStateList, stateList },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
@@ -303,7 +342,7 @@ export default function CVDAnalysisForm() {
                   selectedData,
                   setSelectedData,
                 },
-                dataWranglingProps: {setImputationValue, imputation}, 
+                dataWranglingProps: {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions, loading}, 
                 preprocessProps: {
                   checkbox,
                   setCheckboxValues,
@@ -312,7 +351,9 @@ export default function CVDAnalysisForm() {
                   target,
                   loading,
                   selectedData,
-                  setLoading
+                  setLoading, 
+                  
+                  
                 },
                 visualisationProps: {
                   results: predictions,
@@ -340,7 +381,7 @@ export default function CVDAnalysisForm() {
                         ? handlePreprocess
                         : activeStep === steps.length - 2
                         ? handleAnalysis
-                        : activeStep === steps.length - 4
+                        : activeStep === steps.length - 5
                         ? handleCheckboxOptions
                         : handleNext
                     }
