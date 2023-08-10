@@ -166,7 +166,7 @@ export default function CVDAnalysisForm() {
         imputation: imputation,
         selectedData: selectedDatasetName,
         target: target,
-        stateList: stateList
+        stateList: stateList 
       
       })
     );
@@ -251,7 +251,8 @@ export default function CVDAnalysisForm() {
   };
 
   const handleCheckboxOptions = async () => {
-    const selectedDatasetName = selectedData;
+    let selectedDatasetName = selectedData;
+    console.log(selectedDatasetName)
     setLoading(true);
     fetch("http://127.0.0.1:5000/dropdown", {
       method: "POST",
