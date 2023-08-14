@@ -112,14 +112,41 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
 
-  const handleSaveResults = () => {
+  //const handleSaveResults = () => {
     // TODO: Post to backend
-    saveResults(results, setResultsSaved);
+    //saveResults(results, setResultsSaved);
     // setResultsSaved(true);
-  }
+  //}
 
   const saveResultsText = resultsSaved ? "Results saved" : "Save Results"
 
+  function handleSaveButtonClick() {
+    const dataToSave = gatherDataForSaving(); 
+    const apiUrl = "/save_results"; 
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToSave),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Data saved:", data);
+      })
+      .catch((error) => {
+        console.error("Error saving data:", error);
+      });
+  }
+
+  function gatherDataForSaving() {
+    const data = {
+      regression_results, 
+      classification_results
+    }
+    return data;
+  }
+  
   return (
     <React.Fragment>
 
@@ -128,7 +155,7 @@ const Visualisation = (props: VisualisationProps) => {
       <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
         <LoadingButton 
         variant="contained" 
-        onClick={handleSaveResults}
+        onClick={handleSaveButtonClick}
         loading={loading}
         loadingPosition="start"
         disabled={resultsSaved}
