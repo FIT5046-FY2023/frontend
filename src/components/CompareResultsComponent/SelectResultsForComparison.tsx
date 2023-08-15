@@ -4,15 +4,16 @@ import { useState, useEffect } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function SelectResultsForComparison({handleComparison}:{handleComparison: React.MouseEventHandler<HTMLButtonElement>}) {
+export default function SelectResultsForComparison({handleComparison, results}:{handleComparison: React.MouseEventHandler<HTMLButtonElement>, results: any}) {
   return (
     <Container component="main" sx={{ mb: 4, br: 32 }}>
-      <ExistingDatasetTable
+      {results}
+      {/* <ExistingDatasetTable
         selectedData={""}
         setSelectedData={function (value: React.SetStateAction<string>): void {
           throw new Error("Function not implemented.");
         }}
-      />
+      /> */}
       <AppBar
         position="absolute"
         color="default"
