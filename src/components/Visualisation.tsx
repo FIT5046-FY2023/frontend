@@ -112,40 +112,42 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
 
-  //const handleSaveResults = () => {
+  const handleSaveResults = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
     // TODO: Post to backend
-    //saveResults(results, setResultsSaved);
-    // setResultsSaved(true);
-  //}
+    e.preventDefault();
+    saveResults(results, setResultsSaved);
+    setResultsSaved(true);
+  }
 
   const saveResultsText = resultsSaved ? "Results saved" : "Save Results"
 
-  function handleSaveButtonClick() {
-    const dataToSave = gatherDataForSaving(); 
-    const apiUrl = "/save_results"; 
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataToSave),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Data saved:", data);
-      })
-      .catch((error) => {
-        console.error("Error saving data:", error);
-      });
-  }
+  // function handleSaveButtonClick() {
+  //   const dataToSave = gatherDataForSaving(); 
+  //   const apiUrl = "http://127.0.0.1:5000/save_results"; 
+  //   fetch(apiUrl, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(dataToSave),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("Data saved:", data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error saving data:", error);
+  //     });
+  // }
 
-  function gatherDataForSaving() {
-    const data = {
-      regression_results, 
-      classification_results
-    }
-    return data;
-  }
+  // function gatherDataForSaving() {
+  //   const data = {
+  //     regression_results, 
+  //     classification_results
+  //   }
+  //   return data;
+  // }
   
   return (
     <React.Fragment>
@@ -155,7 +157,7 @@ const Visualisation = (props: VisualisationProps) => {
       <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
         <LoadingButton 
         variant="contained" 
-        onClick={handleSaveButtonClick}
+        onClick={e => handleSaveResults(e)}
         loading={loading}
         loadingPosition="start"
         disabled={resultsSaved}
