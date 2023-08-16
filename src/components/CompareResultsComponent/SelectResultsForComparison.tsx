@@ -2,22 +2,10 @@ import {
   AppBar,
   Box,
   Button,
-  CircularProgress,
   Container,
-  IconButton,
-  LinearProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
 } from "@mui/material";
 import AllResultsTable, {
-  AllResultsTableProps,
-  TableData,
+  AllResultsTableProps
 } from "./AllResultsTable";
 
 type SelectResultsForComparisonProps = {

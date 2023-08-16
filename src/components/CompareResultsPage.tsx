@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 import SelectResultsForComparison from "./CompareResultsComponent/SelectResultsForComparison";
 import CompareResultsSection from "./CompareResultsComponent/CompareResultsSection";
+import { ClassificationMlResult, RegressionMlResult } from "./CompareResultsComponent/CompareVisualisation";
 
 type ClassificationResult = {
   Name: string;
@@ -24,20 +25,18 @@ type ClassificationResult = {
   Predictions: any[];
 }
 
-// TODO
-type RegressionResult = {
+type RegressionResult = RegressionMlResult;
 
-}
 type CvdResults = {
-  classificationResults?: ClassificationResult[];
-  regressionResults?: RegressionResult[];
+  classification_results?: ClassificationMlResult[];
+  regression_results?: RegressionResult[];
   results?: any[]; // TO BE Defined
   spatial_results?: any[];
 }
 export type DataResultInfo = {
   datasetName: string;
   dateCreated: string;
-  cvdResults: any;
+  cvdResults: CvdResults;
  }
 
 const steps = ["Select Results", "Compare Results"];
@@ -49,6 +48,7 @@ const CompareResults = () => {
   const [selectedResults, setSelectedResults] = useState<number[]>([]);
 
   const handleComparison = (e: any) => {
+
     setShowCompareResults(!showCompareResults);
     setActiveStep(activeStep + 1);
   };
@@ -71,9 +71,13 @@ const CompareResults = () => {
     return mappedTableData
   }
 
-  const parseRawData = (rawData: any[]): DataResultInfo[] => {
-    // let mappedResults = [];
+  const mapResultsForVisualisation = (data: DataResultInfo[]) => {
+    const filteredResults = selectedResults.map(index => allResults[index]);
+    console.log('filtered results:', filteredResults);
+    return filteredResults.map(result => result);
+  };
 
+  const parseRawData = (rawData: any[]): DataResultInfo[] => {
     console.log('rawData',rawData);
     console.log('rawData',typeof rawData);
     const mappedResults = rawData.map((result: any) => {
@@ -154,7 +158,7 @@ const CompareResults = () => {
         
        
         {!!activeStep ? (
-          <CompareResultsSection />
+          <CompareResultsSection results={mapResultsForVisualisation(allResults)} loading={false} />
         ) : ( 
           <SelectResultsForComparison
               handleComparison={handleComparison}

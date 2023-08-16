@@ -39,7 +39,7 @@ function getStepContent({
   uploadDataProps: UploadDataProps;
   dataWranglingProps: DataWranglingProps; 
   preprocessProps: PreprocessProps;
-  visualisationProps: VisualisationProps;
+  visualisationProps: Omit<VisualisationProps, 'saveEnabled'>;
 }) {
   const {
     curFiles,
@@ -103,7 +103,7 @@ function getStepContent({
       return <>
       {loading && <CircularProgress />}
       {!!predictions && !loading && (
-        <Visualisation results={predictions} loading={loadingVisual} handleSaveResults={handleSaveResults}></Visualisation>
+        <Visualisation results={predictions} loading={loadingVisual} handleSaveResults={handleSaveResults} saveEnabled={true}></Visualisation>
       )}
 
     </>
