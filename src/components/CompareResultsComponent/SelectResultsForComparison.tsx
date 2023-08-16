@@ -7,7 +7,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 export default function SelectResultsForComparison({handleComparison, results}:{handleComparison: React.MouseEventHandler<HTMLButtonElement>, results: any}) {
   return (
     <Container component="main" sx={{ mb: 4, br: 32 }}>
-      {results}
+      {results && JSON.stringify(results)}
       {/* <ExistingDatasetTable
         selectedData={""}
         setSelectedData={function (value: React.SetStateAction<string>): void {
