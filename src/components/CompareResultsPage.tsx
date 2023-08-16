@@ -28,21 +28,25 @@ type ClassificationResult = {
 type RegressionResult = {
 
 }
-
-type CvdResult = {
+type CvdResults = {
+  classificationResults?: ClassificationResult[];
+  regressionResults?: RegressionResult[];
+  results?: any[]; // TO BE Defined
+  spatial_results?: any[];
+}
+export type DataResultInfo = {
   datasetName: string;
   dateCreated: string;
-  cvdResults: 
-  {classificationResults?: ClassificationResult[];
-  regressionResults?: RegressionResult[];
-}}
+  cvdResults: any;
+ }
 
 const steps = ["Select Results", "Compare Results"];
 
 const CompareResults = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [showCompareResults, setShowCompareResults] = useState<Boolean>(false);
-  const [allResults, setAllResults] = useState<any[]>([]);
+  const [allResults, setAllResults] = useState<DataResultInfo[]>([]);
+  const [selectedResults, setSelectedResults] = useState<number[]>([]);
 
   const handleComparison = (e: any) => {
     setShowCompareResults(!showCompareResults);
@@ -61,15 +65,13 @@ const CompareResults = () => {
     handleFetchAllResults();
   }, []);
 
-  useEffect(() => {
-    console.log(mapResultsToTableData(allResults));
-  }, [allResults]);
-
-  const mapResultsToTableData = (data: any[]) => {
-    return allResults.map(result => ({datasetName: result.datasetName, dateCreated: result.dateCreated}))
+  const mapResultsToTableData = (data: DataResultInfo[]) => {
+    const mappedTableData = allResults.map(result => ({datasetName: result.datasetName, dateCreated: result.dateCreated}));
+    console.log(mappedTableData);
+    return mappedTableData
   }
 
-  const parseRawData = (rawData: any[]) => {
+  const parseRawData = (rawData: any[]): DataResultInfo[] => {
     // let mappedResults = [];
 
     console.log('rawData',rawData);
@@ -149,23 +151,19 @@ const CompareResults = () => {
             ))}
           </Stepper>
         </Container>
-        <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-          {activeStep === 0 && (
-            <Button variant="contained" onClick={handleComparison}>
-              {" "}
-              Compare Results{" "}
-            </Button>
-          )}
-        </Box>
-
+        
+       
         {!!activeStep ? (
           <CompareResultsSection />
-        ) : (
+        ) : ( 
           <SelectResultsForComparison
-            handleComparison={handleComparison}
-            results={allResults}
+              handleComparison={handleComparison}
+              tableData={mapResultsToTableData(allResults)} 
+              setSelectedResults={setSelectedResults} 
+              selectedResults={selectedResults}
           />
         )}
+        
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           {activeStep !== 0 && (
             <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
