@@ -57,6 +57,7 @@ const CompareResults = () => {
   };
 
   const handleStartOver = () => {
+    setSelectedResults([]);
     setActiveStep(0);
     setShowCompareResults(false);
   };

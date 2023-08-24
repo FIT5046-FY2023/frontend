@@ -172,33 +172,6 @@ const Visualisation = (props: VisualisationProps) => {
 
   const saveResultsText = resultsSaved ? "Results saved" : "Save Results";
 
-  // function handleSaveButtonClick() {
-  //   const dataToSave = gatherDataForSaving();
-  //   const apiUrl = "http://127.0.0.1:5000/save_results";
-  //   fetch(apiUrl, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(dataToSave),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log("Data saved:", data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error saving data:", error);
-  //     });
-  // }
-
-  // function gatherDataForSaving() {
-  //   const data = {
-  //     regression_results,
-  //     classification_results
-  //   }
-  //   return data;
-  // }
-
   return (
     <React.Fragment>
       {!loading && (
