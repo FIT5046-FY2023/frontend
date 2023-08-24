@@ -178,6 +178,12 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
     any
   >(newRegressionResults);
   console.log("combined regression results", combinedRegressionResults);
+  
+  const combinedRegressionBarData = combinedRegressionResults.map((r) => {
+    const obj = { ...r, name: `${r.datasetName} \n${r.name}` };
+    return omit(obj, ["datasetName"]) as RegressionBarData;
+  });
+  // Filter by ML regression
   const regressionAlgos = uniq(combinedRegressionResults.map((r) => r.name));
   let algosToBarData: Record<string, any[]> = {};
   console.log("unique regression Algos", regressionAlgos);
@@ -188,10 +194,55 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
     algosToBarData[algo] = filteredBarData;
     console.log(algosToBarData);
   });
-  const combinedRegressionBarData = combinedRegressionResults.map((r) => {
-    const obj = { ...r, name: `${r.datasetName} \n${r.name}` };
-    return omit(obj, ["datasetName"]) as RegressionBarData;
+  // Filter by ML classification
+  const classificationAlgos = uniq(combinedClassResults.map((r) => r.name));
+  let classAlgoBarData: Record<string, any[]> = {};
+  console.log("unique regression Algos", classificationAlgos);
+  classificationAlgos.forEach((algo) => {
+    const filteredBarData = combinedClassResults.filter(
+      (r) => r.name === algo
+    );
+    classAlgoBarData[algo] = filteredBarData;
+    console.log(classAlgoBarData);
   });
+  const ClassMLFilteredBarCharts = () => 
+    Object.entries(classAlgoBarData).map(([key, barData]) => {
+      console.log(key, barData);
+
+      return (
+        <>
+          <Typography variant="h6" gutterBottom align="center">
+            {key}
+          </Typography>
+          <Typography variant="body1" gutterBottom align="center">
+                      {"Datasets: "+ barData.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
+                    </Typography>
+          <BarChart
+        width={1000}
+        height={300}
+        data={barData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="datasetName" tick={<CustomXAxisTick />}/>
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="accuracy" fill="#8884d8" />
+        <Bar dataKey="precision" fill="#82ca9d" />
+        <Bar dataKey="recall" fill="#b34a8d" />
+        <Bar dataKey="f1" fill="#c99a8d" />
+        <Bar dataKey="roc_auc" fill="#ff7f50" />
+        <Bar dataKey="specificity" fill="#00ced1" />
+      </BarChart>
+        </>
+      );
+    });
 
   const MLFilteredBarCharts = () => 
     Object.entries(algosToBarData).map(([key, barData]) => {
@@ -202,9 +253,12 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
           <Typography variant="h6" gutterBottom align="center">
             {key}
           </Typography>
+          <Typography variant="body1" gutterBottom align="center">
+                      {"Datasets: "+ barData.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
+                    </Typography>
           <BarChart
         width={1000}
-        height={700}
+        height={300}
         data={barData}
         margin={{
           top: 5,
@@ -241,12 +295,32 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
               height: "10000",
             }}
           >
-            <Typography variant="h5" gutterBottom align="center">
+            <Typography variant="h4" gutterBottom align="center">
               Spatial Results
             </Typography>
+            <Typography variant="h5" gutterBottom align="center">
+              Comparing All Dataset Results
+            </Typography>
+            <Typography variant="body1" gutterBottom align="center">
+              {"Datasets: "+ results.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
+            </Typography>
             {combinedRegressionBarData?.length > 1 &&<RegressionBarChart barData={combinedRegressionBarData} />}
-            {MLFilteredBarCharts()}
             {combinedClassBarData?.length > 1 && <ClassificationBarChart barData={combinedClassBarData} />}
+
+            <Typography variant="body1" gutterBottom align="center" sx={{marginBottom: "2rem"}}>
+              
+            </Typography>
+            <Typography variant="h5" gutterBottom align="center">
+              Comparing By Machine Learning Algorithms
+            </Typography>
+            <Typography variant="body1" gutterBottom align="center">
+              {"Datasets: "+ results.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
+            </Typography>
+            {MLFilteredBarCharts()}
+            {ClassMLFilteredBarCharts()}
+
+
+            
           </Paper>
           <Paper
             variant="outlined"
@@ -258,7 +332,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             {newRegressionResults?.length > 0 && (
               <>
                 <Typography variant="h5" gutterBottom align="center">
-                  Regression Results
+                  Regression Results By Dataset
                 </Typography>
                 {newRegressionResults.map((r) => (
                   <>
@@ -273,7 +347,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                     )}
                     <BarChart
                       width={1000}
-                      height={700}
+                      height={400}
                       data={r.results}
                       margin={{
                         top: 5,
@@ -448,7 +522,7 @@ const RegressionBarChart = ({
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
+        <XAxis dataKey="name" tick={<CustomXAxisTick />} />
         <YAxis />
         <Tooltip />
         <Legend />
