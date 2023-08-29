@@ -1,5 +1,8 @@
 import { Typography, Paper, Box, CircularProgress } from "@mui/material";
-import React from "react";
+import Chart from "chart.js/auto";
+import { CategoryScale } from "chart.js";
+import FeatureBarChart from "./FeatureBarChart"; 
+import React, { useState } from "react";
 import {
   ScatterChart,
   Scatter,
@@ -17,6 +20,9 @@ type RegressionMlResult = {
   MeanSquareError: string;
   RootMeanSquareError: string;
   R2_Score: string;
+  Ranking: string; 
+  Feature_Importance_Mean: Array<number>;
+  Feature_Name_Ranking: Array<string>; 
 };
 
 type ClassificationMlResult = {
@@ -27,6 +33,8 @@ type ClassificationMlResult = {
   F1Score: string;
   Roc_Auc: string;
   Specificity: string;
+  Feature_Importance_Mean: string;
+  Feature_Name_Ranking: string; 
 };
 
 type SpatialResult = {
@@ -50,10 +58,12 @@ export interface VisualisationProps {
   loading: boolean;
 }
 
+Chart.register(CategoryScale);
+
 const Visualisation = (props: VisualisationProps) => {
   const { loading, results } = props;
-  console.log(results)
-  console.log(props)
+
+ 
 
   const regression_results: RegressionMlResult[] = props?.results?.regression_results?.map((result: string) => {
     return JSON.parse(result);
@@ -65,12 +75,37 @@ const Visualisation = (props: VisualisationProps) => {
     return result;
   });
 
-
+  console.log(results)
   console.log("props", props);
   console.log("results", regression_results);
+ 
+  const chartDataArray = regression_results?.map((result) => {
+    const { Feature_Importance_Mean, Feature_Name_Ranking } = result;
+    const ranking = {
+      
+      labels: Feature_Name_Ranking, 
+      datasets: [
+        {
+          label: "Feature Name Ranking ",
+          data: Feature_Importance_Mean,
+          backgroundColor: [
+            "rgba(75,192,192,1)",
+            "#50AF95",
+            "#f3ba2f",
+            "#2a71d0"
+          ],
+          borderColor: "black",
+          borderWidth: 2
+        } ]
+      }
+
+    return ranking
+});
+
   const regressionBarData = regression_results?.map((result) => {
-    const { Name, MeanSquareError, RootMeanSquareError, R2_Score } = result;
-    console.log(Name, MeanSquareError, RootMeanSquareError, R2_Score);
+    const { Name, MeanSquareError, RootMeanSquareError, R2_Score, Feature_Importance_Mean,
+    Feature_Name_Ranking } = result;
+    console.log("hello", Feature_Importance_Mean,Feature_Name_Ranking);
     return {
       name: Name,
       mse: MeanSquareError,
@@ -79,8 +114,9 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
   const classificationBarData = classification_results?.map((result) => {
-    const { Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity} = result;
-    console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
+    const { Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity, Feature_Importance_Mean,
+      Feature_Name_Ranking} = result;
+    console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity,Feature_Importance_Mean,Feature_Name_Ranking);
     return {
       name: Name,
       accuracy: AccuracyScore,
@@ -110,6 +146,8 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
 
+ 
+
   return (
     <React.Fragment>
       <Typography variant="h5" gutterBottom align="center">
@@ -127,7 +165,9 @@ const Visualisation = (props: VisualisationProps) => {
                 MeanSquareError: mse,
                 RootMeanSquareError: rmse,
                 R2_Score: R2,
-              } = result;
+                Feature_Importance_Mean: Feature_Importance_Mean, 
+                Feature_Name_Ranking: Feature_Name_Ranking
+              } = result; 
 
               return (
                 <>
@@ -193,6 +233,41 @@ const Visualisation = (props: VisualisationProps) => {
                         {R2}
                       </Typography>
                     </Box>
+
+                     <FeatureBarChart data={ {
+labels: Feature_Name_Ranking, 
+      datasets: [
+        {
+          data: Feature_Importance_Mean,
+          backgroundColor: [
+            "rgba(75,192,192,1)",
+            "#50AF95",
+            "#f3ba2f",
+            "#2a71d0"
+          ],
+          borderColor: "black",
+          borderWidth: 2
+        } ]
+      }} />  
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ display: "inline" }}
+                      >
+                        <Typography
+                          sx={{ fontWeight: "bold", display: "inline" }}
+                        >
+              {" "}
+                          FEATURE IMPORTANCE:{" "}
+                        </Typography>{" "}
+                        {Feature_Importance_Mean.map((importance: number, index: number) => (
+                        <Typography key={index} variant="subtitle1" sx={{ display: "block" }}>
+                          {index + 1}.  {Feature_Name_Ranking[index]} : {importance} 
+                        </Typography>
+                      ))}
+                      </Typography>
+                    </Box>
+
                   </Paper>
                 </>
               );

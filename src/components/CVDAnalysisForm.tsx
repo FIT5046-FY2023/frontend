@@ -269,6 +269,9 @@ export default function CVDAnalysisForm() {
         
         setCheckboxOptions(data.headerLabels)
         console.log(data)
+        console.log(data.minList)
+        console.log(data.maxList)
+        console.log(data.meanList)
 
         var rows = [];
   
