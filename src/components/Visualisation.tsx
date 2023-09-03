@@ -33,8 +33,8 @@ type ClassificationMlResult = {
   F1Score: string;
   Roc_Auc: string;
   Specificity: string;
-  Feature_Importance_Mean: string;
-  Feature_Name_Ranking: string; 
+  Feature_Importance_Mean: Array<number>;
+  Feature_Name_Ranking: Array<string>;
 };
 
 type SpatialResult = {
@@ -158,6 +158,171 @@ const Visualisation = (props: VisualisationProps) => {
         <CircularProgress />
       ) : (
         <>
+      
+
+              {!!classification_results &&
+            classification_results.map((result) => {
+              const {
+                Name: name,
+                AccuracyScore: accuracy,
+                PrecisionScore: precision,
+                RecallScore: recall,
+                F1Score: f1,
+                Roc_Auc: roc_auc,
+                Specificity:  specificity,
+                Feature_Importance_Mean: Feature_Importance_Mean, 
+                Feature_Name_Ranking: Feature_Name_Ranking
+              } = result;
+    
+    
+                  return (
+                    <>
+                      <Paper
+                        variant="outlined"
+                        sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
+                      >
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              NAME:{" "}
+                            </Typography>{" "}
+                            {name}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              Accuracy Score:{" "}
+                            </Typography>{" "}
+                            {accuracy}
+                          </Typography>
+                        </Box>
+    
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              Precision Score:{" "}
+                            </Typography>{" "}
+                            {precision}
+                          </Typography>
+                        </Box>
+    
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              Recall Score: {" "}
+                            </Typography>{" "}
+                            {recall}
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              F1 Score: {" "}
+                            </Typography>{" "}
+                            {f1}
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              Roc Auc: {" "}
+                            </Typography>{" "}
+                            {roc_auc}
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ display: "flex" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                              {" "}
+                              Specificity: {" "}
+                            </Typography>{" "}
+                            {specificity}
+                          </Typography>
+                        </Box>
+    
+                         <FeatureBarChart data={ {
+    labels: Feature_Name_Ranking, 
+          datasets: [
+            {
+              data: Feature_Importance_Mean,
+              backgroundColor: [
+                "rgba(75,192,192,1)",
+                "#50AF95",
+                "#f3ba2f",
+                "#2a71d0"
+              ],
+              borderColor: "black",
+              borderWidth: 2
+            } ]
+          }} />  
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ display: "inline" }}
+                          >
+                            <Typography
+                              sx={{ fontWeight: "bold", display: "inline" }}
+                            >
+                  {" "}
+                              FEATURE IMPORTANCE:{" "}
+                            </Typography>{" "}
+                            {Feature_Importance_Mean.map((importance: number, index: number) => (
+                            <Typography key={index} variant="subtitle1" sx={{ display: "block" }}>
+                              {index + 1}.  {Feature_Name_Ranking[index]} : {importance} 
+                            </Typography>
+                          ))}
+                          </Typography>
+                        </Box>
+    
+                      </Paper>
+                    </>
+                  );
+                })}
           {!!regression_results &&
             regression_results.map((result) => {
               const {
@@ -168,6 +333,8 @@ const Visualisation = (props: VisualisationProps) => {
                 Feature_Importance_Mean: Feature_Importance_Mean, 
                 Feature_Name_Ranking: Feature_Name_Ranking
               } = result; 
+
+              
 
               return (
                 <>
