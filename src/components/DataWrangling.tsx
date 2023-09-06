@@ -135,7 +135,7 @@ const DataWrangling = (props:DataWranglingProps) => {
 
 <div ><Button variant="outlined" onClick={handleApplyButton}>Apply</Button></div>
 </div>
-)}; 
+)}
     </>
    
 };
