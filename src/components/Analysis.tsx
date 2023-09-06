@@ -21,7 +21,6 @@ import {
 import { FormikProps } from "formik";
 import { ParametersSection } from "./AnalysisFormComponents/ParametersSection";
 import { MLDataList, MLData } from "./AnalysisFormComponents/mlDatatypes";
-import MLForm from "./MLForm";
 
 export interface AnalysisProps {
   setMLData: React.Dispatch<MLData[]>;
@@ -110,7 +109,6 @@ const Analysis = (props: AnalysisProps) => {
     setFormValues([...formValuesCopy]);
     console.log("in handleParamChange");
   };
-  const [hideOldForm, setHideOldForm] = useState<boolean>();
 
   return (
     <Box
@@ -121,49 +119,6 @@ const Analysis = (props: AnalysisProps) => {
       flexDirection={"column"}
     >
       <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
-        <Typography
-          variant="h6"
-          gutterBottom
-          marginTop={1}
-          sx={{ fontWeight: "bold" }}
-        >
-          {" "}
-          Spatial Analysis
-        </Typography>
-        <FormControl fullWidth>
-           <InputLabel size="small" id="spatial-analytic-select">Choose States</InputLabel>
-          <Select
-            labelId="task-type-select"
-            id="task-type-select"
-            value={stateList}
-            label="Spatial Analysis"
-            onChange={handleSpatialChange}
-            multiple={true}
-            size="small"
-            renderValue={(selected) => {
-              console.log(selected);
-              return (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((task) => (
-                    <Chip key={task} label={task} />
-                  ))}
-                </Box>
-              );
-            }}
-          >
-            {spatialStatesList.map((task) => (
-              <MenuItem key={task.value} value={task.label}>
-                {task.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Box paddingTop={1}></Box>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
-          {" "}
-          ML Analysis
-        </Typography>
 
         {formValues.map((mlData, index) => {
           return (
@@ -184,12 +139,12 @@ const Analysis = (props: AnalysisProps) => {
                 </IconButton>
                 <Typography align="left" variant="subtitle2">
                   {" "}
-                  ML Task #{index + 1}
+                  ML Algorithm #{index + 1}
                 </Typography>
               </Box>
               <FormControl fullWidth>
                  <InputLabel size="small" id="task-type-select">
-                  Machine Learning Task
+                  Machine Learning Type
                 </InputLabel>
                 <Select
                   labelId="task-type-select"
@@ -252,14 +207,7 @@ const Analysis = (props: AnalysisProps) => {
         <Button variant="contained" onClick={(e) => handleAddTask(e)}>
           Add
         </Button>
-
-        {hideOldForm && <MLForm formRef={formRef} />}
       </Stack>
-      <Box sx={{ marginTop: "3rem" }}>
-        <Button variant="outlined" onClick={() => setHideOldForm(!hideOldForm)}>
-          show/hide old form
-        </Button>
-      </Box>
     </Box>
   );
 };

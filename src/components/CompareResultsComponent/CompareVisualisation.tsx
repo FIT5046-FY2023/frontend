@@ -313,9 +313,9 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             <Typography variant="h5" gutterBottom align="center">
               Comparing By Machine Learning Algorithms
             </Typography>
-            <Typography variant="body1" gutterBottom align="center">
+            {/* <Typography variant="body1" gutterBottom align="center">
               {"Datasets: "+ results.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
-            </Typography>
+            </Typography> */}
             {MLFilteredBarCharts()}
             {ClassMLFilteredBarCharts()}
 
@@ -512,7 +512,7 @@ const RegressionBarChart = ({
     <>
       <BarChart
         width={1000}
-        height={700}
+        height={400}
         data={barData}
         margin={{
           top: 5,

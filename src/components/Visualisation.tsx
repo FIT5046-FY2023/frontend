@@ -288,7 +288,7 @@ const Visualisation = (props: VisualisationProps) => {
                 </Typography>
                 <BarChart
                   width={1000}
-                  height={700}
+                  height={400}
                   data={regressionBarData}
                   margin={{
                     top: 5,
@@ -315,7 +315,7 @@ const Visualisation = (props: VisualisationProps) => {
                 </Typography>
                 <BarChart
                   width={1000}
-                  height={700}
+                  height={400}
                   data={classificationBarData}
                   margin={{
                     top: 5,
@@ -345,7 +345,7 @@ const Visualisation = (props: VisualisationProps) => {
                 </Typography>
                 <BarChart
                   width={1000}
-                  height={700}
+                  height={400}
                   data={spatialBarData}
                   margin={{
                     top: 5,
