@@ -129,8 +129,8 @@ const Preprocessing = (props: PreprocessProps) => {
           }
           setHeatmapString(data.encodedString);
           setRealCheckboxOptions(rows.filter((item) => item.feature != target));
-          setCheckboxValues(data.selectedIndices[0])
-          setPrecheckedRows(data.selectedIndices[0])
+          setCheckboxValues(data.selectedIndices)
+          setPrecheckedRows(data.selectedIndices)
           console.log(checkboxOptions)
           console.log(checkbox)
           console.log(data.selectedIndices)
