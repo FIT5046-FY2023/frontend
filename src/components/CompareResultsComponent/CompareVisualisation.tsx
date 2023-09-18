@@ -1,6 +1,5 @@
-import { LoadingButton } from "@mui/lab";
 import { Typography, Paper, Box } from "@mui/material";
-import { clone, omit, uniq, values } from "lodash";
+import { omit, uniq } from "lodash";
 import React from "react";
 import {
   CartesianGrid,
@@ -11,6 +10,7 @@ import {
   Legend,
   Bar,
   Text,
+  ResponsiveContainer,
 } from "recharts";
 import { DataResultInfo } from "../CompareResultsPage";
 
@@ -178,7 +178,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
     any
   >(newRegressionResults);
   console.log("combined regression results", combinedRegressionResults);
-  
+
   const combinedRegressionBarData = combinedRegressionResults.map((r) => {
     const obj = { ...r, name: `${r.datasetName} \n${r.name}` };
     return omit(obj, ["datasetName"]) as RegressionBarData;
@@ -199,13 +199,11 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
   let classAlgoBarData: Record<string, any[]> = {};
   console.log("unique regression Algos", classificationAlgos);
   classificationAlgos.forEach((algo) => {
-    const filteredBarData = combinedClassResults.filter(
-      (r) => r.name === algo
-    );
+    const filteredBarData = combinedClassResults.filter((r) => r.name === algo);
     classAlgoBarData[algo] = filteredBarData;
     console.log(classAlgoBarData);
   });
-  const ClassMLFilteredBarCharts = () => 
+  const ClassMLFilteredBarCharts = () =>
     Object.entries(classAlgoBarData).map(([key, barData]) => {
       console.log(key, barData);
 
@@ -215,36 +213,41 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             {key}
           </Typography>
           <Typography variant="body1" gutterBottom align="center">
-                      {"Datasets: "+ barData.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
-                    </Typography>
-          <BarChart
-        width={1000}
-        height={300}
-        data={barData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="datasetName" tick={<CustomXAxisTick />}/>
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="accuracy" fill="#8884d8" />
-        <Bar dataKey="precision" fill="#82ca9d" />
-        <Bar dataKey="recall" fill="#b34a8d" />
-        <Bar dataKey="f1" fill="#c99a8d" />
-        <Bar dataKey="roc_auc" fill="#ff7f50" />
-        <Bar dataKey="specificity" fill="#00ced1" />
-      </BarChart>
+            {"Datasets: " +
+              barData.reduce(
+                (accumulator, barData) =>
+                  accumulator + barData.datasetName + ", ",
+                ""
+              )}
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={barData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="datasetName" tick={<CustomXAxisTick />} />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="accuracy" fill="#8884d8" />
+              <Bar dataKey="precision" fill="#82ca9d" />
+              <Bar dataKey="recall" fill="#b34a8d" />
+              <Bar dataKey="f1" fill="#c99a8d" />
+              <Bar dataKey="roc_auc" fill="#ff7f50" />
+              <Bar dataKey="specificity" fill="#00ced1" />
+            </BarChart>
+          </ResponsiveContainer>
         </>
       );
     });
 
-  const MLFilteredBarCharts = () => 
+  const MLFilteredBarCharts = () =>
     Object.entries(algosToBarData).map(([key, barData]) => {
       console.log(key, barData);
 
@@ -254,28 +257,33 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             {key}
           </Typography>
           <Typography variant="body1" gutterBottom align="center">
-                      {"Datasets: "+ barData.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
-                    </Typography>
-          <BarChart
-        width={1000}
-        height={300}
-        data={barData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="datasetName" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="rmse" fill="#8884d8" />
-        <Bar dataKey="mse" fill="#82ca9d" />
-        <Bar dataKey="R2" fill="#b34a8d" />
-      </BarChart>
+            {"Datasets: " +
+              barData.reduce(
+                (accumulator, barData) =>
+                  accumulator + barData.datasetName + ", ",
+                ""
+              )}
+          </Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={barData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="datasetName" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="rmse" fill="#8884d8" />
+              <Bar dataKey="mse" fill="#82ca9d" />
+              <Bar dataKey="R2" fill="#b34a8d" />
+            </BarChart>
+          </ResponsiveContainer>
         </>
       );
     });
@@ -284,9 +292,6 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
     <React.Fragment>
       {!loading && (
         <>
-          <Typography variant="h5" gutterBottom align="center">
-            Visualisation Results
-          </Typography>
           <Paper
             variant="outlined"
             sx={{
@@ -302,14 +307,26 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
               Comparing All Dataset Results
             </Typography>
             <Typography variant="body1" gutterBottom align="center">
-              {"Datasets: "+ results.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
+              {"Datasets: " +
+                results.reduce(
+                  (accumulator, barData) =>
+                    accumulator + barData.datasetName + ", ",
+                  ""
+                )}
             </Typography>
-            {combinedRegressionBarData?.length > 1 &&<RegressionBarChart barData={combinedRegressionBarData} />}
-            {combinedClassBarData?.length > 1 && <ClassificationBarChart barData={combinedClassBarData} />}
+            {combinedRegressionBarData?.length > 1 && (
+              <RegressionBarChart barData={combinedRegressionBarData} />
+            )}
+            {combinedClassBarData?.length > 1 && (
+              <ClassificationBarChart barData={combinedClassBarData} />
+            )}
 
-            <Typography variant="body1" gutterBottom align="center" sx={{marginBottom: "2rem"}}>
-              
-            </Typography>
+            <Typography
+              variant="body1"
+              gutterBottom
+              align="center"
+              sx={{ marginBottom: "2rem" }}
+            ></Typography>
             <Typography variant="h5" gutterBottom align="center">
               Comparing By Machine Learning Algorithms
             </Typography>
@@ -318,9 +335,6 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             </Typography> */}
             {MLFilteredBarCharts()}
             {ClassMLFilteredBarCharts()}
-
-
-            
           </Paper>
           <Paper
             variant="outlined"
@@ -345,26 +359,26 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                     {r.results?.map((barData) =>
                       RegressionResultDetails(barData)
                     )}
-                    <BarChart
-                      width={1000}
-                      height={400}
-                      data={r.results}
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="rmse" fill="#8884d8" />
-                      <Bar dataKey="mse" fill="#82ca9d" />
-                      <Bar dataKey="R2" fill="#b34a8d" />
-                    </BarChart>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <BarChart
+                        data={r.results}
+                        margin={{
+                          top: 5,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="rmse" fill="#8884d8" />
+                        <Bar dataKey="mse" fill="#82ca9d" />
+                        <Bar dataKey="R2" fill="#b34a8d" />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </>
                 ))}
               </>
@@ -372,8 +386,8 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
 
             {newClassificationResults?.length > 0 && (
               <>
-                <Typography variant="h5" gutterBottom align="center">
-                  Classification Results
+                <Typography variant="h4" gutterBottom align="center">
+                  Classification Results by Dataset
                 </Typography>
                 {newClassificationResults.map((r) => (
                   <>
@@ -383,29 +397,29 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                     <Typography variant="body1" gutterBottom align="center">
                       {r.dateCreated}
                     </Typography>
-                    <BarChart
-                      width={1000}
-                      height={300}
-                      data={r.results}
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Bar dataKey="accuracy" fill="#8884d8" />
-                      <Bar dataKey="precision" fill="#82ca9d" />
-                      <Bar dataKey="recall" fill="#b34a8d" />
-                      <Bar dataKey="f1" fill="#c99a8d" />
-                      <Bar dataKey="roc_auc" fill="#ff7f50" />
-                      <Bar dataKey="specificity" fill="#00ced1" />
-                    </BarChart>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart
+                        data={r.results}
+                        margin={{
+                          top: 5,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="accuracy" fill="#8884d8" />
+                        <Bar dataKey="precision" fill="#82ca9d" />
+                        <Bar dataKey="recall" fill="#b34a8d" />
+                        <Bar dataKey="f1" fill="#c99a8d" />
+                        <Bar dataKey="roc_auc" fill="#ff7f50" />
+                        <Bar dataKey="specificity" fill="#00ced1" />
+                      </BarChart>
+                    </ResponsiveContainer>
                     {r.results?.map((barData) => (
                       <ClassificationResultDetails {...barData} />
                     ))}
@@ -510,9 +524,38 @@ const RegressionBarChart = ({
 }) => {
   return (
     <>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart
+          data={barData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" tick={<CustomXAxisTick />} />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="rmse" fill="#8884d8" />
+          <Bar dataKey="mse" fill="#82ca9d" />
+          <Bar dataKey="R2" fill="#b34a8d" />
+        </BarChart>
+      </ResponsiveContainer>
+    </>
+  );
+};
+
+const ClassificationBarChart = ({
+  barData,
+}: {
+  barData: ClassificationBarData[];
+}) => {
+  return (
+    <ResponsiveContainer width="100%" height={400}>
       <BarChart
-        width={1000}
-        height={400}
         data={barData}
         margin={{
           top: 5,
@@ -525,44 +568,15 @@ const RegressionBarChart = ({
         <XAxis dataKey="name" tick={<CustomXAxisTick />} />
         <YAxis />
         <Tooltip />
-        <Legend />
-        <Bar dataKey="rmse" fill="#8884d8" />
-        <Bar dataKey="mse" fill="#82ca9d" />
-        <Bar dataKey="R2" fill="#b34a8d" />
+        <Legend verticalAlign="top" />
+        <Bar dataKey="accuracy" fill="#8884d8" />
+        <Bar dataKey="precision" fill="#82ca9d" />
+        <Bar dataKey="recall" fill="#b34a8d" />
+        <Bar dataKey="f1" fill="#c99a8d" />
+        <Bar dataKey="roc_auc" fill="#ff7f50" />
+        <Bar dataKey="specificity" fill="#00ced1" />
       </BarChart>
-    </>
-  );
-};
-
-const ClassificationBarChart = ({
-  barData,
-}: {
-  barData: ClassificationBarData[];
-}) => {
-  return (
-    <BarChart
-      width={1000}
-      height={400}
-      data={barData}
-      margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" tick={<CustomXAxisTick />} />
-      <YAxis />
-      <Tooltip />
-      <Legend verticalAlign="top" />
-      <Bar dataKey="accuracy" fill="#8884d8" />
-      <Bar dataKey="precision" fill="#82ca9d" />
-      <Bar dataKey="recall" fill="#b34a8d" />
-      <Bar dataKey="f1" fill="#c99a8d" />
-      <Bar dataKey="roc_auc" fill="#ff7f50" />
-      <Bar dataKey="specificity" fill="#00ced1" />
-    </BarChart>
+    </ResponsiveContainer>
   );
 };
 

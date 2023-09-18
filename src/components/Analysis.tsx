@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
   Stack,
   Typography,
   IconButton,
@@ -11,21 +10,18 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import React, { useState } from "react";
+import React from "react";
 import { MLTypes, mlTypesList } from "../enums/machineLearningTasks";
-import { spatialStatesList } from "../enums/spatialAnalysisStates";
 import {
   classificationMachineLearningAlgo,
   regressionMachineLearningAlgo,
 } from "../enums/machineLearningAlgo";
-import { FormikProps } from "formik";
 import { ParametersSection } from "./AnalysisFormComponents/ParametersSection";
-import { MLDataList, MLData } from "./AnalysisFormComponents/mlDatatypes";
+import { MLData } from "./AnalysisFormComponents/mlDatatypes";
 
 export interface AnalysisProps {
   setMLData: React.Dispatch<MLData[]>;
   mlData: MLData[];
-  formRef: React.MutableRefObject<FormikProps<MLDataList> | null>;
   setStateList: React.Dispatch<any[]>;
   stateList: any[];
 }
@@ -37,7 +33,6 @@ const Analysis = (props: AnalysisProps) => {
   const {
     setMLData: setFormValues,
     mlData: formValues,
-    formRef,
     stateList,
     setStateList,
   } = props;
@@ -62,10 +57,6 @@ const Analysis = (props: AnalysisProps) => {
     console.log(formValuesCopy);
   };
 
-  const handleSpatialChange = (event: SelectChangeEvent<any>) => {
-    setStateList(event.target.value);
-    console.log(stateList);
-  };
 
   const handleAddTask = (event: any) => {
     let formValuesCopy = formValues.map((object) => object);

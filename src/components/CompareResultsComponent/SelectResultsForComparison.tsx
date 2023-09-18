@@ -27,18 +27,7 @@ export default function SelectResultsForComparison({
           setSelectedResults={setSelectedResults}
           tableData={tableData}
         />
-
-        <AppBar
-          position="absolute"
-          color="default"
-          elevation={0}
-          sx={{
-            position: "relative",
-            borderBottom: (t) => `1px solid ${t.palette.divider}`,
-            marginBottom: "1rem",
-          }}
-        ></AppBar>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box sx={{ mt: '1rem', display: "flex", justifyContent: "flex-end" }}>
           <Button variant="contained" onClick={handleComparison}>
             {" "}
             Compare Results{" "}

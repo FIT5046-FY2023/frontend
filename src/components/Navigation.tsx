@@ -1,42 +1,47 @@
+import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import { Link } from "react-router-dom";
 
-export const sections = [
+export const leftGroup = [
   { title: "Analyse Dataset", url: "/" },
   { title: "Compare Results", url: "compare-results" },
-  { title: "About", url: "#" },
 ];
 
+export const rightGroup = [{ title: "About", url: "#" },]
+
 interface HeaderProps {
-    sections: ReadonlyArray<{
-      title: string;
-      url: string;
-    }>;
     title: string;
   }
 const Navigation = (props: HeaderProps) => {
       
-        const { sections, title } = props;
+        const { title } = props;
       
         return (
-          <React.Fragment>
             <Toolbar
               component="nav"
               variant="dense"
-              sx={{ justifyContent: 'space-between', overflowX: 'auto',  borderBottom: 1, borderColor: 'divider' }}
+              sx={{ justifyContent: 'space-between', overflowX: 'auto', border: 0, elevation: 0, backgroundColor: '#ffffff'}}
             >
-                {sections.map((section) => (
-                <>
+              <Stack direction={'row'} spacing={2}>
+                {leftGroup.map((section) => (
+                  <>
                 <Link to={section.url}>
                 <Button size="small">{section.title}</Button></Link>
                 </>
                 ))}
+                </Stack>
+                <Stack direction={'row'} spacing={2}>
+                {rightGroup.map((section) => (
+                  <>
+                <Link to={section.url}>
+                <Button size="small">{section.title}</Button></Link>
+                </>
+                ))}
+                  </Stack>
             </Toolbar>
-        
-          </React.Fragment>
         );
       
 };

@@ -136,17 +136,7 @@ const CompareResults = () => {
   };
 
   return (
-    <React.Fragment>
-      <AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: "relative",
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}
-      ></AppBar>
-      <Container component="main" sx={{ mb: 4, br: 32 }}>
+    <>
         <Container maxWidth={"sm"}>
           <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
@@ -182,8 +172,7 @@ const CompareResults = () => {
             </Button>
           )}
         </Box>
-      </Container>
-    </React.Fragment>
+    </>
   );
 };
 

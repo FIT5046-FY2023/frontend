@@ -1,13 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Analysis, { AnalysisProps, initialFormValues } from "./Analysis";
 import Preprocessing, { PreprocessProps } from "./Preprocessing";
 import DataWrangling, { DataWranglingProps} from "./DataWrangling";
 import UploadData, { UploadDataProps } from "./UploadData";
 import Visualisation, { VisualisationProps } from "./Visualisation";
-import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -15,8 +13,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
-import { FormikProps } from "formik";
-import { MLData, MLDataList } from "./AnalysisFormComponents/mlDatatypes";
+import { MLData } from "./AnalysisFormComponents/mlDatatypes";
 
 const steps = [
   "Upload Dataset",
@@ -61,7 +58,7 @@ function getStepContent({
   } = preprocessProps;
 
   const {results: predictions, loading: loadingVisual, handleSaveResults} = visualisationProps;
-  const {setMLData, mlData, formRef, setStateList, stateList } = analysisProps;
+  const {setMLData, mlData, setStateList, stateList } = analysisProps;
   const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = dataWranglingProps; 
   
 
@@ -106,7 +103,7 @@ function getStepContent({
       );
 
     case 3:
-      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList} formRef={formRef}/>;
+      return <Analysis setMLData={setMLData} mlData={mlData} setStateList={setStateList} stateList ={stateList} />;
     case 4:
       return <>
       {loading && <CircularProgress />}
@@ -139,9 +136,6 @@ export default function CVDAnalysisForm() {
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
 
-
-  const formRef = useRef<FormikProps<MLDataList> | null>(null);
-
   const handleNext = () => {
     setActiveStep(activeStep + 1);
   };
@@ -156,7 +150,6 @@ export default function CVDAnalysisForm() {
 
   const handleVisual = async () => {
     const selectedDatasetName = selectedData;
-    console.log("formValues" , formRef.current?.values);
     console.log(
       JSON.stringify({
         mlData: mlData,
@@ -315,21 +308,7 @@ export default function CVDAnalysisForm() {
   }
 
   return (
-    <React.Fragment>
-      <AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: "relative",
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}
-      ></AppBar>
-      <Container component="main" sx={{ mb: 4, br: 32 }}>
-        <Paper
-          variant="outlined"
-          sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 }, borderRadius: 2 }}
-        >
+    <Box>
           <Typography component="h1" variant="h4" align="center">
             CVD Analysis
           </Typography>
@@ -347,7 +326,7 @@ export default function CVDAnalysisForm() {
             <React.Fragment>
               {getStepContent({
                 step: activeStep,
-                analysisProps: {setMLData: setMlData, mlData: mlData, formRef, setStateList, stateList },
+                analysisProps: {setMLData: setMlData, mlData: mlData, setStateList, stateList },
                 uploadDataProps: {
                   curFiles,
                   setCurFiles,
@@ -388,17 +367,17 @@ export default function CVDAnalysisForm() {
 
                 {activeStep < steps.length - 1 && (
                   <Button
-                    variant="contained"
-                    onClick={
-                        activeStep === steps.length - 3
-                        ? handlePreprocess
-                        : activeStep === steps.length - 2
-                        ? handleAnalysis
-                        : activeStep === steps.length - 5
-                        ? handleCheckboxOptions
-                        : handleNext
-                    }
-                    sx={{ mt: 3, ml: 1 }}
+                  variant="contained"
+                  onClick={
+                    activeStep === steps.length - 3
+                    ? handlePreprocess
+                    : activeStep === steps.length - 2
+                    ? handleAnalysis
+                    : activeStep === steps.length - 5
+                    ? handleCheckboxOptions
+                    : handleNext
+                  }
+                  sx={{ mt: 3, ml: 1 }}
                   >
                     {activeStep === steps.length - 2 ? "Analyse" : "Next"}
                   </Button>
@@ -406,8 +385,6 @@ export default function CVDAnalysisForm() {
               </Box>
             </React.Fragment>
           )}
-        </Paper>
-      </Container>
-    </React.Fragment>
+          </Box>
   );
 }

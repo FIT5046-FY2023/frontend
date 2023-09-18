@@ -18,8 +18,3 @@ export type KNNOptions = {
       | "";
     mlOptions: KNNOptions | RandomForestOptions | {};
   }
-  
-  export interface MLDataList {
-    MLData: MLData[];
-  }
-  

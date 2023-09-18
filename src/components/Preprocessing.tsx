@@ -327,7 +327,8 @@ const Preprocessing = (props: PreprocessProps) => {
           <h3> Select Features</h3>
           <div style={{ height: 500, width: '100%' }}>
             <DataGrid
-              rows={realCheckboxOptions}
+          sx={{ borderRadius: 4, px: 2, pt: 1 }}
+          rows={realCheckboxOptions}
               columns={columns}
               checkboxSelection
               onRowSelectionModelChange={handleSelectionChange}

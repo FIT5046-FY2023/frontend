@@ -1,18 +1,5 @@
 import {
-  Card,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Button,
-  Paper,
-  CircularProgress,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Typography,
   LinearProgress,
   IconButton,
 } from "@mui/material";
@@ -206,7 +193,8 @@ const AllResultsTable = ({
     <>      
         <div style={{ height: 400, width: "100%" }}>
           <DataGrid
-            rows={rows}
+          sx={{ borderRadius: 4, px: 2, pt: 1 }}
+          rows={rows}
             checkboxSelection
             columns={newTableHeaderKeys()}
             slots={{

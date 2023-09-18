@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   Bar,
+  ResponsiveContainer,
 } from "recharts";
 
 type RegressionMlResult = {
@@ -286,26 +287,26 @@ const Visualisation = (props: VisualisationProps) => {
                 <Typography variant="h5" gutterBottom align="center">
                   Regression Results
                 </Typography>
-                <BarChart
-                  width={1000}
-                  height={400}
-                  data={regressionBarData}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="rmse" fill="#8884d8" />
-                  <Bar dataKey="mse" fill="#82ca9d" />
-                  <Bar dataKey="R2" fill="#b34a8d" />
-                </BarChart>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart
+                    data={regressionBarData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="rmse" fill="#8884d8" />
+                    <Bar dataKey="mse" fill="#82ca9d" />
+                    <Bar dataKey="R2" fill="#b34a8d" />
+                  </BarChart>
+                </ResponsiveContainer>
               </>
             )}
             {classificationBarData?.length > 0 && (
@@ -313,59 +314,30 @@ const Visualisation = (props: VisualisationProps) => {
                 <Typography variant="h5" gutterBottom align="center">
                   Classification Results
                 </Typography>
-                <BarChart
-                  width={1000}
-                  height={400}
-                  data={classificationBarData}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="accuracy" fill="#8884d8" />
-                  <Bar dataKey="precision" fill="#82ca9d" />
-                  <Bar dataKey="recall" fill="#b34a8d" />
-                  <Bar dataKey="f1" fill="#c99a8d" />
-                  <Bar dataKey="roc_auc" fill="#ff7f50" />
-                  <Bar dataKey="specificity" fill="#00ced1" />
-                </BarChart>
-              </>
-            )}
-            {spatialBarData?.length > 0 && (
-              <>
-                <Typography variant="h5" gutterBottom align="center">
-                  Spatial Analysis Results
-                </Typography>
-                <BarChart
-                  width={1000}
-                  height={400}
-                  data={spatialBarData}
-                  margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="accuracy" fill="#8884d8" />
-                  <Bar dataKey="precision" fill="#82ca9d" />
-                  <Bar dataKey="recall" fill="#b34a8d" />
-                  <Bar dataKey="f1" fill="#c99a8d" />
-                  <Bar dataKey="roc_auc" fill="#ff7f50" />
-                  <Bar dataKey="specificity" fill="#00ced1" />
-                </BarChart>
+
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart
+                    data={classificationBarData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="accuracy" fill="#8884d8" />
+                    <Bar dataKey="precision" fill="#82ca9d" />
+                    <Bar dataKey="recall" fill="#b34a8d" />
+                    <Bar dataKey="f1" fill="#c99a8d" />
+                    <Bar dataKey="roc_auc" fill="#ff7f50" />
+                    <Bar dataKey="specificity" fill="#00ced1" />
+                  </BarChart>
+                </ResponsiveContainer>
               </>
             )}
           </Paper>
