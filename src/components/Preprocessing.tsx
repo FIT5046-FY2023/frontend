@@ -176,7 +176,7 @@ const Preprocessing = (props: PreprocessProps) => {
 <h2> Feature Selection </h2>
 
 <FormControl sx={{ m: 1, minWidth: 350 }}>
-    <InputLabel id="demo-simple-select-label">Feature Selection Method</InputLabel>
+     <InputLabel size="small" id="demo-simple-select-label">Feature Selection Method </InputLabel>
     <Select
       labelId="demo-simple-select-label"
       id="demo-simple-select"
@@ -203,7 +203,7 @@ const Preprocessing = (props: PreprocessProps) => {
 <br></br>
 
 <FormControl sx={{ m: 1, minWidth: 350 }}>
-    <InputLabel id="demo-simple-select-label">Feature Selection Method </InputLabel>
+     <InputLabel size="small" id="demo-simple-select-label">Feature Selection Method </InputLabel>
     <Select
       labelId="demo-simple-select-label"
       id="demo-simple-select"
@@ -255,7 +255,7 @@ const Preprocessing = (props: PreprocessProps) => {
     <br></br>
 
     <FormControl sx={{ m: 1, minWidth: 350 }}>
-    <InputLabel id="demo-simple-select-label"> Machine Learning Algorithm </InputLabel>
+     <InputLabel size="small" id="demo-simple-select-label"> Machine Learning Algorithm </InputLabel>
     <Select
       labelId="demo-simple-select-label"
       id="demo-simple-select"
@@ -291,7 +291,7 @@ const Preprocessing = (props: PreprocessProps) => {
     
 <h3> Target </h3>
     <FormControl sx={{ m: 1, minWidth: 500 }}>
-          <InputLabel id="demo-simple-select-label">CVD Target</InputLabel>
+           <InputLabel size="small" id="demo-simple-select-label">CVD Target</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -327,7 +327,8 @@ const Preprocessing = (props: PreprocessProps) => {
           <h3> Select Features</h3>
           <div style={{ height: 500, width: '100%' }}>
             <DataGrid
-              rows={realCheckboxOptions}
+          sx={{ borderRadius: 4, px: 2, pt: 1 }}
+          rows={realCheckboxOptions}
               columns={columns}
               checkboxSelection
               onRowSelectionModelChange={handleSelectionChange}

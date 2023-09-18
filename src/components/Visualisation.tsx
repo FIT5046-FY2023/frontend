@@ -1,8 +1,7 @@
-import { Typography, Paper, Box, CircularProgress } from "@mui/material";
-import React from "react";
+import { LoadingButton } from "@mui/lab";
+import { Typography, Paper, Box } from "@mui/material";
+import React, { useState } from "react";
 import {
-  ScatterChart,
-  Scatter,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -10,6 +9,7 @@ import {
   Tooltip,
   Legend,
   Bar,
+  ResponsiveContainer,
 } from "recharts";
 
 type RegressionMlResult = {
@@ -48,23 +48,39 @@ export interface ScatterPoint {
 export interface VisualisationProps {
   results: any;
   loading: boolean;
+  handleSaveResults?: (
+    results: any,
+    setResultsSaved: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void;
+  saveEnabled: boolean;
 }
 
 const Visualisation = (props: VisualisationProps) => {
-  const { loading, results } = props;
-  console.log(results)
-  console.log(props)
+  const {
+    loading,
+    results,
+    handleSaveResults: saveResults,
+    saveEnabled,
+  } = props;
+  const [resultsSaved, setResultsSaved] = useState<boolean>(false);
 
-  const regression_results: RegressionMlResult[] = props?.results?.regression_results?.map((result: string) => {
-    return JSON.parse(result);
-  });
-  const classification_results: ClassificationMlResult[] = props?.results?.classification_results?.map((result: string) => {
-    return JSON.parse(result);
-  });
-  const spatial_results: SpatialResult[] = props?.results?.spatial_results?.map((result: string) => {
-    return result;
-  });
+  console.log("results");
+  console.log(results);
+  console.log(props);
 
+  const regression_results: RegressionMlResult[] =
+    props?.results?.regression_results?.map((result: string) => {
+      return JSON.parse(result);
+    });
+  const classification_results: ClassificationMlResult[] =
+    props?.results?.classification_results?.map((result: string) => {
+      return JSON.parse(result);
+    });
+  const spatial_results: SpatialResult[] = props?.results?.spatial_results?.map(
+    (result: string) => {
+      return result;
+    }
+  );
 
   console.log("props", props);
   console.log("results", regression_results);
@@ -79,8 +95,24 @@ const Visualisation = (props: VisualisationProps) => {
     };
   });
   const classificationBarData = classification_results?.map((result) => {
-    const { Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity} = result;
-    console.log(Name, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
+    const {
+      Name,
+      AccuracyScore,
+      PrecisionScore,
+      RecallScore,
+      F1Score,
+      Roc_Auc,
+      Specificity,
+    } = result;
+    console.log(
+      Name,
+      AccuracyScore,
+      PrecisionScore,
+      RecallScore,
+      F1Score,
+      Roc_Auc,
+      Specificity
+    );
     return {
       name: Name,
       accuracy: AccuracyScore,
@@ -88,16 +120,34 @@ const Visualisation = (props: VisualisationProps) => {
       recall: RecallScore,
       f1: F1Score,
       roc_auc: Roc_Auc,
-      specificity: Specificity
+      specificity: Specificity,
     };
   });
-  
+
   console.log(spatial_results);
-  
+
   const spatialBarData = spatial_results?.map((result: SpatialResult) => {
     console.log(result);
-    const { Name, State, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity} = result;
-    console.log(Name, State, AccuracyScore,PrecisionScore,RecallScore,F1Score, Roc_Auc, Specificity);
+    const {
+      Name,
+      State,
+      AccuracyScore,
+      PrecisionScore,
+      RecallScore,
+      F1Score,
+      Roc_Auc,
+      Specificity,
+    } = result;
+    console.log(
+      Name,
+      State,
+      AccuracyScore,
+      PrecisionScore,
+      RecallScore,
+      F1Score,
+      Roc_Auc,
+      Specificity
+    );
     return {
       name: `${Name} (${State})`,
       state: State,
@@ -106,20 +156,43 @@ const Visualisation = (props: VisualisationProps) => {
       recall: RecallScore,
       f1: F1Score,
       roc_auc: Roc_Auc,
-      specificity: Specificity
+      specificity: Specificity,
     };
   });
 
+  const handleSaveResults = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    // TODO: Post to backend
+    e.preventDefault();
+    if (saveResults !== undefined) {
+      saveResults(results, setResultsSaved);
+      setResultsSaved(true);
+    }
+  };
+
+  const saveResultsText = resultsSaved ? "Results saved" : "Save Results";
+
   return (
     <React.Fragment>
-      <Typography variant="h5" gutterBottom align="center">
-        Analysis Results
-      </Typography>
-
-      {loading ? (
-        <CircularProgress />
-      ) : (
+      {!loading && (
         <>
+          {saveEnabled && (
+            <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+              <LoadingButton
+                variant="contained"
+                onClick={(e) => handleSaveResults(e)}
+                loading={loading}
+                loadingPosition="start"
+                disabled={resultsSaved}
+              >
+                {saveResultsText}
+              </LoadingButton>
+            </Box>
+          )}
+          <Typography variant="h5" gutterBottom align="center">
+            Analysis Results
+          </Typography>
           {!!regression_results &&
             regression_results.map((result) => {
               const {
@@ -208,83 +281,65 @@ const Visualisation = (props: VisualisationProps) => {
               my: { xs: 4, md: 6 },
               p: { xs: 2, md: 3 },
             }}
-            
           >
-           { regressionBarData?.length > 0 && <><Typography variant="h5" gutterBottom align="center">
-            Regression Results
-          </Typography>
-            <BarChart
-              width={1000}
-              height={700}
-              data={regressionBarData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="rmse" fill="#8884d8" />
-              <Bar dataKey="mse" fill="#82ca9d" />
-              <Bar dataKey="R2" fill="#b34a8d" />
-            </BarChart></>}
-           {classificationBarData?.length > 0 && <><Typography variant="h5" gutterBottom align="center">
-            Classification Results
-          </Typography>
-            <BarChart
-              width={1000}
-              height={700}
-              data={classificationBarData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="accuracy" fill="#8884d8" />
-              <Bar dataKey="precision" fill="#82ca9d" />
-              <Bar dataKey="recall" fill="#b34a8d" />
-              <Bar dataKey="f1" fill="#c99a8d" />
-              <Bar dataKey="roc_auc" fill="#ff7f50" />
-              <Bar dataKey="specificity" fill="#00ced1" />
-            </BarChart></>}
-            {spatialBarData?.length > 0 && <><Typography variant="h5" gutterBottom align="center">
-            Spatial Analysis Results
-          </Typography>
-            <BarChart
-              width={1000}
-              height={700}
-              data={spatialBarData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="accuracy" fill="#8884d8" />
-              <Bar dataKey="precision" fill="#82ca9d" />
-              <Bar dataKey="recall" fill="#b34a8d" />
-              <Bar dataKey="f1" fill="#c99a8d" />
-              <Bar dataKey="roc_auc" fill="#ff7f50" />
-              <Bar dataKey="specificity" fill="#00ced1" />
-            </BarChart></>}
+            {regressionBarData?.length > 0 && (
+              <>
+                <Typography variant="h5" gutterBottom align="center">
+                  Regression Results
+                </Typography>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart
+                    data={regressionBarData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="rmse" fill="#8884d8" />
+                    <Bar dataKey="mse" fill="#82ca9d" />
+                    <Bar dataKey="R2" fill="#b34a8d" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </>
+            )}
+            {classificationBarData?.length > 0 && (
+              <>
+                <Typography variant="h5" gutterBottom align="center">
+                  Classification Results
+                </Typography>
+
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart
+                    data={classificationBarData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="accuracy" fill="#8884d8" />
+                    <Bar dataKey="precision" fill="#82ca9d" />
+                    <Bar dataKey="recall" fill="#b34a8d" />
+                    <Bar dataKey="f1" fill="#c99a8d" />
+                    <Bar dataKey="roc_auc" fill="#ff7f50" />
+                    <Bar dataKey="specificity" fill="#00ced1" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </>
+            )}
           </Paper>
         </>
       )}

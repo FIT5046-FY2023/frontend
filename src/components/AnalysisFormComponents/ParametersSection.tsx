@@ -31,7 +31,8 @@ export type ParameterSectionProps = {
             InputLabelProps={{
               shrink: true,
             }}
-            variant="filled"
+            variant="outlined"
+            size="small"
           />
           {/* <label
             htmlFor={`MLData.${index}.mlOptions.maxDepth`}
@@ -66,6 +67,8 @@ export type ParameterSectionProps = {
           <TextField
             name={`MLData.${index}.mlOptions.KNNneighbours`}
             id="filled-number"
+            variant="outlined"
+            size="small"
             label="Number of Neighbours"
             type="number"
             value={data.mlOptions ? (data.mlOptions as KNNOptions)[mlOptionFields.KNNneighbours] ? (data.mlOptions as KNNOptions)[mlOptionFields.KNNneighbours] : "" :""}
@@ -73,7 +76,6 @@ export type ParameterSectionProps = {
             InputLabelProps={{
               shrink: true,
             }}
-            variant="filled"
           />
   
             {/* <label

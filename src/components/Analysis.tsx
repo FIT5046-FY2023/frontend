@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
   Stack,
   Typography,
   IconButton,
@@ -11,22 +10,18 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import React, { useState } from "react";
+import React from "react";
 import { MLTypes, mlTypesList } from "../enums/machineLearningTasks";
-import { spatialStatesList } from "../enums/spatialAnalysisStates";
 import {
   classificationMachineLearningAlgo,
   regressionMachineLearningAlgo,
 } from "../enums/machineLearningAlgo";
-import { FormikProps } from "formik";
 import { ParametersSection } from "./AnalysisFormComponents/ParametersSection";
-import { MLDataList, MLData } from "./AnalysisFormComponents/mlDatatypes";
-import MLForm from "./MLForm";
+import { MLData } from "./AnalysisFormComponents/mlDatatypes";
 
 export interface AnalysisProps {
   setMLData: React.Dispatch<MLData[]>;
   mlData: MLData[];
-  formRef: React.MutableRefObject<FormikProps<MLDataList> | null>;
   setStateList: React.Dispatch<any[]>;
   stateList: any[];
 }
@@ -38,7 +33,6 @@ const Analysis = (props: AnalysisProps) => {
   const {
     setMLData: setFormValues,
     mlData: formValues,
-    formRef,
     stateList,
     setStateList,
   } = props;
@@ -63,10 +57,6 @@ const Analysis = (props: AnalysisProps) => {
     console.log(formValuesCopy);
   };
 
-  const handleSpatialChange = (event: SelectChangeEvent<any>) => {
-    setStateList(event.target.value);
-    console.log(stateList);
-  };
 
   const handleAddTask = (event: any) => {
     let formValuesCopy = formValues.map((object) => object);
@@ -110,7 +100,6 @@ const Analysis = (props: AnalysisProps) => {
     setFormValues([...formValuesCopy]);
     console.log("in handleParamChange");
   };
-  const [hideOldForm, setHideOldForm] = useState<boolean>();
 
   return (
     <Box
@@ -121,49 +110,6 @@ const Analysis = (props: AnalysisProps) => {
       flexDirection={"column"}
     >
       <Stack spacing={2} maxWidth={"40vw"} width={"100%"}>
-        <Typography
-          variant="h6"
-          gutterBottom
-          marginTop={1}
-          sx={{ fontWeight: "bold" }}
-        >
-          {" "}
-          Spatial Analysis
-        </Typography>
-        <FormControl fullWidth>
-          <InputLabel id="spatial-analytic-select">Choose States</InputLabel>
-          <Select
-            labelId="task-type-select"
-            id="task-type-select"
-            value={stateList}
-            label="Spatial Analysis"
-            onChange={handleSpatialChange}
-            multiple={true}
-            size="small"
-            renderValue={(selected) => {
-              console.log(selected);
-              return (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((task) => (
-                    <Chip key={task} label={task} />
-                  ))}
-                </Box>
-              );
-            }}
-          >
-            {spatialStatesList.map((task) => (
-              <MenuItem key={task.value} value={task.label}>
-                {task.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Box paddingTop={1}></Box>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
-          {" "}
-          ML Analysis
-        </Typography>
 
         {formValues.map((mlData, index) => {
           return (
@@ -184,12 +130,12 @@ const Analysis = (props: AnalysisProps) => {
                 </IconButton>
                 <Typography align="left" variant="subtitle2">
                   {" "}
-                  ML Task #{index + 1}
+                  ML Algorithm #{index + 1}
                 </Typography>
               </Box>
               <FormControl fullWidth>
-                <InputLabel id="task-type-select">
-                  Machine Learning Task
+                 <InputLabel size="small" id="task-type-select">
+                  Machine Learning Type
                 </InputLabel>
                 <Select
                   labelId="task-type-select"
@@ -209,7 +155,7 @@ const Analysis = (props: AnalysisProps) => {
               </FormControl>
 
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
+                 <InputLabel size="small" id="demo-simple-select-label">
                   Machine Learning Algorithm
                 </InputLabel>
                 <Select
@@ -218,7 +164,6 @@ const Analysis = (props: AnalysisProps) => {
                   value={mlData.mlAlgo}
                   label="Machine Learning Algorithm"
                   onChange={(e) => handleMLChange(e, index)}
-                  multiple={false}
                   size="small"
                 >
                   {mlData.mlType === MLTypes.Regression &&
@@ -253,14 +198,7 @@ const Analysis = (props: AnalysisProps) => {
         <Button variant="contained" onClick={(e) => handleAddTask(e)}>
           Add
         </Button>
-
-        {hideOldForm && <MLForm formRef={formRef} />}
       </Stack>
-      <Box sx={{ marginTop: "3rem" }}>
-        <Button variant="outlined" onClick={() => setHideOldForm(!hideOldForm)}>
-          show/hide old form
-        </Button>
-      </Box>
     </Box>
   );
 };
