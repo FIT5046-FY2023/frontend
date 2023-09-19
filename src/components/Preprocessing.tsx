@@ -131,6 +131,8 @@ const Preprocessing = (props: PreprocessProps) => {
           setRealCheckboxOptions(rows.filter((item) => item.feature != target));
           setCheckboxValues(data.selectedIndices)
           setPrecheckedRows(data.selectedIndices)
+          console.log(checkboxOptions)
+          console.log(checkbox)
           console.log(data.selectedIndices)
         })
         .catch((err) => {
