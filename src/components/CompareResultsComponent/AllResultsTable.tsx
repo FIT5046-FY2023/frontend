@@ -34,7 +34,7 @@ const AllResultsTable = ({
   const [error, setError] = useState("");
   const [selectedDataset, setSelectedDataset] = useState();
   // const [tableRowData, setTableData] = useState<DataResultInfo[]>(tableData);
-  // const [processingDelete, setProcessingDelete] = useState<boolean>(false);
+  const [processingDelete, setProcessingDelete] = useState<boolean>(false);
   const [rows, setRows] = useState<GridRowsProp<TableRowData>>(
     []
   );
@@ -48,45 +48,45 @@ const AllResultsTable = ({
   };
 
   const removeDataset = (indexToRemove: number) => {
-    // console.log("remove row ");
-    // const updatedDatasetResult = datasetsResult.filter(
-    //   (_dataset, idx) => idx !== indexToRemove
-    // );
-    // setDatasetsResult(updatedDatasetResult);
-    // console.log("updatedDatasetResult:\n", updatedDatasetResult);
+    console.log("remove row ");
+    const updatedRows = rows.filter(
+      (_dataset, idx) => idx !== indexToRemove
+    );
+    setRows(updatedRows);
+    console.log("updatedDatasetResult:\n", updatedRows);
 
   };
 
   const handleDeleteDataset = async (e: any, index: number) => {
-    // console.log("handleDeleteDataset", e, index);
-    // setProcessingDelete(true);
-    // console.log(
-    //   "Request body:\n",
-    //   JSON.stringify({
-    //     datasetNames: [datasetsResult[index]],
-    //   })
-    // );
+    console.log("handleDeleteDataset", e, index);
+    setProcessingDelete(true);
+    console.log(
+      "Request body:\n",
+      JSON.stringify({
+        results: [rows[index].name],
+      })
+    );
 
-    // await fetch("http://127.0.0.1:5000/db_datasets", {
-    //   method: "DELETE",
-    //   body: JSON.stringify({
-    //     datasetNames: [datasetsResult[index]],
-    //   }),
-    //   headers: {
-    //     "Content-type": "application/json; charset=UTF-8",
-    //   },
-    // })
-    //   .then((response) => {
-    //     setProcessingDelete(false);
-    //     console.log(response);
-    //     removeDataset(index);
-    //     return response.json();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.message);
-    //     setLoadingDataset(false);
-    //     setError(err.message);
-    //   });
+    await fetch("http://127.0.0.1:5000/save_results", {
+      method: "DELETE",
+      body: JSON.stringify({
+        results: [rows[index].name],
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => {
+        setProcessingDelete(false);
+        console.log(response);
+        removeDataset(index);
+        return response.json();
+      })
+      .catch((err) => {
+        console.log(err.message);
+        setLoadingDataset(false);
+        setError(err.message);
+      });
   };
 
   useEffect(() => {
