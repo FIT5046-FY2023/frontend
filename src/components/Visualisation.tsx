@@ -37,17 +37,6 @@ type ClassificationMlResult = {
   Feature_Name_Ranking: Array<string>;
 };
 
-type SpatialResult = {
-  Name: string;
-  State: string;
-  AccuracyScore: string;
-  PrecisionScore: string;
-  RecallScore: string;
-  F1Score: string;
-  Roc_Auc: string;
-  Specificity: string;
-};
-
 export interface ScatterPoint {
   name: number;
   uv: number;
@@ -120,10 +109,7 @@ const Visualisation = (props: VisualisationProps) => {
       MeanSquareError,
       RootMeanSquareError,
       R2_Score,
-      Feature_Importance_Mean,
-      Feature_Name_Ranking,
     } = result;
-    console.log("hello", Feature_Importance_Mean, Feature_Name_Ranking);
     return {
       name: Name,
       mse: MeanSquareError,
@@ -139,9 +125,7 @@ const Visualisation = (props: VisualisationProps) => {
       RecallScore,
       F1Score,
       Roc_Auc,
-      Specificity,
-      Feature_Importance_Mean,
-      Feature_Name_Ranking,
+      Specificity
     } = result;
     console.log(
       Name,
@@ -150,9 +134,7 @@ const Visualisation = (props: VisualisationProps) => {
       RecallScore,
       F1Score,
       Roc_Auc,
-      Specificity,
-      Feature_Importance_Mean,
-      Feature_Name_Ranking
+      Specificity
     );
     return {
       name: Name,
@@ -168,7 +150,6 @@ const Visualisation = (props: VisualisationProps) => {
   const handleSaveResults = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    // TODO: Post to backend
     e.preventDefault();
     if (saveResults !== undefined) {
       saveResults(results, setResultsSaved);
