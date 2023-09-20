@@ -152,9 +152,6 @@ const filterClassificationResults = (results: DataResultInfo[]) => {
   return filteredResults;
 };
 
-// const getUniqueAlgorithms = (results: )
-// const filterByAlgorithm = (results: ClassificationBarData[])
-
 const CompareVisualisation = (props: CompareVisualisationProps) => {
   const { loading, results } = props;
 
@@ -292,8 +289,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
     <React.Fragment>
       {!loading && (
         <>
-          <Paper
-            variant="outlined"
+          <Box
             sx={{
               my: { xs: 4, md: 6 },
               p: { xs: 2, md: 3 },
@@ -330,17 +326,14 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             <Typography variant="h5" gutterBottom align="center">
               Comparing By Machine Learning Algorithms
             </Typography>
-            {/* <Typography variant="body1" gutterBottom align="center">
-              {"Datasets: "+ results.reduce((accumulator, barData) => accumulator+barData.datasetName+", ","")}
-            </Typography> */}
+
             {MLFilteredBarCharts()}
             {ClassMLFilteredBarCharts()}
-          </Paper>
-          <Paper
-            variant="outlined"
+          </Box>
+          <Box
             sx={{
-              my: { xs: 4, md: 6 },
-              p: { xs: 2, md: 3 },
+
+
             }}
           >
             {newRegressionResults?.length > 0 && (
@@ -384,6 +377,8 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
               </>
             )}
 
+          
+            <Box sx={{ display:"flex", flexDirection: "column", flexWrap:"wrap", alignContent:"center"}}>
             {newClassificationResults?.length > 0 && (
               <>
                 <Typography variant="h4" gutterBottom align="center">
@@ -391,12 +386,20 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                 </Typography>
                 {newClassificationResults.map((r) => (
                   <>
-                    <Typography variant="h6" gutterBottom align="center">
+                  <Box sx={{ my: { xs: 1, md: 1 } , p: { xs: 2, md: 2 }, mb: {md:4}, display:"flex", flexDirection: "column", flexWrap:"wrap", alignContent:"center", alignItems:"flex-start"}}>
+                    <Typography variant="h6" gutterBottom align="left">
                       {r.datasetName}
                     </Typography>
-                    <Typography variant="body1" gutterBottom align="center">
-                      {r.dateCreated}
+                    <Typography variant="body1" gutterBottom align="left" sx={{display: "inline"}}>
+                    <Typography variant="body1" gutterBottom align="left" sx={{fontWeight:"bold", display: "inline"}}>
+                      {`Date Created: `}
                     </Typography>
+                      {`${r.dateCreated}`}
+                    </Typography>
+                    {r.results?.map((barData) => (
+                      <ClassificationResultDetails {...barData} />
+                    ))}
+                    </Box>
                     <ResponsiveContainer width="100%" height={300}>
                       <BarChart
                         data={r.results}
@@ -406,7 +409,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                           left: 20,
                           bottom: 5,
                         }}
-                      >
+                        >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis />
@@ -420,14 +423,13 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                         <Bar dataKey="specificity" fill="#00ced1" />
                       </BarChart>
                     </ResponsiveContainer>
-                    {r.results?.map((barData) => (
-                      <ClassificationResultDetails {...barData} />
-                    ))}
                   </>
                 ))}
               </>
             )}
-          </Paper>
+            </Box>
+
+          </Box>
         </>
       )}
     </React.Fragment>
@@ -486,10 +488,7 @@ const ClassificationResultDetails = ({
   ];
   return (
     <>
-      <Paper
-        variant="outlined"
-        sx={{ my: { xs: 4, md: 6 }, p: { xs: 2, md: 3 } }}
-      >
+      
         {data.map(({ label, value }) => (
           <Box sx={{ display: "flex" }}>
             <Typography variant="subtitle1" sx={{ display: "inline" }}>
@@ -500,7 +499,7 @@ const ClassificationResultDetails = ({
             </Typography>
           </Box>
         ))}
-      </Paper>
+     
     </>
   );
 };
