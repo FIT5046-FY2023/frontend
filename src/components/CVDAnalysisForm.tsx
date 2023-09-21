@@ -56,7 +56,15 @@ function getStepContent({
     target,
     loading: loadingPreprocess,
     setLoading,
-    checkboxOptions
+    checkboxOptions, 
+    featureOption, 
+    setFeatureOption, 
+    selectedAlgo, 
+    setSelectedAlgo, 
+    selectedAlgoOption,
+    setSelectedAlgoOption, 
+    selectedMethod, 
+    setSelectedMethod
 
   } = preprocessProps;
 
@@ -101,6 +109,14 @@ function getStepContent({
           loading={loadingPreprocess}
           selectedData={selectedData}
           setLoading={setLoading}
+          featureOption={featureOption}
+          setFeatureOption={setFeatureOption}
+          selectedAlgo={selectedAlgo}
+          setSelectedAlgo={setSelectedAlgo}
+          selectedAlgoOption={selectedAlgoOption}
+          setSelectedAlgoOption={setSelectedAlgoOption}
+          selectedMethod={selectedMethod}
+          setSelectedMethod={setSelectedMethod}
 
         />
       );
@@ -138,6 +154,12 @@ export default function CVDAnalysisForm() {
   const [target, setTarget] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedData, setSelectedData] = React.useState("");
+  const [featureOption, setFeatureOption] = useState("Filter");
+  const [selectedAlgo, setSelectedAlgo] = useState("regression");
+  const [selectedAlgoOption, setSelectedAlgoOption] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState('');
+  const [isDataVisible, setIsDataVisible] = useState(false)
+  
 
 
   const formRef = useRef<FormikProps<MLDataList> | null>(null);
@@ -355,6 +377,14 @@ export default function CVDAnalysisForm() {
                   loading,
                   selectedData,
                   setLoading, 
+                  featureOption, 
+                  setFeatureOption, 
+                  selectedAlgo, 
+                  setSelectedAlgo, 
+                  selectedAlgoOption, 
+                  setSelectedAlgoOption, 
+                  selectedMethod,
+                  setSelectedMethod
                   
                   
                 },

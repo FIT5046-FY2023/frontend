@@ -31,7 +31,15 @@ export interface PreprocessProps {
   target: string;
   loading: boolean; 
   selectedData: React.SetStateAction<string>;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>, 
+  featureOption: string, 
+  setFeatureOption:  React.Dispatch<React.SetStateAction<string>>, 
+  selectedAlgo: string, 
+  setSelectedAlgo: React.Dispatch<React.SetStateAction<string>>, 
+  selectedAlgoOption: string,
+  setSelectedAlgoOption: React.Dispatch<React.SetStateAction<string>>, 
+  selectedMethod: string, 
+  setSelectedMethod: React.Dispatch<React.SetStateAction<string>>
 }
 
 
@@ -45,17 +53,15 @@ const columns: GridColDef[] = [
 ];
 
 const Preprocessing = (props: PreprocessProps) => {
-    const {loading, checkbox, setCheckboxValues, setTarget, target, selectedData, checkboxOptions, setLoading} = props; 
+    const {loading, checkbox, setCheckboxValues, setTarget, target, selectedData, checkboxOptions, setLoading,  featureOption, setFeatureOption, selectedAlgo, setSelectedAlgo, selectedAlgoOption, setSelectedAlgoOption, selectedMethod, setSelectedMethod} = props; 
     const [isDataVisible, setIsDataVisible] = useState(false);
-    const [csv, setCSV] = useState<any[]>([]);
     const [heatmapString, setHeatmapString] = useState("");
     const [realCheckboxOptions, setRealCheckboxOptions] = useState<any[]>([]); 
-    const [selectedRows, setSelectedRows] = React.useState([]);
     const [precheckedRows, setPrecheckedRows] = useState<any[]>([]);
-    const [featureOption, setFeatureOption] = useState("Filter");
-    const [selectedAlgo, setSelectedAlgo] = useState('regression');
-    const [selectedAlgoOption, setSelectedAlgoOption] = useState('');
-    const [selectedMethod, setSelectedMethod] = useState('');
+    // const [featureOption, setFeatureOption] = useState("Filter");
+    // const [selectedAlgo, setSelectedAlgo] = useState('regression');
+    // const [selectedAlgoOption, setSelectedAlgoOption] = useState('');
+    // const [selectedMethod, setSelectedMethod] = useState('');
     const featureSelectionOptions = ["Filter", "Wrapper", "Other"]
     const wrapperMethods = ["Forward Selection", "Backward Selection", "Stepwise Selection"]
     const filterMethods = ["Select K Features"]
@@ -72,7 +78,7 @@ const Preprocessing = (props: PreprocessProps) => {
     const handleAlgoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedAlgo((event.target as HTMLInputElement).value);
       setSelectedAlgoOption("")
-      setIsDataVisible(false);
+      //setIsDataVisible(false);
       // handleVisual();
     };
 
@@ -81,14 +87,14 @@ const Preprocessing = (props: PreprocessProps) => {
       setSelectedAlgoOption("")
       setSelectedMethod("")
       setSelectedAlgo("")
-      setIsDataVisible(false);
+      //setIsDataVisible(false);
       console.log(featureOption)
       // handleVisual();
     };
     
     const handleAlgoOptionChange = (event: SelectChangeEvent<any>) => {
       setSelectedAlgoOption(event.target.value);
-      setIsDataVisible(false);
+      //setIsDataVisible(false);
     };
     
     const handleCheckboxOptions = async () => {
@@ -158,14 +164,14 @@ const Preprocessing = (props: PreprocessProps) => {
 
     const handleFeatureSelectionChange = (event: SelectChangeEvent<any>) => {
       setSelectedMethod(event.target.value);
-      setIsDataVisible(false);
+      //setIsDataVisible(false);
 
     };
 
     
       const handleTargetChange = (event: SelectChangeEvent<any>) => { 
         setTarget(event.target.value);
-        setIsDataVisible(false);
+       // setIsDataVisible(false);
 
       };
 
