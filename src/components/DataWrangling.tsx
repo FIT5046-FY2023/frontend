@@ -151,6 +151,8 @@ const DataWrangling = (props: DataWranglingProps) => {
                   control={<Radio />}
                   label="Median"
                 />
+
+              <FormControlLabel value="none" control={<Radio />} label="None" />
               </RadioGroup>
             </FormControl>
 
@@ -169,6 +171,7 @@ const DataWrangling = (props: DataWranglingProps) => {
                   label="Z-method"
                 />
                 <FormControlLabel value="iqr" control={<Radio />} label="IQR" />
+                <FormControlLabel value="none" control={<Radio />} label="None" />
               </RadioGroup>
             </FormControl>
 
