@@ -16,14 +16,14 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataResultInfo } from "../CompareResultsPage";
 
-export type TableData = Pick<DataResultInfo, "datasetName"|"dateCreated">[];
+export type TableData = Pick<DataResultInfo, "datasetName"|"dateCreated"|"objectId">[];
 export interface AllResultsTableProps {
   selectedResults: number[];
   setSelectedResults: React.Dispatch<React.SetStateAction<number[]>>;
   tableData: TableData;
 }
 
-type TableRowData = { id: number; name: string; dateCreated: string; }
+type TableRowData = { id: number; name: string; dateCreated: string; objectId:string; }
 const AllResultsTable = ({
   selectedResults: selectedData,
   setSelectedResults: setSelectedData,
@@ -63,14 +63,14 @@ const AllResultsTable = ({
     console.log(
       "Request body:\n",
       JSON.stringify({
-        results: [rows[index].name],
+        results: [rows[index].objectId],
       })
     );
 
-    await fetch("http://127.0.0.1:5000/save_results", {
+    await fetch("http://127.0.0.1:5000/cvd_results", {
       method: "DELETE",
       body: JSON.stringify({
-        results: [rows[index].name],
+        results: [rows[index].objectId],
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
@@ -179,6 +179,7 @@ const AllResultsTable = ({
         console.log(data);
         return {
           id: index,
+          objectId: data.objectId,
           name: data.datasetName,
           dateCreated: data.dateCreated
         };
