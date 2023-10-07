@@ -56,6 +56,7 @@ export interface ScatterPoint {
 }
 
 export interface VisualisationProps {
+  datasetName: string;
   results: any;
   loading: boolean;
   handleSaveResults?: (
@@ -66,6 +67,7 @@ export interface VisualisationProps {
     setResultsSaved: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   saveEnabled: boolean;
+
 }
 
 Chart.register(CategoryScale);
@@ -76,6 +78,7 @@ const Visualisation = (props: VisualisationProps) => {
     results,
     handleSaveResults: saveResults,
     saveEnabled,
+    datasetName
   } = props;
   const [resultsSaved, setResultsSaved] = useState<boolean>(false);
 
@@ -182,7 +185,9 @@ const Visualisation = (props: VisualisationProps) => {
           <Typography variant="h5" gutterBottom align="center">
             Analysis Results
           </Typography>
-
+          <Typography paragraph gutterBottom align="center">
+            {`Dataset Name: ${datasetName}`}
+          </Typography>
           {saveEnabled && (
             <Box sx={{ display:"flex", justifyContent: 'center', width: "100%" }}>
             <Stack direction={"row"} spacing={2}>

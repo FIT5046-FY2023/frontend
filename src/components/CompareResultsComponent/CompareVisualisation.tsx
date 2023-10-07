@@ -1,4 +1,13 @@
-import { Typography, Paper, Box } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Grid,
+  Stack,
+} from "@mui/material";
 import { omit, uniq } from "lodash";
 import React from "react";
 import {
@@ -14,17 +23,22 @@ import {
 } from "recharts";
 import { DataResultInfo } from "../CompareResultsPage";
 import FeatureBarChart from "../FeatureBarChart";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { TooltipProps } from "recharts/types/component/Tooltip";
+import {
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
+import { light } from "@mui/material/styles/createPalette";
 
 type RawFeatureRanking = {
-  Feature_Importance_Mean: number[],
-  Feature_Name_Ranking: string[]
-}
+  Feature_Importance_Mean: number[];
+  Feature_Name_Ranking: string[];
+};
 
 type FeatureRanking = {
-  featureImportanceMean: number[],
-  featureNameRanking: string[]
-}
+  featureImportanceMean: number[];
+  featureNameRanking: string[];
+};
 
 export type RegressionMlResult = {
   Name: string;
@@ -34,6 +48,7 @@ export type RegressionMlResult = {
 } & RawFeatureRanking;
 
 export type RegressionBarData = {
+  resultName: string;
   name: string;
   mse: string;
   rmse: string;
@@ -41,6 +56,7 @@ export type RegressionBarData = {
 } & FeatureRanking;
 
 export type ClassificationBarData = {
+  resultName: string;
   name: string;
   accuracy: string;
   precision: string;
@@ -49,7 +65,7 @@ export type ClassificationBarData = {
   roc_auc: string;
   specificity: string;
 } & FeatureRanking;
- 
+
 export type ClassificationMlResult = {
   Name: string;
   AccuracyScore: string;
@@ -72,18 +88,20 @@ export interface CompareVisualisationProps {
 
 function combineMultipleDatasetResults<
   S,
-  T extends { datasetName: string; results: S[] | undefined }
+  T extends { datasetName: string; state: string; results: S[] | undefined }
 >(datasetResults: T[]) {
   console.log(datasetResults);
   const combined = datasetResults.reduce<
     (S & {
       datasetName: string;
+      state: string;
     })[]
   >((accumulator, currentDatasetResult) => {
-    const { datasetName } = currentDatasetResult;
+    const { datasetName, state } = currentDatasetResult;
     const results = currentDatasetResult["results"]?.map((r) => ({
       ...r,
       datasetName,
+      state,
     }));
     return results ? accumulator.concat(results) : accumulator;
   }, []);
@@ -97,24 +115,42 @@ const filterRegressionResults = (results: DataResultInfo[]) => {
     return regressionResults !== undefined && regressionResults.length > 0;
   });
   const filteredResults = rawResults.map((result: DataResultInfo) => {
-    const { datasetName, dateCreated } = result;
+    const { datasetName, dateCreated, title, state, description } = result;
     const rawRegressionResults = result.cvdResults.regression_results;
     const regressionResults = rawRegressionResults?.map((r) => {
-      const { Name, MeanSquareError, RootMeanSquareError, R2_Score, Feature_Importance_Mean, Feature_Name_Ranking } = r;
-      console.log(Name, MeanSquareError, RootMeanSquareError, R2_Score, Feature_Importance_Mean, Feature_Name_Ranking );
+      const {
+        Name,
+        MeanSquareError,
+        RootMeanSquareError,
+        R2_Score,
+        Feature_Importance_Mean,
+        Feature_Name_Ranking,
+      } = r;
+      console.log(
+        Name,
+        MeanSquareError,
+        RootMeanSquareError,
+        R2_Score,
+        Feature_Importance_Mean,
+        Feature_Name_Ranking
+      );
       return {
+        resultName: title,
         name: Name,
         mse: MeanSquareError,
         rmse: RootMeanSquareError,
         R2: R2_Score,
         featureImportanceMean: Feature_Importance_Mean,
-        featureNameRanking: Feature_Name_Ranking
+        featureNameRanking: Feature_Name_Ranking,
       } as RegressionBarData;
     });
     return {
       datasetName,
       dateCreated,
+      state,
+      resultTitle: title,
       results: regressionResults,
+      description,
     };
   });
   return filteredResults;
@@ -127,7 +163,7 @@ const filterClassificationResults = (results: DataResultInfo[]) => {
     );
   });
   const filteredResults = rawResults.map((result: DataResultInfo) => {
-    const { datasetName, dateCreated } = result;
+    const { datasetName, dateCreated, state, title } = result;
     const rawClassificationResults = result.cvdResults.classification_results;
     const classificationResults = rawClassificationResults?.map((r) => {
       const {
@@ -139,7 +175,7 @@ const filterClassificationResults = (results: DataResultInfo[]) => {
         Roc_Auc,
         Specificity,
         Feature_Importance_Mean,
-        Feature_Name_Ranking
+        Feature_Name_Ranking,
       } = r;
       console.log(
         Name,
@@ -153,6 +189,7 @@ const filterClassificationResults = (results: DataResultInfo[]) => {
         Feature_Name_Ranking
       );
       return {
+        resultName: title,
         name: Name,
         accuracy: AccuracyScore,
         precision: PrecisionScore,
@@ -161,12 +198,14 @@ const filterClassificationResults = (results: DataResultInfo[]) => {
         roc_auc: Roc_Auc,
         specificity: Specificity,
         featureImportanceMean: Feature_Importance_Mean,
-        featureNameRanking: Feature_Name_Ranking
+        featureNameRanking: Feature_Name_Ranking,
       } as ClassificationBarData;
     });
     return {
       datasetName,
       dateCreated,
+      state,
+      resultTitle: title,
       results: classificationResults,
     };
   });
@@ -198,7 +237,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
   console.log("combined regression results", combinedRegressionResults);
 
   const combinedRegressionBarData = combinedRegressionResults.map((r) => {
-    const obj = { ...r, name: `${r.datasetName} \n${r.name}` };
+    const obj = { ...r, name: `${r.state} \n${r.name}` };
     return omit(obj, ["datasetName"]) as RegressionBarData;
   });
   // Filter by ML regression
@@ -231,12 +270,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             {key}
           </Typography>
           <Typography variant="body1" gutterBottom align="center">
-            {"Datasets: " +
-              barData.reduce(
-                (accumulator, barData) =>
-                  accumulator + barData.datasetName + ", ",
-                ""
-              )}
+            {`Datasets: ${extractDatasetNames(results)}`}
           </Typography>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -251,7 +285,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="datasetName" tick={<CustomXAxisTick />} />
               <YAxis />
-              <Tooltip />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar dataKey="accuracy" fill="#8884d8" />
               <Bar dataKey="precision" fill="#82ca9d" />
@@ -275,12 +309,7 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             {key}
           </Typography>
           <Typography variant="body1" gutterBottom align="center">
-            {"Datasets: " +
-              barData.reduce(
-                (accumulator, barData) =>
-                  accumulator + barData.datasetName + ", ",
-                ""
-              )}
+            {`Datasets: ${extractDatasetNames(results)}`}
           </Typography>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -293,9 +322,9 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="datasetName" />
+              <XAxis dataKey="state" />
               <YAxis />
-              <Tooltip />
+              <Tooltip content={<CustomTooltip />} />
               <Legend />
               <Bar dataKey="rmse" fill="#8884d8" />
               <Bar dataKey="mse" fill="#82ca9d" />
@@ -312,24 +341,53 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
         <>
           <Box
             sx={{
-              my: { xs: 4, md: 6 },
-              p: { xs: 2, md: 3 },
               height: "10000",
             }}
           >
             <Typography variant="h4" gutterBottom align="center">
               Spatial Results
             </Typography>
+            <Grid
+              container
+              sx={{ mb: 8, mt: 4 }}
+              justifyContent="center"
+              rowSpacing={1}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            >
+              {newRegressionResults?.length > 1 &&
+                newRegressionResults.map((result) => (
+                  <Grid item xs={5}>
+                    <Card variant="outlined">
+                      <CardContent
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          align="left"
+                          variant="body1"
+                          sx={{ fontWeight: "600" }}
+                        >
+                          {`${result.resultTitle} Result`}
+                          <Typography paragraph={true}>
+                            {result.description}
+                          </Typography>
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+            </Grid>
+            {combinedClassBarData?.length > 1 && (
+              <ClassificationBarChart barData={combinedClassBarData} />
+            )}
             <Typography variant="h5" gutterBottom align="center">
               Comparing All Dataset Results
             </Typography>
             <Typography variant="body1" gutterBottom align="center">
-              {"Datasets: " +
-                results.reduce(
-                  (accumulator, barData) =>
-                    accumulator + barData.datasetName + ", ",
-                  ""
-                )}
+              {`Datasets: ${extractDatasetNames(results)}`}
             </Typography>
             {combinedRegressionBarData?.length > 1 && (
               <RegressionBarChart barData={combinedRegressionBarData} />
@@ -351,21 +409,21 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
             {MLFilteredBarCharts()}
             {ClassMLFilteredBarCharts()}
           </Box>
-          <Box
-            sx={{
-
-
-            }}
-          >
+          <Box>
             {newRegressionResults?.length > 0 && (
               <>
-                <Typography variant="h5" gutterBottom align="center">
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  align="center"
+                  sx={{ mt: 8 }}
+                >
                   Regression Results By Dataset
                 </Typography>
                 {newRegressionResults.map((r) => (
                   <>
                     <Typography variant="h6" gutterBottom align="center">
-                      {r.datasetName}
+                      {`${r.datasetName} (${r.resultTitle})`}
                     </Typography>
                     <Typography variant="body1" gutterBottom align="center">
                       {r.dateCreated}
@@ -393,89 +451,140 @@ const CompareVisualisation = (props: CompareVisualisationProps) => {
                         <Bar dataKey="R2" fill="#b34a8d" />
                       </BarChart>
                     </ResponsiveContainer>
-                    <Box sx={{ my: { xs: 1, md: 1 } , mb: {md:4}, display:"flex", flexDirection: "column", flexWrap:"wrap", alignContent:"center", alignItems:"flex-start", width:"100%"}}>
-                    
-                    {r.results?.map((barData) => {
-                      // const {featureNameRanking, featureImportanceMean} = barData;
-                      return (
-                       <>
-                        <FeatureBarChart2 barData={barData}  />
-                        
-                        </>
-                    )})}
+                    <Box
+                      sx={{
+                        my: { xs: 1, md: 1 },
+                        mb: { md: 4 },
+                        display: "flex",
+                        flexDirection: "column",
+                        flexWrap: "wrap",
+                        alignContent: "center",
+                        alignItems: "flex-start",
+                        width: "100%",
+                      }}
+                    >
+                      {r.results?.map((barData) => {
+                        // const {featureNameRanking, featureImportanceMean} = barData;
+                        return (
+                          <>
+                            <FeatureBarChart2 barData={barData} />
+                          </>
+                        );
+                      })}
                     </Box>
                   </>
                 ))}
               </>
             )}
 
-          
-            <Box sx={{ my: { xs: 1, md: 1 } , p: { xs: 2, md: 4 }, mb: {xs: 2, md:2}, display:"flex", flexDirection: "column", flexWrap:"wrap", alignContent:"center", alignItems:"flex-start", width:"100%"}} >
-            {newClassificationResults?.length > 0 && (
-              <>
-                <Typography variant="h4" gutterBottom >
-                  Classification Results by Dataset
-                </Typography>
-                {newClassificationResults.map((r) => (
-                  <>
-                    <Typography variant="h6" gutterBottom >
-                      {r.datasetName}
-                    </Typography>
-                    <Typography variant="subtitle1" gutterBottom align="left" sx={{display: "inline"}}>
-                    <Typography variant="body1" gutterBottom align="left" sx={{fontWeight:"bold", display: "inline"}}>
-                      {`Date Created: `}
-                    </Typography>
-                      {`${r.dateCreated}`}
-                    </Typography>
-                    
-                    {r.results?.map((barData) => {
-                      return (
-                        <Box sx={{ my: { xs: 1, md: 1 } , mb: {xs: 2, md:2}, display:"flex", flexDirection: "column", flexWrap:"wrap", alignContent:"flex-start", alignItems:"flex-start", width:"100%"}}>
-                        <ClassificationResultDetails {...barData} />
-                        
-                    </Box>
-                    )})}
-                    
-                    <ResponsiveContainer width="100%" height={300}>
-                      <BarChart
-                        data={r.results}
-                        margin={{
-                          top: 5,
-                          right: 30,
-                          left: 20,
-                          bottom: 5,
-                        }}
+            <Box
+              sx={{
+                my: { xs: 1, md: 1 },
+                p: { xs: 2, md: 4 },
+                mb: { xs: 2, md: 2 },
+                display: "flex",
+                flexDirection: "column",
+                flexWrap: "wrap",
+                alignContent: "center",
+                alignItems: "flex-start",
+                width: "100%",
+              }}
+            >
+              {newClassificationResults?.length > 0 && (
+                <>
+                  <Typography variant="h4" gutterBottom>
+                    Classification Results by Dataset
+                  </Typography>
+                  {newClassificationResults.map((r) => (
+                    <>
+                      <Typography variant="h6" gutterBottom>
+                        {r.datasetName}
+                      </Typography>
+                      <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        align="left"
+                        sx={{ display: "inline" }}
+                      >
+                        <Typography
+                          variant="body1"
+                          gutterBottom
+                          align="left"
+                          sx={{ fontWeight: "bold", display: "inline" }}
                         >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="accuracy" fill="#8884d8" />
-                        <Bar dataKey="precision" fill="#82ca9d" />
-                        <Bar dataKey="recall" fill="#b34a8d" />
-                        <Bar dataKey="f1" fill="#c99a8d" />
-                        <Bar dataKey="roc_auc" fill="#ff7f50" />
-                        <Bar dataKey="specificity" fill="#00ced1" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                    <Box sx={{ my: { xs: 1, md: 1 } , mb: {md:4}, display:"flex", flexDirection: "column", flexWrap:"wrap", alignContent:"center", alignItems:"flex-start", width:"100%"}}>
-                    
-                    {r.results?.map((barData) => {
-                      // const {featureNameRanking, featureImportanceMean} = barData;
-                      return (
-                       <>
-                        <FeatureBarChart2 barData={barData}  />
-                        
-                        </>
-                    )})}
-                    </Box>
-                  </>
-                ))}
-              </>
-            )}
-            </Box>
+                          {`Date Created: `}
+                        </Typography>
+                        {`${r.dateCreated}`}
+                      </Typography>
 
+                      {r.results?.map((barData) => {
+                        return (
+                          <Box
+                            sx={{
+                              my: { xs: 1, md: 1 },
+                              mb: { xs: 2, md: 2 },
+                              display: "flex",
+                              flexDirection: "column",
+                              flexWrap: "wrap",
+                              alignContent: "flex-start",
+                              alignItems: "flex-start",
+                              width: "100%",
+                            }}
+                          >
+                            <ClassificationResultDetails {...barData} />
+                          </Box>
+                        );
+                      })}
+
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart
+                          data={r.results}
+                          margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="accuracy" fill="#8884d8" />
+                          <Bar dataKey="precision" fill="#82ca9d" />
+                          <Bar dataKey="recall" fill="#b34a8d" />
+                          <Bar dataKey="f1" fill="#c99a8d" />
+                          <Bar dataKey="roc_auc" fill="#ff7f50" />
+                          <Bar dataKey="specificity" fill="#00ced1" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                      <Box
+                        sx={{
+                          my: { xs: 1, md: 1 },
+                          mb: { md: 4 },
+                          display: "flex",
+                          flexDirection: "column",
+                          flexWrap: "wrap",
+                          alignContent: "center",
+                          alignItems: "flex-start",
+                          width: "100%",
+                        }}
+                      >
+                        {r.results?.map((barData) => {
+                          // const {featureNameRanking, featureImportanceMean} = barData;
+                          return (
+                            <>
+                              <FeatureBarChart2 barData={barData} />
+                            </>
+                          );
+                        })}
+                      </Box>
+                    </>
+                  ))}
+                </>
+              )}
+            </Box>
           </Box>
         </>
       )}
@@ -535,18 +644,16 @@ const ClassificationResultDetails = ({
   ];
   return (
     <>
-      
-        {data.map(({ label, value }) => (
-          <Box sx={{ display: "flex" }}>
-            <Typography variant="subtitle1" sx={{ display: "inline" }}>
-              <Typography sx={{ fontWeight: "bold", display: "inline" }}>
-                {label}{" "}
-              </Typography>
-              {value}
+      {data.map(({ label, value }) => (
+        <Box sx={{ display: "flex" }}>
+          <Typography variant="subtitle1" sx={{ display: "inline" }}>
+            <Typography sx={{ fontWeight: "bold", display: "inline" }}>
+              {label}{" "}
             </Typography>
-          </Box>
-        ))}
-     
+            {value}
+          </Typography>
+        </Box>
+      ))}
     </>
   );
 };
@@ -583,7 +690,7 @@ const RegressionBarChart = ({
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" tick={<CustomXAxisTick />} />
           <YAxis />
-          <Tooltip />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="rmse" fill="#8884d8" />
           <Bar dataKey="mse" fill="#82ca9d" />
@@ -626,48 +733,108 @@ const ClassificationBarChart = ({
   );
 };
 
-function FeatureBarChart2<T extends FeatureRanking> ({barData}: {barData: T})  {
-  const {featureNameRanking, featureImportanceMean} = barData;
-  return <><FeatureBarChart title={false}
-    data={{
-      labels: barData.featureNameRanking,
-      datasets: [
-        {
-          data: barData.featureImportanceMean,
-          backgroundColor: [
-            "rgba(75,192,192,1)",
-            "#50AF95",
-            "#f3ba2f",
-            "#2a71d0",
+function FeatureBarChart2<T extends FeatureRanking>({
+  barData,
+}: {
+  barData: T;
+}) {
+  const { featureNameRanking, featureImportanceMean } = barData;
+  const means = featureImportanceMean.map((mean) =>
+    parseFloat(mean.toFixed(4))
+  );
+  return (
+    <>
+      <FeatureBarChart
+        title={false}
+        data={{
+          labels: barData.featureNameRanking,
+          datasets: [
+            {
+              data: means,
+              backgroundColor: [
+                "rgba(75,192,192,1)",
+                "#50AF95",
+                "#f3ba2f",
+                "#2a71d0",
+              ],
+              borderColor: "black",
+              borderWidth: 2,
+            },
           ],
-          borderColor: "black",
-          borderWidth: 2
-        },
-      ],
-    }} /><Box
-      sx={{
-        display: "flex", flexDirection: "column", flexWrap: "wrap", alignContent: "center", alignItems: "flex-start",
-      }}
-    >
-
-      <Typography variant="subtitle1"
-        sx={{ fontWeight: "bold", display: "inline" }}
+        }}
+      />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          flexWrap: "wrap",
+          alignContent: "center",
+          alignItems: "flex-start",
+        }}
       >
-        {" "}
-        FEATURE IMPORTANCE - {(barData as any).name}:{" "}
-      </Typography>{" "}
-      {featureImportanceMean.map(
-        (importance: number, index: number) => (
-          <Typography
-            key={index}
-            variant="subtitle1"
-
-          >
-            {index + 1}. {featureNameRanking[index]} :{" "}
-            {importance}
+        <Typography
+          variant="subtitle1"
+          sx={{ fontWeight: "bold", display: "inline" }}
+        >
+          {" "}
+          FEATURE IMPORTANCE - {(barData as any).name}:{" "}
+        </Typography>{" "}
+        {featureImportanceMean.map((importance: number, index: number) => (
+          <Typography key={index} variant="subtitle1">
+            {index + 1}. {featureNameRanking[index]} : {importance}
           </Typography>
-        )
-      )}
-    </Box></>
+        ))}
+      </Box>
+    </>
+  );
 }
 export default CompareVisualisation;
+
+export const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<ValueType, NameType>) => {
+  if (active && payload && payload.length) {
+    return (
+      <Card
+        className="custom-tooltip"
+        sx={{
+          maxWidth: "400px",
+          flexDirection: "column",
+
+          p: 3,
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "flex-start",
+          flexWrap: "wrap",
+        }}
+      >
+        <CardContent>
+          <Typography
+            sx={{ fontWeight: "600" }}
+            className="label"
+          >{`${label}`}</Typography>
+          <Stack direction={"column"} flex={2} flexWrap={"wrap"}>
+            <Typography
+              paragraph
+            >{`Result ${payload[0].payload.resultName}`}</Typography>
+            {payload.map((pld) => (
+              <div
+                style={{ color: pld.color }}
+              >{`${pld.dataKey} ${pld.value}} `}</div>
+            ))}
+          </Stack>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return null;
+};
+const extractDatasetNames = (results: DataResultInfo[]) => {
+  let datasets = new Set<string>();
+  results.forEach((barData) => datasets.add(barData.datasetName));
+  const darray = Array.from(datasets).join(",");
+  return darray;
+};

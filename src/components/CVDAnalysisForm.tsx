@@ -57,7 +57,7 @@ function getStepContent({
 
   } = preprocessProps;
 
-  const {results: predictions, loading: loadingVisual, handleSaveResults} = visualisationProps;
+  const {results: predictions, loading: loadingVisual, handleSaveResults, datasetName} = visualisationProps;
   const {setMLData, mlData, setStateList, stateList } = analysisProps;
   const {setImputationValue, imputation, setOutlierValue, outlier, dataWranglingOptions, setDataWranglingCheckbox, dataWranglingCheckbox, setDataWranglingOptions} = dataWranglingProps; 
   
@@ -75,7 +75,7 @@ function getStepContent({
         />
       );
     case 1:
-      return <><DataWrangling 
+      return <DataWrangling 
       setImputationValue={setImputationValue}
       imputation={imputation}
       setOutlierValue={setOutlierValue}
@@ -86,7 +86,6 @@ function getStepContent({
       dataWranglingCheckbox={dataWranglingCheckbox}
       loading={loading}
       ></DataWrangling>
-      </>
     case 2:
       return (
         <Preprocessing
@@ -108,7 +107,7 @@ function getStepContent({
       return <>
       {loading && <CircularProgress />}
       {!!predictions && !loading && (
-        <Visualisation results={predictions} loading={loadingVisual} handleSaveResults={handleSaveResults} saveEnabled={true}></Visualisation>
+        <Visualisation datasetName={datasetName} results={predictions} loading={loadingVisual} handleSaveResults={handleSaveResults} saveEnabled={true}></Visualisation>
       )}
 
     </>
@@ -354,7 +353,8 @@ export default function CVDAnalysisForm() {
                 visualisationProps: {
                   results: predictions,
                   loading,
-                  handleSaveResults
+                  handleSaveResults,
+                  datasetName: selectedData
                 }
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

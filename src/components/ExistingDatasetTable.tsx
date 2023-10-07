@@ -9,9 +9,6 @@ import {
   Button,
   Paper,
   CircularProgress,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
   Typography,
   LinearProgress,
   IconButton,
@@ -247,14 +244,13 @@ const ExistingDatasetTable = ({
         <DataGrid
           sx={{ borderRadius: 4, px: 2, pt: 1 }}
           rows={rows}
-          checkboxSelection
+         
           columns={newTableHeaderKeys()}
           slots={{
             loadingOverlay: LinearProgress,
             noRowsOverlay: GridNoRowsOverlay,
           }}
           loading={loadingDatasets}
-          disableRowSelectionOnClick
           onRowSelectionModelChange={(rowSelectionModel) => {
             console.log("rowSelectionModel");
             console.log(rowSelectionModel);

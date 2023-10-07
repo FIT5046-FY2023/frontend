@@ -21,8 +21,6 @@ import { Upload } from "@mui/icons-material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import ExistingDatasetTable from "./ExistingDatasetTable";
 
-import { DataGrid, GRID_CHECKBOX_SELECTION_COL_DEF, GridColDef, GridRowsProp } from '@mui/x-data-grid';
-
 export interface UploadDataProps {
   curFiles: File[];
   setCurFiles: React.Dispatch<any[]>;
@@ -48,7 +46,6 @@ const UploadData = (props: UploadDataProps) => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
 
   const handleOnChangeCurFiles = (e: any) => {
     const fileList: FileList = e.target.files;
