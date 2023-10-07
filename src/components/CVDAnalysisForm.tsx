@@ -290,13 +290,15 @@ export default function CVDAnalysisForm() {
     handleNext();
   };
 
-  const handleSaveResults = async (results:any, setResultsSaved:React.Dispatch<React.SetStateAction<boolean>>) => {
+  const handleSaveResults = async (state:string, title: string, description:string, results:any, setResultsSaved:React.Dispatch<React.SetStateAction<boolean>>) => {
+    const name = title !== "" ? title : selectedData ;
     console.log("save results POST");
-    console.log(JSON.stringify({ results: results, datasetName: selectedData}));
+    const payload = { results: results, datasetName: selectedData, title: name, description: description, state: state };
+    console.log(JSON.stringify(payload));
     setLoading(true);
     fetch("http://127.0.0.1:5000/save_results", {
       method: "POST",
-      body: JSON.stringify({ results: results, datasetName: selectedData}),
+      body: JSON.stringify(payload),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
@@ -352,7 +354,7 @@ export default function CVDAnalysisForm() {
                 visualisationProps: {
                   results: predictions,
                   loading,
-                  handleSaveResults: handleSaveResults
+                  handleSaveResults
                 }
               })}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

@@ -6,7 +6,8 @@ export const spatialAnalysisStates = [
     {value: 4, label: 'SA'},
     {value: 5, label: 'TAS'},
     {value: 6, label: 'VIC'},
-    {value: 7, label: 'WA'}
+    {value: 7, label: 'WA'},
+    {value: 8, label: 'ALL STATES'}
 ];
 export enum SpatialStates {
     ACT = 'ACT',
@@ -16,7 +17,8 @@ export enum SpatialStates {
     SA = 'SA',
     TAS = 'TAS',
     VIC = 'VIC',
-    WA = 'WA'
+    WA = 'WA',
+    ALL = 'ALL STATES'
 }
 export const spatialStatesList = [
     {value: SpatialStates.ACT, label: 'ACT'},
@@ -26,5 +28,6 @@ export const spatialStatesList = [
     {value: SpatialStates.SA, label: 'SA'},
     {value: SpatialStates.TAS, label: 'TAS'},
     {value: SpatialStates.VIC, label: 'VIC'},
-    {value: SpatialStates.WA, label: 'WA'}
+    {value: SpatialStates.WA, label: 'WA'},
+    {value: SpatialStates.ALL, label: 'ALL STATES'}
 ];

@@ -1,5 +1,15 @@
 import { LoadingButton } from "@mui/lab";
-import { Typography, Paper, Box } from "@mui/material";
+import {
+  Typography,
+  Paper,
+  Box,
+  TextField,
+  Stack,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
 import FeatureBarChart from "./FeatureBarChart";
@@ -14,6 +24,9 @@ import {
   Bar,
   ResponsiveContainer,
 } from "recharts";
+import {
+  spatialStatesList
+} from "../enums/spatialAnalysisStates";
 
 type RegressionMlResult = {
   Name: string;
@@ -46,6 +59,9 @@ export interface VisualisationProps {
   results: any;
   loading: boolean;
   handleSaveResults?: (
+    title: string,
+    description: string,
+    state: string,
     results: any,
     setResultsSaved: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
@@ -62,6 +78,10 @@ const Visualisation = (props: VisualisationProps) => {
     saveEnabled,
   } = props;
   const [resultsSaved, setResultsSaved] = useState<boolean>(false);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [state, setState] = useState<string>("");
 
   console.log("results");
   console.log(results);
@@ -104,12 +124,7 @@ const Visualisation = (props: VisualisationProps) => {
   });
 
   const regressionBarData = regression_results?.map((result) => {
-    const {
-      Name,
-      MeanSquareError,
-      RootMeanSquareError,
-      R2_Score,
-    } = result;
+    const { Name, MeanSquareError, RootMeanSquareError, R2_Score } = result;
     return {
       name: Name,
       mse: MeanSquareError,
@@ -125,7 +140,7 @@ const Visualisation = (props: VisualisationProps) => {
       RecallScore,
       F1Score,
       Roc_Auc,
-      Specificity
+      Specificity,
     } = result;
     console.log(
       Name,
@@ -152,7 +167,7 @@ const Visualisation = (props: VisualisationProps) => {
   ) => {
     e.preventDefault();
     if (saveResults !== undefined) {
-      saveResults(results, setResultsSaved);
+      saveResults(state, title, description, results, setResultsSaved);
       setResultsSaved(true);
     }
   };
@@ -161,24 +176,73 @@ const Visualisation = (props: VisualisationProps) => {
 
   return (
     <React.Fragment>
+      
       {!loading && (
         <>
-          {saveEnabled && (
-            <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
-              <LoadingButton
-                variant="contained"
-                onClick={(e) => handleSaveResults(e)}
-                loading={loading}
-                loadingPosition="start"
-                disabled={resultsSaved}
-              >
-                {saveResultsText}
-              </LoadingButton>
-            </Box>
-          )}
           <Typography variant="h5" gutterBottom align="center">
             Analysis Results
           </Typography>
+
+          {saveEnabled && (
+            <Box sx={{ display:"flex", justifyContent: 'center', width: "100%" }}>
+            <Stack direction={"row"} spacing={2}>
+            <TextField
+                size="small"
+                fullWidth
+                name="analysisTitle"
+                label="Analysis Title"
+                onChange={(e) => setTitle(e.target.value)}
+                value={title}
+              />
+                
+              <FormControl sx={{ m: 1, minWidth: 200 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    {"Select State"}
+                  </InputLabel>
+                  <Select
+                    id="demo-simple-select"
+                    labelId="demo-simple-select-label"
+                    value={state}
+                    name={"state"}
+                    label="Select State"
+                    onChange={(e) => setState(e.target.value)}
+                    size="small"
+                    fullWidth
+                    displayEmpty={false}
+                  >
+                    {spatialStatesList.map(({ value, label }) => (
+                      <MenuItem key={value} value={value}>
+                        {label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              
+              <TextField
+                size="small"
+                fullWidth
+                multiline
+                name="analysisDesc"
+                label="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <Box sx={{ minWidth: "200px" }}>
+                <LoadingButton
+                  variant="contained"
+                  onClick={(e) => handleSaveResults(e)}
+                  loading={loading}
+                  loadingPosition="start"
+                  disabled={resultsSaved}
+                  fullWidth
+                  
+                >
+                  {saveResultsText}
+                </LoadingButton>
+                </Box>
+            </Stack>
+          </Box>
+          )}
 
           {!!classification_results &&
             classification_results.map((result) => {

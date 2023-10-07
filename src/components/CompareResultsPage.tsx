@@ -38,6 +38,9 @@ export type DataResultInfo = {
   dateCreated: string;
   cvdResults: CvdResults;
   objectId: string;
+  title: string;
+  description: string;
+  state: string;
  }
 
 const steps = ["Select Results", "Compare Results"];
@@ -68,7 +71,7 @@ const CompareResults = () => {
   }, []);
 
   const mapResultsToTableData = (data: DataResultInfo[]) => {
-    const mappedTableData = allResults.map(result => ({datasetName: result.datasetName, dateCreated: result.dateCreated, objectId: result.objectId}));
+    const mappedTableData = allResults.map(result => ({description: result.description, title: result.title, datasetName: result.datasetName, dateCreated: result.dateCreated, objectId: result.objectId, state: result.state}));
     console.log(mappedTableData);
     return mappedTableData
   }
@@ -94,7 +97,10 @@ const CompareResults = () => {
         datasetName: result.dataset_name,
         dateCreated: result.date_created,
         cvdResults: cvdResults,
-        objectId: result._id
+        objectId: result._id,
+        title: result.title,
+        description: result.description,
+        state: result.state
       };
       console.log("cvd results: \n", cvdResults);
 

@@ -16,14 +16,14 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataResultInfo } from "../CompareResultsPage";
 
-export type TableData = Pick<DataResultInfo, "datasetName"|"dateCreated"|"objectId">[];
+export type TableData = Pick<DataResultInfo, "datasetName"|"dateCreated"|"objectId"|"title"|"state">[];
 export interface AllResultsTableProps {
   selectedResults: number[];
   setSelectedResults: React.Dispatch<React.SetStateAction<number[]>>;
   tableData: TableData;
 }
 
-type TableRowData = { id: number; name: string; dateCreated: string; objectId:string; }
+type TableRowData = { id: number; name: string; dateCreated: string; objectId:string; title:string; state:string;}
 const AllResultsTable = ({
   selectedResults: selectedData,
   setSelectedResults: setSelectedData,
@@ -41,7 +41,7 @@ const AllResultsTable = ({
 
   // Set up cache system for already downloaded datasets so don't have to redownload
   //   const tableHeaders = ["Name", "Size", "Action"];
-  const tableHeaders = ["Name", "Date Created", "Action"];
+  const tableHeaders = ["Name", "Dataset", "Date Created", "Action"];
 
   const handlePreview = (index: number) => {
     // setLoadingDataset(true);
@@ -113,19 +113,21 @@ const AllResultsTable = ({
   // }; 
 
   const newTableHeaderKeys = () => {
-    const [name, dateCreated, action, _] = tableHeaders;
+    const [name, dataset, dateCreated, action, _] = tableHeaders;
     const columns: GridColDef[] = [
       {
         ...GRID_CHECKBOX_SELECTION_COL_DEF,
         width: 100,
       },
-      { field: "name", headerName: name, width: 350 },
-      { field: "dateCreated", headerName: dateCreated, width: 350 },
+      { field: "title", headerName: name, flex: 0.6 },
+      { field: "state", headerName: "State", flex: 0.3  },
+      { field: "name", headerName: dataset, flex: 0.5  },
+      { field: "dateCreated", headerName: dateCreated, flex: 0.5  },
 
       {
         field: "action",
         headerName: action,
-        width: 150,
+        flex: 0.5, 
         renderCell: (params) => {
           const idx =
             typeof params.id === "string"
@@ -138,7 +140,7 @@ const AllResultsTable = ({
       {
         field: "delete",
         headerName: "Delete",
-        width: 150,
+        width: 50, flex: 0.3, 
         renderCell: (params) => {
           const idx =
             typeof params.id === "string"
@@ -181,7 +183,9 @@ const AllResultsTable = ({
           id: index,
           objectId: data.objectId,
           name: data.datasetName,
-          dateCreated: data.dateCreated
+          dateCreated: data.dateCreated,
+          title: data.title,
+          state: data.state
         };
       });
 
@@ -214,7 +218,6 @@ const AllResultsTable = ({
                 if (index !== undefined){
                   index = typeof index === "string" ? parseInt(index)
                   : (index as number);
-                  console.log(rows[index].name);
                   setSelectedData(rowSelectionModel as number[]);
                 }
               }
